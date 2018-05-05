@@ -1,0 +1,22 @@
+{
+  "name": "0lsen/olbotv3",
+  "description": "a stupid telegram chat bot",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "oLsen",
+      "email": "me@o1sen.noip.me"
+    }
+  ],
+  "require": {
+    "slim/slim": "3.10.0",
+    "phpunit/phpunit": "7.1.5",
+    "guzzle/http": "v3.9.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "OLBot\\": "app/src/OLBot/"
+    }
+  }
+}
