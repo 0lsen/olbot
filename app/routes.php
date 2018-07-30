@@ -8,8 +8,7 @@ $app->get('/healthcheck', function(Request $request, Response $response, array $
     return $response;
 });
 
-$app->get('/test', function(Request $request, Response $response, array $args) {
-    $response->getBody()->write(" - Test Route Main Function");
-})
-    ->add(new \OLBot\Middleware\DBLogIncomingMiddleware())
-    ->add(new \OLBot\Middleware\DBConnectMiddleware());
+$app->post('/incoming', 'incoming:evaluate')
+    ->add(new \OLBot\Middleware\MathMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\AllowedMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\MessageMiddleware($container['storage'], $container['message']));
