@@ -3,28 +3,27 @@
 namespace OLBot\Service;
 
 
-use Guzzle\Http\Client;
+use Swagger\Client\Api\MessagesApi;
+use Swagger\Client\Telegram\ParseMode;
+use Swagger\Client\Telegram\SendMessageBody;
 
 class MessageService
 {
-    private $uri = 'https://api.telegram.org/bot';
+    private $api;
+    private $token;
 
     function __construct($token)
     {
-        $this->uri .= $token;
+        $this->api = new MessagesApi();
+        $this->token = $token;
     }
 
     function sendMessage($text, $id)
     {
-        $this->send('sendMessage', [
-            'chat_id' => $id,
-            'text'=> $text
-        ]);
-    }
-
-    private function send($route, $payload)
-    {
-        $client = new Client();
-        $res = $client->post($this->uri.'/'.$route, ['Content-Type' => 'application/json'], $payload);
+        $message =  new SendMessageBody();
+        $message->setChatId($id);
+        $message->setText($text);
+        $message->setParseMode(ParseMode::MARKDOWN);
+        $this->api->sendMessage($this->token, $message);
     }
 }

@@ -11,7 +11,7 @@ $container['message'] = function (\Psr\Container\ContainerInterface $c) use ($se
 };
 
 $container['incoming'] = function (\Psr\Container\ContainerInterface $c) {
-    return new \OLBot\Controller\IncomingControler(
+    return new \OLBot\Controller\IncomingController(
         $c['storage']
     );
 };

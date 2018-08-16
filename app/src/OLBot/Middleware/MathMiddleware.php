@@ -22,7 +22,7 @@ class MathMiddleware
     public function __invoke(Request $request, Response $response, $next)
     {
         Parser::init();
-        $results = Parser::evaluate($this->storageService->message['message']['text']);
+        $results = Parser::evaluate($this->storageService->message->getText());
         foreach ($results as $result) {
             $this->storageService->math[] = $this->formatResult($result);
         }

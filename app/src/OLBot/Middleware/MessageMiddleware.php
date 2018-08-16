@@ -7,6 +7,7 @@ use OLBot\Service\MessageService;
 use OLBot\Service\StorageService;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Swagger\Client\ObjectSerializer;
 
 class MessageMiddleware
 {
@@ -23,8 +24,7 @@ class MessageMiddleware
 
     public function __invoke(Request $request, Response $response, $next)
     {
-        //TODO: deserialise message to swagger model
-        $this->storageService->message = $request->getParsedBody();
+        $this->storageService->message = ObjectSerializer::deserialize($request->getParsedBody(), 'Swagger\Client\Telegram\Message');
         $response = $next($request, $response);
 
         $this->sendResponse();
@@ -48,6 +48,6 @@ class MessageMiddleware
             $text .= '\n' . $message;
         }
 
-        $this->messageService->sendMessage($text, $this->storageService->message['message']['chat']['id']);
+        $this->messageService->sendMessage($text, $this->storageService->message->getChat()->getId());
     }
 }

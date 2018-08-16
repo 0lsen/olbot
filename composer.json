@@ -30,7 +30,8 @@
   },
   "autoload": {
     "psr-4": {
-      "OLBot\\": "app/src/OLBot/"
+      "OLBot\\": "app/src/OLBot/",
+      "Telegram\\": "app/src/SwaggerClient-php/lib/Telegram"
     }
   }
 }
