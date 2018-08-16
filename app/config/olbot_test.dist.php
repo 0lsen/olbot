@@ -4,6 +4,6 @@ return [
     'token' => 'asd',
     'math' => [
         'decimal_point' => '.',
-        'dbz_message' => 'Devision by Zero is evil.'
+        'dbz_message' => 'Division by Zero is evil.'
     ]
 ];

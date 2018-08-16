@@ -1,8 +1,8 @@
 <?php
 
-$app = new \Slim\App(require PROJECT_ROOT.'/config/slim.php');
+$app = new \Slim\App(require PROJECT_ROOT . '/app/config/slim.php');
 
-$settings = require PROJECT_ROOT.'/config/olbot.php';
+$settings = require PROJECT_ROOT . '/app/config/olbot.php';
 
 require 'dependencies.php';
 require 'routes.php';

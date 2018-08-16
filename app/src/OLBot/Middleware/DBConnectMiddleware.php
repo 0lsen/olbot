@@ -11,7 +11,7 @@ class DBConnectMiddleware {
     public function __invoke(Request $request, Response $response, $next)
     {
         try {
-            $settings = require PROJECT_ROOT.'/config/database.php';
+            $settings = require PROJECT_ROOT . '/app/config/database.php';
             $connection = new Manager();
             $connection->addConnection($settings);
             $connection->bootEloquent();
