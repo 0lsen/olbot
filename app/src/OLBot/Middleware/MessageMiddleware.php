@@ -24,7 +24,9 @@ class MessageMiddleware
 
     public function __invoke(Request $request, Response $response, $next)
     {
-        $this->storageService->message = ObjectSerializer::deserialize($request->getParsedBody(), 'Swagger\Client\Telegram\Message');
+        $messageObject = json_decode(json_encode($request->getParsedBodyParam('message')));
+        $this->storageService->message = ObjectSerializer::deserialize($messageObject, 'Swagger\Client\Telegram\Message');
+
         $response = $next($request, $response);
 
         $this->sendResponse();

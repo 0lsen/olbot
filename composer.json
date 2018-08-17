@@ -18,7 +18,7 @@
   "require": {
     "php": "^7.1",
     "slim/slim": "3.10.0",
-    "guzzle/http": "v3.9.2",
+    "guzzlehttp/guzzle": "6.3.3",
     "illuminate/database": "v5.6.29",
     "symfony/console": "v4.1.2",
     "olsen/olmath": "^0.0.1"
@@ -31,7 +31,7 @@
   "autoload": {
     "psr-4": {
       "OLBot\\": "app/src/OLBot/",
-      "Telegram\\": "app/src/SwaggerClient-php/lib/Telegram"
+      "Swagger\\Client\\": "app/src/SwaggerClient-php/lib/"
     }
   }
 }
