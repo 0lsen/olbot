@@ -1,10 +1,10 @@
 <?php
 
-///**
-// * @runTestsInSeparateProcesses
-// */
+/**
+ * @runTestsInSeparateProcesses
+ */
 
-class MathTest extends FeatureTestCase
+class InsultTest extends FeatureTestCase
 {
     function setup()
     {
@@ -14,7 +14,7 @@ class MathTest extends FeatureTestCase
             ->withArgs(function (\GuzzleHttp\Psr7\Request $response){
                 return
                     $response->getUri()->getPath() == '/botasd/sendMessage' &&
-                    strpos($response->getBody()->getContents(), '1 + 1  = 2') !== false;
+                    strpos($response->getBody()->getContents(), 'Jerk') !== false;
             })
             ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));
@@ -22,14 +22,14 @@ class MathTest extends FeatureTestCase
         parent::setup();
     }
 
-    function testMath()
+    function testInsult()
     {
         $request = [
             'message' => [
                 'chat' => [
                     'id' => 123
                 ],
-                'text' => 'foo 1 + 1 bar'
+                'text' => 'foo jerk bar'
             ]
         ];
 

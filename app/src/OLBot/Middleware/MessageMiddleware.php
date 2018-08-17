@@ -42,12 +42,18 @@ class MessageMiddleware
 
         $text = '';
 
-        foreach ($this->storageService->main as $message) {
+        foreach ($this->storageService->response['main'] as $message) {
             $text .= '\n' . $message;
         }
 
-        foreach ($this->storageService->math as $message) {
+        foreach ($this->storageService->response['math'] as $message) {
             $text .= '\n' . $message;
+        }
+
+        if (!is_null($this->storageService->insult)) {
+            $text .= '\n**' . ucwords($this->storageService->insult->insult) . '**';
+            if ($this->storageService->insult->author)
+                $text .= ' __(' . $this->storageService->insult->author . ')__';
         }
 
         $this->messageService->sendMessage($text, $this->storageService->message->getChat()->getId());

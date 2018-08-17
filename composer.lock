@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62898800d5adad417615462205724302",
+    "content-hash": "2e12025cdc61b7f9e50eb0648228af27",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -597,12 +597,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/0lsen/olmath.git",
-                "reference": "861a58c08db161c388fcd31a2945b6be3f5b22ee"
+                "reference": "521de9c1dd47b2c67def5da8a57ae44520b0ccab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/0lsen/olmath/zipball/861a58c08db161c388fcd31a2945b6be3f5b22ee",
-                "reference": "861a58c08db161c388fcd31a2945b6be3f5b22ee",
+                "url": "https://api.github.com/repos/0lsen/olmath/zipball/521de9c1dd47b2c67def5da8a57ae44520b0ccab",
+                "reference": "521de9c1dd47b2c67def5da8a57ae44520b0ccab",
                 "shasum": ""
             },
             "require": {

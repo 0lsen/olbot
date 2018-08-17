@@ -12,8 +12,8 @@ class StorageService
     /** @var Message */
     public $message;
     public $sendResponse = false;
-    public $main;
-    public $math;
+    public $response = ['main' => [], 'math' => []];
+    public $insult = null;
 
     public function __construct($settings)
     {

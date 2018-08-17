@@ -5,27 +5,21 @@ namespace OLBot\Middleware;
 
 use Math\Parser;
 use Math\Result;
-use OLBot\Service\StorageService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class MathMiddleware
+class MathMiddleware extends TextBasedMiddleware
 {
-    /** @var StorageService */
-    private $storageService;
-
-    public function __construct($storageService)
-    {
-        $this->storageService = $storageService;
-    }
-
     public function __invoke(Request $request, Response $response, $next)
     {
         Parser::init();
         $results = Parser::evaluate($this->storageService->message->getText());
         foreach ($results as $result) {
-            $this->storageService->math[] = $this->formatResult($result);
+            $this->storageService->response['math'][] = $this->formatResult($result);
+            $this->removeFromText($result->original);
         }
+
+        if ($results) $this->storageService->sendResponse = true;
 
         return $next($request, $response);
     }
