@@ -1,8 +1,8 @@
 <?php
 
-///**
-// * @runTestsInSeparateProcesses
-// */
+/**
+ * @runTestsInSeparateProcesses
+ */
 
 class MathTest extends FeatureTestCase
 {
@@ -11,10 +11,10 @@ class MathTest extends FeatureTestCase
         $guzzleMock = Mockery::mock('overload:GuzzleHttp\Client');
         $guzzleMock
             ->shouldReceive('send')
-            ->withArgs(function (\GuzzleHttp\Psr7\Request $response){
+            ->withArgs(function (\GuzzleHttp\Psr7\Request $request){
                 return
-                    $response->getUri()->getPath() == '/botasd/sendMessage' &&
-                    strpos($response->getBody()->getContents(), '1 + 1  = 2') !== false;
+                    $request->getUri()->getPath() == '/botasd/sendMessage' &&
+                    strpos($request->getBody()->getContents(), '1 + 1 = 2') !== false;
             })
             ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));

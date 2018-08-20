@@ -43,19 +43,25 @@ class MessageMiddleware
         $text = '';
 
         foreach ($this->storageService->response['main'] as $message) {
-            $text .= '\n' . $message;
+            $this->addLine($message, $text);
         }
 
         foreach ($this->storageService->response['math'] as $message) {
-            $text .= '\n' . $message;
+            $this->addLine($message, $text);
         }
 
         if (!is_null($this->storageService->insult)) {
-            $text .= '\n**' . ucwords($this->storageService->insult->insult) . '**';
+            $this->addLine('**' . ucwords($this->storageService->insult->insult) . '**', $text);
             if ($this->storageService->insult->author)
                 $text .= ' __(' . $this->storageService->insult->author . ')__';
         }
 
         $this->messageService->sendMessage($text, $this->storageService->message->getChat()->getId());
+    }
+
+    private function addLine($message, &$text)
+    {
+        if ($text) $text .= '\n';
+        $text .= $message;
     }
 }
