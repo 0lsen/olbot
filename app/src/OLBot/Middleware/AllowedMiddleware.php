@@ -23,6 +23,10 @@ class AllowedMiddleware
         $id = $this->storageService->message->getChat()->getId();
 
         if ($this->isAllowedUser($id) || $this->isAllowedGroup($id)) {
+            $this->storageService->user = $this->getUser();
+            if ($this->isBotmaster($id)) {
+                $this->storageService->botmaster = true;
+            }
             return $next($request, $response);
         } else {
             return $response->withStatus(403);
@@ -37,5 +41,14 @@ class AllowedMiddleware
     private function isAllowedGroup($id)
     {
         return $id < 0 && AllowedGroup::where(['id' => $id, 'active' => true])->count();
+    }
+
+    private function getUser() {
+        return AllowedUser::where(['id' => $this->storageService->message->getFrom()->getId()]);
+    }
+
+    private function isBotmaster($id) {
+         return $id == $this->storageService->settings['botmaster_id'];
+
     }
 }

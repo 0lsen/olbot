@@ -29,6 +29,9 @@ class MathTest extends FeatureTestCase
                 'chat' => [
                     'id' => 123
                 ],
+                'from' => [
+                    'id' => 789
+                ],
                 'text' => 'foo 1 + 1 bar'
             ]
         ];

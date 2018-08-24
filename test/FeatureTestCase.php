@@ -4,19 +4,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
     function setup()
     {
-        $allowedUserMock = Mockery::mock('alias:OLBot\Model\DB\AllowedUser');
-        $allowedUserMock
-            ->shouldReceive('where')
-            ->with(['id' => 123, 'active' => true])
-            ->andReturn(new EloquentMock(['count' => 1]));
-
-        $insultCollection = new \Illuminate\Database\Eloquent\Collection();
-        $insultCollection->add((object)['insult' => 'jerk', 'author' => null]);
-        $insultMock = Mockery::mock('alias:OLBot\Model\DB\Insult');
-        $insultMock
-            ->shouldReceive('all')
-            ->andReturn($insultCollection);
-
+        $this->mockStuff();
         parent::setup();
     }
 
@@ -36,6 +24,56 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     protected function tearDown()
     {
         Mockery::close();
+    }
+
+    private function mockStuff()
+    {
+        $allowedUserMock = Mockery::mock('alias:OLBot\Model\DB\AllowedUser');
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => 123, 'active' => true])
+            ->andReturn(new EloquentMock(['count' => 1]));
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => 456, 'active' => true])
+            ->andReturn(new EloquentMock(['count' => 0]));
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => 123])
+            ->andReturn(new EloquentMock(['karma' => 1]));
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => 456])
+            ->andReturn(new EloquentMock(['karma' => -1]));
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => 789])
+            ->andReturn(new EloquentMock(['karma' => 0]));
+
+        $allowedUserMock = Mockery::mock('alias:OLBot\Model\DB\AllowedGroup');
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => -123, 'active' => true])
+            ->andReturn(new EloquentMock(['count' => 1]));
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => -456, 'active' => true])
+            ->andReturn(new EloquentMock(['count' => 0]));
+
+        $karmaPositiveCollection = new \Illuminate\Database\Eloquent\Collection();
+        $karmaPositiveCollection->add((object)['text' => 'sweetie', 'author' => null]);
+        $karmaNegativeCollection = new \Illuminate\Database\Eloquent\Collection();
+        $karmaNegativeCollection->add((object)['text' => 'jerk', 'author' => null]);
+
+        $karmaMock = Mockery::mock('alias:OLBot\Model\DB\Karma');
+        $karmaMock
+            ->shouldReceive('where')
+            ->with(['karma' => true])
+            ->andReturn(new EloquentMock(['get' => $karmaPositiveCollection]));
+        $karmaMock
+            ->shouldReceive('where')
+            ->with(['karma' => false])
+            ->andReturn(new EloquentMock(['get' => $karmaNegativeCollection]));
     }
 }
 

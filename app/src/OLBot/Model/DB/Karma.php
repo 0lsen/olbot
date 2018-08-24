@@ -3,9 +3,9 @@
 namespace OLBot\Model\DB;
 
 
-class Insult extends Eloquent
+class Karma extends Eloquent
 {
-    protected $table = 'insult';
+    protected $table = 'karma';
     protected $keyType = 'integer';
     protected $guarded = [];
 }

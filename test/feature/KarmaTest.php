@@ -4,7 +4,7 @@
  * @runTestsInSeparateProcesses
  */
 
-class InsultTest extends FeatureTestCase
+class KarmaTest extends FeatureTestCase
 {
     function setup()
     {
@@ -22,12 +22,15 @@ class InsultTest extends FeatureTestCase
         parent::setup();
     }
 
-    function testInsult()
+    function testActiveInsult()
     {
         $request = [
             'message' => [
                 'chat' => [
-                    'id' => 123
+                    'id' => -123
+                ],
+                'from' => [
+                    'id' => 789
                 ],
                 'text' => 'foo jerk bar'
             ]
@@ -36,4 +39,6 @@ class InsultTest extends FeatureTestCase
         $this->client->post('/incoming', $request);
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
+
+    //TODO: tests for flattery and passive Karma response
 }

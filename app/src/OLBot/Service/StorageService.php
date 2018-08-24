@@ -11,9 +11,13 @@ class StorageService
     public $settings;
     /** @var Message */
     public $message;
+    public $textCopy;
+
+    public $user;
+
     public $sendResponse = false;
     public $response = ['main' => [], 'math' => []];
-    public $insult = null;
+    public $karma = null;
 
     public function __construct($settings)
     {
