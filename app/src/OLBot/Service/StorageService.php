@@ -3,6 +3,7 @@
 namespace OLBot\Service;
 
 
+use OLBot\Model\DB\AllowedUser;
 use Swagger\Client\Telegram\Message;
 
 class StorageService
@@ -13,6 +14,7 @@ class StorageService
     public $message;
     public $textCopy;
 
+    /** @var AllowedUser */
     public $user;
 
     public $sendResponse = false;

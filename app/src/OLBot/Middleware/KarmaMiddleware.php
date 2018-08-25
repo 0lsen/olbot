@@ -46,7 +46,6 @@ class KarmaMiddleware extends TextBasedMiddleware
         }
 
         if (!is_null($karma)) {
-            $asd = Karma::where(['karma' => $karma]);
             $this->storageService->karma = $karma ? $flattery->random() : $insults->random();
         }
 
