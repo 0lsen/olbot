@@ -4,6 +4,9 @@ use Illuminate\Database\Eloquent\Collection;
 
 class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
+    /** @var \Mockery\MockInterface */
+    protected $karmaMock;
+
     function setup()
     {
         $this->mockStuff();
@@ -71,12 +74,12 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $karmaNegativeCollection = new Collection();
         $karmaNegativeCollection->add((object)['text' => 'jerk', 'author' => null]);
 
-        $karmaMock = Mockery::mock('alias:OLBot\Model\DB\Karma');
-        $karmaMock
+        $this->karmaMock = Mockery::mock('alias:OLBot\Model\DB\Karma');
+        $this->karmaMock
             ->shouldReceive('where')
             ->with(['karma' => true])
             ->andReturn(new EloquentMock(['get' => $karmaPositiveCollection]));
-        $karmaMock
+        $this->karmaMock
             ->shouldReceive('where')
             ->with(['karma' => false])
             ->andReturn(new EloquentMock(['get' => $karmaNegativeCollection]));

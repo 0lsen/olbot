@@ -3,19 +3,11 @@
 namespace OLBot\Middleware;
 
 
-use OLBot\Service\StorageService;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class CommandMiddleware
+class CommandMiddleware extends TextBasedMiddleware
 {
-    private $storageService;
-
-    function __construct(StorageService $storageService)
-    {
-        $this->storageService = $storageService;
-    }
-
     public function __invoke(Request $request, Response $response, $next)
     {
         //TODO: does the API tell me about the usage of a registered command already?
@@ -25,21 +17,33 @@ class CommandMiddleware
             return $response;
         }
 
+        $found = $this->checkCommand('addFlattery', 'Karma', ['karma' => true]);
+        if ($found) {
+            return $response;
+        }
+
+        $found = $this->checkCommand('addInsult', 'Karma', ['karma' => false]);
+        if ($found) {
+            return $response;
+        }
+
         return $next($request, $response);
     }
 
-    private function checkCommand($command, $eloquentModel)
+    private function checkCommand($command, $eloquentModel, $conditions = [])
     {
         if ($this->commandFound($command)) {
             $this->storageService->sendResponse = true;
-            $alreadyKnown = $this->isTextAlreadyKnown($eloquentModel, $this->storageService->textCopy);
+            $alreadyKnown = $this->isTextAlreadyKnown($eloquentModel, $this->storageService->textCopy, $conditions);
             $this->storageService->response['main'][] =
                 $alreadyKnown
                 ? $this->storageService->settings['command']['reply_entry_already_known']
                 : $this->storageService->settings['command']['reply_new_entry'];
             if (!$alreadyKnown) {
-                $this->addNew($eloquentModel, $this->storageService->textCopy, $this->storageService->user->id);
+                $this->addNew($eloquentModel, $this->storageService->textCopy, $this->storageService->user->id, $conditions);
             }
+
+            return true;
         } else {
             return false;
         }
@@ -61,13 +65,13 @@ class CommandMiddleware
         return $found;
     }
 
-    private function isTextAlreadyKnown($eloquentModel, $text)
+    private function isTextAlreadyKnown($eloquentModel, $text, $conditions)
     {
-        return call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::where', ['text' => $text])->count();
+        return call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::where', array_merge(['text' => $text], $conditions))->count();
     }
 
-    private function addNew($eloquentModel, $text, $author)
+    private function addNew($eloquentModel, $text, $author, $conditions)
     {
-        return call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::create', ['text' => $text, 'author' => $author]);
+        return call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::create', array_merge(['text' => $text, 'author' => $author], $conditions));
     }
 }

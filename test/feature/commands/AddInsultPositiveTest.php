@@ -4,7 +4,7 @@
  * @runTestsInSeparateProcesses
  */
 
-class CommandAddJokePositiveTest extends FeatureTestCase
+class AddInsultPositiveTest extends FeatureTestCase
 {
     function setup()
     {
@@ -19,21 +19,20 @@ class CommandAddJokePositiveTest extends FeatureTestCase
             ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));
 
-        $jokeMock = Mockery::mock('alias:OLBot\Model\DB\Joke');
-        $jokeMock
+        parent::setup();
+
+        $this->karmaMock
             ->shouldReceive('where')
-            ->with(['text' => 'foo joke'])
+            ->with(['text' => 'foo insult', 'karma' => false])
             ->once()
             ->andReturn(new EloquentMock(['count' => 0]));
-        $jokeMock
+        $this->karmaMock
             ->shouldReceive('create')
-            ->with(['text' => 'foo joke', 'author' => 789])
+            ->with(['text' => 'foo insult', 'author' => 789, 'karma' => false])
             ->once();
-
-        parent::setup();
     }
 
-    function testAddNewJoke()
+    function testAddNewFlattery()
     {
         $request = [
             'message' => [
@@ -43,7 +42,7 @@ class CommandAddJokePositiveTest extends FeatureTestCase
                 'from' => [
                     'id' => 789
                 ],
-                'text' => '/addJoke foo joke'
+                'text' => '/addInsult foo insult'
             ]
         ];
 
