@@ -44,6 +44,7 @@ class AllowedMiddleware
     }
 
     private function getUser() {
+        //TODO: register (inactive?) User if unknown
         return AllowedUser::where(['id' => $this->storageService->message->getFrom()->getId()]);
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection;
+
 class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
     function setup()
@@ -39,16 +41,20 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->andReturn(new EloquentMock(['count' => 0]));
         $allowedUserMock
             ->shouldReceive('where')
+            ->with(['id' => 789, 'active' => true])
+            ->andReturn(new EloquentMock(['count' => 1]));
+        $allowedUserMock
+            ->shouldReceive('where')
             ->with(['id' => 123])
-            ->andReturn(new EloquentMock(['karma' => 1]));
+            ->andReturn(new EloquentMock(['karma' => 1, 'id' => 123]));
         $allowedUserMock
             ->shouldReceive('where')
             ->with(['id' => 456])
-            ->andReturn(new EloquentMock(['karma' => -1]));
+            ->andReturn(new EloquentMock(['karma' => -1, 'id' => 456]));
         $allowedUserMock
             ->shouldReceive('where')
             ->with(['id' => 789])
-            ->andReturn(new EloquentMock(['karma' => 0]));
+            ->andReturn(new EloquentMock(['karma' => 0, 'id' => 789]));
 
         $allowedUserMock = Mockery::mock('alias:OLBot\Model\DB\AllowedGroup');
         $allowedUserMock
@@ -60,9 +66,9 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->with(['id' => -456, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 0]));
 
-        $karmaPositiveCollection = new \Illuminate\Database\Eloquent\Collection();
+        $karmaPositiveCollection = new Collection();
         $karmaPositiveCollection->add((object)['text' => 'sweetie', 'author' => null]);
-        $karmaNegativeCollection = new \Illuminate\Database\Eloquent\Collection();
+        $karmaNegativeCollection = new Collection();
         $karmaNegativeCollection->add((object)['text' => 'jerk', 'author' => null]);
 
         $karmaMock = Mockery::mock('alias:OLBot\Model\DB\Karma');

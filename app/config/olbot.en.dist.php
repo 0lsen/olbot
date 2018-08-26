@@ -9,6 +9,16 @@ return [
             'addInsult' => 'addInsult',
             'addFlattery' => 'addFlattery',
             'addPicture' => 'addPicture'
+            /*
+             * TODO: maybe custom things would be better this way: (no Eloquent Models though)
+             * 'addJoke' => [
+             *   'type' => 'text',
+             *   'db_table' => 'joke',
+             *   'already_exists_message' => 'I already know this ... .',
+             *   'botmaster_only' => false,
+             *   ...
+             * ]
+             */
         ],
         'reply_new_entry' => 'Thank you for your contribution.',
         'reply_entry_already_known' => 'I already know this.'
