@@ -8,7 +8,7 @@ return [
             'addJoke' => 'addJoke',
             'addInsult' => 'addInsult',
             'addFlattery' => 'addFlattery',
-            'addPicture' => 'addPicture'
+            'addPicture' => 'addPicture',
             /*
              * TODO: maybe custom things would be better this way: (no Eloquent Models though)
              * 'addJoke' => [
@@ -22,6 +22,13 @@ return [
         ],
         'reply_new_entry' => 'Thank you for your contribution.',
         'reply_entry_already_known' => 'I already know this.'
+    ],
+    'instant_responses' => [
+        [
+            'regex' => '#^Hakuna$#',
+            'response' => 'Matata',
+            'break' => true
+        ],
     ],
     'letter_conversion' => [
         'from' => [
@@ -40,6 +47,7 @@ return [
         'typical_language_ending' => 'ese'
     ],
     'karma' => [
+        'function' => '',
         'step' => 0.1
-    ]
+    ],
 ];

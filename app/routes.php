@@ -11,6 +11,7 @@ $app->get('/healthcheck', function(Request $request, Response $response, array $
 $app->post('/incoming', 'incoming:evaluate')
     ->add(new \OLBot\Middleware\KarmaMiddleware($container['storage']))
     ->add(new \OLBot\Middleware\MathMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\InstantResponseMiddleware($container['storage']))
     ->add(new \OLBot\Middleware\CommandMiddleware($container['storage']))
     ->add(new \OLBot\Middleware\AllowedMiddleware($container['storage']))
     ->add(new \OLBot\Middleware\MessageMiddleware($container['storage'], $container['message']));

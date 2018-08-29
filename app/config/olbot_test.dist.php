@@ -8,10 +8,17 @@ return [
             'addJoke' => 'addJoke',
             'addInsult' => 'addInsult',
             'addFlattery' => 'addFlattery',
-            'addPicture' => 'addPicture'
+            'addPicture' => 'addPicture',
         ],
         'reply_new_entry' => 'Thank you for your contribution.',
         'reply_entry_already_known' => 'I already know this.'
+    ],
+    'instant_responses' => [
+        [
+            'regex' => '#^Hakuna$#',
+            'response' => 'Matata',
+            'break' => true
+        ],
     ],
     'letter_conversion' => [
         'from' => [
