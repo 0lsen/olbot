@@ -13,11 +13,14 @@ class KarmaTest extends FeatureTestCase
         $guzzleMock = Mockery::mock('overload:GuzzleHttp\Client');
         $guzzleMock
             ->shouldReceive('send')
-            ->withArgs(function (\GuzzleHttp\Psr7\Request $response){
+            ->withArgs(function (\GuzzleHttp\Psr7\Request $request){
+                $body = $request->getBody()->getContents();
                 return
-                    $response->getUri()->getPath() == '/botasd/sendMessage' &&
-                    strpos($response->getBody()->getContents(), $this->keyWord) !== false;
+                    $request->getUri()->getPath() == '/botasd/sendMessage' &&
+                    strpos($body, '-123') !== false &&
+                    strpos($body, $this->keyWord) !== false;
             })
+            ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));
 
         parent::setup();
@@ -73,7 +76,7 @@ class KarmaTest extends FeatureTestCase
                 'from' => [
                     'id' => 123
                 ],
-                'text' => 'foo bar'
+                'text' => 'foo 1+1 bar'
             ]
         ];
 
@@ -93,7 +96,7 @@ class KarmaTest extends FeatureTestCase
                 'from' => [
                     'id' => 456
                 ],
-                'text' => 'foo bar'
+                'text' => 'foo 1+1 bar'
             ]
         ];
 

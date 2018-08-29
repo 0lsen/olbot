@@ -12,9 +12,11 @@ class MathTest extends FeatureTestCase
         $guzzleMock
             ->shouldReceive('send')
             ->withArgs(function (\GuzzleHttp\Psr7\Request $request){
+                $body = $request->getBody()->getContents();
                 return
                     $request->getUri()->getPath() == '/botasd/sendMessage' &&
-                    strpos($request->getBody()->getContents(), '1 + 1 = 2') !== false;
+                    strpos($body, '-123') !== false &&
+                    strpos($body, '1 + 1 = 2') !== false;
             })
             ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));
@@ -27,7 +29,7 @@ class MathTest extends FeatureTestCase
         $request = [
             'message' => [
                 'chat' => [
-                    'id' => 123
+                    'id' => -123
                 ],
                 'from' => [
                     'id' => 789

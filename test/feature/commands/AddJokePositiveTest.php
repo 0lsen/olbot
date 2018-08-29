@@ -12,9 +12,11 @@ class AddJokePositiveTest extends FeatureTestCase
         $guzzleMock
             ->shouldReceive('send')
             ->withArgs(function (\GuzzleHttp\Psr7\Request $request){
+                $body = $request->getBody()->getContents();
                 return
                     $request->getUri()->getPath() == '/botasd/sendMessage' &&
-                    strpos($request->getBody()->getContents(), 'Thank you for your contribution.') !== false;
+                    strpos($body, '789') !== false &&
+                    strpos($body, 'Thank you for your contribution.') !== false;
             })
             ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));
@@ -33,7 +35,7 @@ class AddJokePositiveTest extends FeatureTestCase
         parent::setup();
     }
 
-    function testAddNewJoke()
+    function testAddNewJokePositive()
     {
         $request = [
             'message' => [

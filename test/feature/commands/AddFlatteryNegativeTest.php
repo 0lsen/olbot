@@ -12,9 +12,11 @@ class AddFlatteryNegativeTest extends FeatureTestCase
         $guzzleMock
             ->shouldReceive('send')
             ->withArgs(function (\GuzzleHttp\Psr7\Request $request){
+                $body = $request->getBody()->getContents();
                 return
                     $request->getUri()->getPath() == '/botasd/sendMessage' &&
-                    strpos($request->getBody()->getContents(), 'I already know this.') !== false;
+                    strpos($body, '789') !== false &&
+                    strpos($body, 'I already know this.') !== false;
             })
             ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));
@@ -28,7 +30,7 @@ class AddFlatteryNegativeTest extends FeatureTestCase
             ->andReturn(new EloquentMock(['count' => 1]));
     }
 
-    function testAddNewFlattery()
+    function testAddNewFlatteryNegative()
     {
         $request = [
             'message' => [

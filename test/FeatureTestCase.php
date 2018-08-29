@@ -59,12 +59,12 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->with(['id' => 789])
             ->andReturn(new EloquentMock(['karma' => 0, 'id' => 789]));
 
-        $allowedUserMock = Mockery::mock('alias:OLBot\Model\DB\AllowedGroup');
-        $allowedUserMock
+        $allowedGroupMock = Mockery::mock('alias:OLBot\Model\DB\AllowedGroup');
+        $allowedGroupMock
             ->shouldReceive('where')
             ->with(['id' => -123, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 1]));
-        $allowedUserMock
+        $allowedGroupMock
             ->shouldReceive('where')
             ->with(['id' => -456, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 0]));
