@@ -19,7 +19,7 @@ class StorageService
 
     public $sendResponse = false;
     public $response = ['main' => [], 'math' => []];
-    public $karma = null;
+    public $karma;
 
     public function __construct($settings)
     {

@@ -78,11 +78,11 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $this->karmaMock
             ->shouldReceive('where')
             ->with(['karma' => true])
-            ->andReturn(new EloquentMock(['get' => $karmaPositiveCollection]));
+            ->andReturn($karmaPositiveCollection);
         $this->karmaMock
             ->shouldReceive('where')
             ->with(['karma' => false])
-            ->andReturn(new EloquentMock(['get' => $karmaNegativeCollection]));
+            ->andReturn($karmaNegativeCollection);
     }
 }
 

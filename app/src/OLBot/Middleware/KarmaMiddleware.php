@@ -15,7 +15,7 @@ class KarmaMiddleware extends TextBasedMiddleware
         $text = $this->storageService->message->getText();
         $karma = null;
         $insults = $this->getInsults();
-        foreach ($insults as $insult) {
+        foreach ($insults->all() as $insult) {
             if (strpos($text, $insult->text) !== false) {
                 $karma = false;
                 $this->removeFromText($insult->text);
@@ -23,7 +23,7 @@ class KarmaMiddleware extends TextBasedMiddleware
         }
         if (is_null($karma)) {
             $flattery = $this->getFlattery();
-            foreach ($flattery as $flatter) {
+            foreach ($flattery->all() as $flatter) {
                 if (strpos($text, $flatter->text) !== false) {
                     $karma = true;
                     $this->removeFromText($flatter->text);
@@ -57,7 +57,7 @@ class KarmaMiddleware extends TextBasedMiddleware
 //        if (apcu_exists('olbot_insults')) {
 //            return apcu_fetch('olbot_insults');
 //        } else {
-            $insults = Karma::where(['karma' => false])->get();
+            $insults = Karma::where(['karma' => false]);
 //            apcu_add('olbot_insults', $insults);
             return $insults;
 //        }
@@ -70,7 +70,7 @@ class KarmaMiddleware extends TextBasedMiddleware
 //        if (apcu_exists('olbot_flattery')) {
 //            return apcu_fetch('olbot_flattery');
 //        } else {
-        $flattery = Karma::where(['karma' => true])->get();
+        $flattery = Karma::where(['karma' => true]);
 //            apcu_add('olbot_flattery', $flattery);
         return $flattery;
 //        }

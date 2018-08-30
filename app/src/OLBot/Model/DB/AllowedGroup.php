@@ -3,7 +3,7 @@
 namespace OLBot\Model\DB;
 
 
-class AllowedGroup
+class AllowedGroup extends Eloquent
 {
     protected $table = 'allowed_groups';
     protected $keyType = 'integer';
