@@ -6,6 +6,12 @@
 
 class AllowedTest extends FeatureTestCase
 {
+    function setup()
+    {
+        parent::mockLogMessageIn();
+        parent::setup();
+    }
+
     function testUserPositive()
     {
         $this->client->post('/incoming', $this->createMessage(self::USER_ALLOWED, self::USER_ALLOWED));

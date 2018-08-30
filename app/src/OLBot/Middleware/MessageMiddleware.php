@@ -3,6 +3,7 @@
 namespace OLBot\Middleware;
 
 
+use OLBot\Logger;
 use OLBot\Service\MessageService;
 use OLBot\Service\StorageService;
 use Slim\Http\Request;
@@ -28,6 +29,8 @@ class MessageMiddleware
         $messageObject = json_decode(json_encode($request->getParsedBodyParam('message')));
         /** @var Message $message */
         $message = ObjectSerializer::deserialize($messageObject, 'Swagger\Client\Telegram\Message');
+
+        Logger::logMessageIn($message);
 
         if ($this->insufficientMessageData($message)) {
             return $response;
@@ -73,7 +76,11 @@ class MessageMiddleware
             $this->addLine(ucwords($this->storageService->karma->text), $text);
         }
 
-        $this->messageService->sendMessage($text, $this->storageService->message->getChat()->getId());
+        $this->messageService->sendMessage(
+            $text,
+            $this->storageService->message->getChat()->getId(),
+            $this->storageService->message->getMessageId()
+        );
     }
 
     private function addLine($message, &$text)

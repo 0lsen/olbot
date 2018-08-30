@@ -3,6 +3,7 @@
 namespace OLBot\Service;
 
 
+use OLBot\Logger;
 use Swagger\Client\Api\MessagesApi;
 use Swagger\Client\Telegram\ParseMode;
 use Swagger\Client\Telegram\SendMessageBody;
@@ -18,12 +19,18 @@ class MessageService
         $this->token = $token;
     }
 
-    function sendMessage($text, $id)
+    function sendMessage($text, $idOut, $idIn)
     {
         $message =  new SendMessageBody();
-        $message->setChatId($id);
+        $message->setChatId($idOut);
+        $message->setReplyToMessageId($idIn);
         $message->setText($text);
         $message->setParseMode(ParseMode::MARKDOWN);
-        $this->api->sendMessage($this->token, $message);
+        try {
+            $this->api->sendMessage($this->token, $message);
+            Logger::logMessageOut($message);
+        } catch (\Throwable $t) {
+            Logger::logError($idIn, $t);
+        }
     }
 }

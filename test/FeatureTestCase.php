@@ -20,7 +20,8 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 
     function setup()
     {
-        $this->mockStuff();
+        $this->mockAllowedUsersAndGroups();
+        $this->mockKarma();
         parent::setup();
     }
 
@@ -42,7 +43,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         Mockery::close();
     }
 
-    private function mockStuff()
+    private function mockAllowedUsersAndGroups()
     {
         $allowedUserMock = Mockery::mock('alias:OLBot\Model\DB\AllowedUser');
         $allowedUserMock
@@ -79,7 +80,10 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->shouldReceive('where')
             ->with(['id' => self::GROUP_NOT_ALLOWED, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 0]));
+    }
 
+    private function mockKarma()
+    {
         $karmaPositiveCollection = new Collection();
         $karmaPositiveCollection->add((object)['text' => 'sweetie', 'author' => null]);
         $karmaNegativeCollection = new Collection();
@@ -94,6 +98,14 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->shouldReceive('where')
             ->with(['karma' => false])
             ->andReturn($karmaNegativeCollection);
+    }
+
+    protected function mockLogMessageIn()
+    {
+        $logMessageInMock = Mockery::mock('alias:OLBot\Model\DB\LogMessageIn');
+        $logMessageInMock
+            ->shouldReceive('create')
+            ->once();
     }
 
     protected function createMessage($fromId, $chatId, $text = 'foo bar')
@@ -128,6 +140,11 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             })
             ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));
+
+        $logMessageOutMock = Mockery::mock('alias:OLBot\Model\DB\LogMessageOut');
+        $logMessageOutMock
+            ->shouldReceive('create')
+            ->once();
     }
 }
 

@@ -8,6 +8,7 @@ class MathTest extends FeatureTestCase
 {
     function setup()
     {
+        parent::mockLogMessageIn();
         parent::expectMessage();
         parent::setup();
     }
