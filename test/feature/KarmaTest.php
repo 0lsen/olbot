@@ -6,103 +6,69 @@
 
 class KarmaTest extends FeatureTestCase
 {
-    private $keyWord;
-
     function setup()
     {
-        $guzzleMock = Mockery::mock('overload:GuzzleHttp\Client');
-        $guzzleMock
-            ->shouldReceive('send')
-            ->withArgs(function (\GuzzleHttp\Psr7\Request $request){
-                $body = $request->getBody()->getContents();
-                return
-                    $request->getUri()->getPath() == '/botasd/sendMessage' &&
-                    strpos($body, '-123') !== false &&
-                    strpos($body, $this->keyWord) !== false;
-            })
-            ->once()
-            ->andReturn(new \GuzzleHttp\Psr7\Response(200));
-
+        parent::expectMessage();
         parent::setup();
     }
 
     function testActiveFlattery()
     {
-        $request = [
-            'message' => [
-                'chat' => [
-                    'id' => -123
-                ],
-                'from' => [
-                    'id' => 789
-                ],
-                'text' => 'foo sweetie bar'
-            ]
+        $from = self::USER_NEUTRAL_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->expectedMessageContent = [
+            'chat_id' => $chat,
+            'text' => '"Sweetie"',
+            'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->keyWord = 'Sweetie';
-
-        $this->client->post('/incoming', $request);
+        $this->client->post('/incoming', $this->createMessage($from, $chat, 'foo sweetie bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
     function testActiveInsult()
     {
-        $request = [
-            'message' => [
-                'chat' => [
-                    'id' => -123
-                ],
-                'from' => [
-                    'id' => 789
-                ],
-                'text' => 'foo jerk bar'
-            ]
+        $from = self::USER_NEUTRAL_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->expectedMessageContent = [
+            'chat_id' => $chat,
+            'text' => '"Jerk"',
+            'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->keyWord = 'Jerk';
-
-        $this->client->post('/incoming', $request);
+        $this->client->post('/incoming', $this->createMessage($from, $chat, 'foo jerk bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
     function testPassiveFlattery()
     {
-        $request = [
-            'message' => [
-                'chat' => [
-                    'id' => -123
-                ],
-                'from' => [
-                    'id' => 123
-                ],
-                'text' => 'foo 1+1 bar'
-            ]
+        $from = self::USER_POSITIVE_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->expectedMessageContent = [
+            'chat_id' => $chat,
+            'text' => '"1+1 = 2\\\\nSweetie"',
+            'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->keyWord = 'Sweetie';
-
-        $this->client->post('/incoming', $request);
+        $this->client->post('/incoming', $this->createMessage($from, $chat, 'foo 1+1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
     function testPassiveInsult()
     {
-        $request = [
-            'message' => [
-                'chat' => [
-                    'id' => -123
-                ],
-                'from' => [
-                    'id' => 456
-                ],
-                'text' => 'foo 1+1 bar'
-            ]
+        $from = self::USER_NEGATIVE_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->expectedMessageContent = [
+            'chat_id' => $chat,
+            'text' => '"1+1 = 2\\\\nJerk"',
+            'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->keyWord = 'Jerk';
-
-        $this->client->post('/incoming', $request);
+        $this->client->post('/incoming', $this->createMessage($from, $chat, 'foo 1+1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 }

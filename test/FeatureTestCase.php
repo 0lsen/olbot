@@ -4,8 +4,19 @@ use Illuminate\Database\Eloquent\Collection;
 
 class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
+    protected const USER_ALLOWED = 1;
+    protected const USER_NOT_ALLOWED = 2;
+    protected const USER_POSITIVE_KARMA = 1;
+    protected const USER_NEGATIVE_KARMA = 2;
+    protected const USER_NEUTRAL_KARMA = 3;
+    protected const GROUP_ALLOWED = -1;
+    protected const GROUP_NOT_ALLOWED = -2;
+    protected const MESSAGE_ID = 123;
+
     /** @var \Mockery\MockInterface */
     protected $karmaMock;
+
+    protected $expectedMessageContent = [];
 
     function setup()
     {
@@ -36,37 +47,37 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $allowedUserMock = Mockery::mock('alias:OLBot\Model\DB\AllowedUser');
         $allowedUserMock
             ->shouldReceive('where')
-            ->with(['id' => 123, 'active' => true])
+            ->with(['id' => self::USER_POSITIVE_KARMA, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 1]));
         $allowedUserMock
             ->shouldReceive('where')
-            ->with(['id' => 456, 'active' => true])
+            ->with(['id' => self::USER_NEGATIVE_KARMA, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 0]));
         $allowedUserMock
             ->shouldReceive('where')
-            ->with(['id' => 789, 'active' => true])
+            ->with(['id' => self::USER_NEUTRAL_KARMA, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 1]));
         $allowedUserMock
             ->shouldReceive('where')
-            ->with(['id' => 123])
-            ->andReturn(new EloquentMock(['karma' => 1, 'id' => 123]));
+            ->with(['id' => self::USER_POSITIVE_KARMA])
+            ->andReturn(new EloquentMock(['karma' => 1, 'id' => self::USER_POSITIVE_KARMA]));
         $allowedUserMock
             ->shouldReceive('where')
-            ->with(['id' => 456])
-            ->andReturn(new EloquentMock(['karma' => -1, 'id' => 456]));
+            ->with(['id' => self::USER_NEGATIVE_KARMA])
+            ->andReturn(new EloquentMock(['karma' => -1, 'id' => self::USER_NEGATIVE_KARMA]));
         $allowedUserMock
             ->shouldReceive('where')
-            ->with(['id' => 789])
-            ->andReturn(new EloquentMock(['karma' => 0, 'id' => 789]));
+            ->with(['id' => self::USER_NEUTRAL_KARMA])
+            ->andReturn(new EloquentMock(['karma' => 0, 'id' => self::USER_NEUTRAL_KARMA]));
 
         $allowedGroupMock = Mockery::mock('alias:OLBot\Model\DB\AllowedGroup');
         $allowedGroupMock
             ->shouldReceive('where')
-            ->with(['id' => -123, 'active' => true])
+            ->with(['id' => self::GROUP_ALLOWED, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 1]));
         $allowedGroupMock
             ->shouldReceive('where')
-            ->with(['id' => -456, 'active' => true])
+            ->with(['id' => self::GROUP_NOT_ALLOWED, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 0]));
 
         $karmaPositiveCollection = new Collection();
@@ -83,6 +94,40 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->shouldReceive('where')
             ->with(['karma' => false])
             ->andReturn($karmaNegativeCollection);
+    }
+
+    protected function createMessage($fromId, $chatId, $text = 'foo bar')
+    {
+        $message = new \Swagger\Client\Telegram\Message();
+        $message->setMessageId(self::MESSAGE_ID);
+        $message->setText($text);
+        $chat = new \Swagger\Client\Telegram\Chat();
+        $chat->setId($chatId);
+        $message->setChat($chat);
+        $from = new \Swagger\Client\Telegram\User();
+        $from->setId($fromId);
+        $message->setFrom($from);
+        return ['message' => \Swagger\Client\ObjectSerializer::sanitizeForSerialization($message)];
+    }
+
+    protected function expectMessage()
+    {
+        $guzzleMock = Mockery::mock('overload:GuzzleHttp\Client');
+        $guzzleMock
+            ->shouldReceive('send')
+            ->withArgs(function (\GuzzleHttp\Psr7\Request $request){
+                $body = $request->getBody()->getContents();
+                $match = $request->getUri()->getPath() == '/botasd/sendMessage';
+                foreach ($this->expectedMessageContent as $key => $value) {
+                    if (strpos($body, '"'.$key.'": '.$value) === false) {
+                        $match = false;
+                        break;
+                    }
+                }
+                return $match;
+            })
+            ->once()
+            ->andReturn(new \GuzzleHttp\Psr7\Response(200));
     }
 }
 
