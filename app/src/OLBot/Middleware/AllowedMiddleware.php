@@ -41,7 +41,7 @@ class AllowedMiddleware extends TextBasedMiddleware
     }
 
     private function isBotmaster($id) {
-         return $id == $this->storageService->settings['botmaster_id'];
+         return $id == $this->storageService->settings->botmasterId;
 
     }
 }

@@ -4,6 +4,7 @@ namespace OLBot\Service;
 
 
 use OLBot\Model\DB\AllowedUser;
+use OLBot\Settings;
 use Swagger\Client\Telegram\Message;
 
 class StorageService
@@ -21,7 +22,7 @@ class StorageService
     public $response = ['main' => [], 'math' => []];
     public $karma;
 
-    public function __construct($settings)
+    public function __construct(Settings $settings)
     {
         $this->settings = $settings;
     }

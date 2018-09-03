@@ -27,10 +27,10 @@ class MathMiddleware extends TextBasedMiddleware
     private function formatResult(Result $result)
     {
         if ($result->dbz) {
-            return $this->storageService->settings['math']['dbz_message'];
+            return $this->storageService->settings->parser->math->divisionByZeroResponse;
         } else {
             $string = $result->original . ' = ' . $result->result;
-            return str_replace('.', $this->storageService->settings['math']['decimal_point'], $string);
+            return str_replace('.', $this->storageService->settings->parser->math->decimalPoint, $string);
         }
     }
 }

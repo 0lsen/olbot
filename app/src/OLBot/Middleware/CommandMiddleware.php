@@ -37,8 +37,8 @@ class CommandMiddleware extends TextBasedMiddleware
             $alreadyKnown = $this->isTextAlreadyKnown($eloquentModel, $this->storageService->textCopy, $conditions);
             $this->storageService->response['main'][] =
                 $alreadyKnown
-                ? $this->storageService->settings['command']['reply_entry_already_known']
-                : $this->storageService->settings['command']['reply_new_entry'];
+                ? $this->storageService->settings->commands->replyToEntryAlreadyKnown
+                : $this->storageService->settings->commands->replyToNewEntry;
             if (!$alreadyKnown) {
                 $this->addNew($eloquentModel, $this->storageService->textCopy, $this->storageService->user->id, $conditions);
             }
@@ -51,10 +51,9 @@ class CommandMiddleware extends TextBasedMiddleware
 
     private function commandFound($command)
     {
-        $needle = '/' . $this->storageService->settings['command']['commands'][$command] . ' ';
-        $found =
-            isset($this->storageService->settings['command']['commands'][$command])
-            && strpos($this->storageService->textCopy, $needle) === 0;
+        $commandName = $command.'Command';
+        $needle = '/' . $this->storageService->settings->commands->$commandName . ' ';
+        $found = strpos($this->storageService->textCopy, $needle) === 0;
         if ($found) {
             $this->storageService->textCopy = str_replace_first(
                 $needle,

@@ -7,7 +7,7 @@ $container['storage'] = function (\Psr\Container\ContainerInterface $c) use ($se
 };
 
 $container['message'] = function (\Psr\Container\ContainerInterface $c) use ($settings) {
-    return new \OLBot\Service\MessageService($settings['token']);
+    return new \OLBot\Service\MessageService($settings->token);
 };
 
 $container['incoming'] = function (\Psr\Container\ContainerInterface $c) {

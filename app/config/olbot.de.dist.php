@@ -1,42 +1,35 @@
 <?php
 
-return [
-    'token' => 'asd',
-    'botmaster_id' => '123456789',
-    'commands' => [
-        'commands' => [
-            'addJoke' => 'neuerWitz',
-            'addInsult' => 'neueBeleidigung',
-            'addFlattery' => 'neueSchmeichelei',
-            'addPicture' => 'neuesBild',
-        ],
-        'reply_new_entry' => 'Vielen Dank!',
-        'reply_entry_already_known' => 'Kenne ich schon.'
+return new \OLBot\Settings(
+    'asd',
+    '123456789',
+    [
+        'addJokeCommand' => 'neuerWitz',
+        'addFlatteryCommand' => 'neueSchmeichelei',
+        'addInsultCommand' => 'neueBeleidigung',
+        'replyToNewEntry' => 'Vielen Dank!',
+        'replyToEntryAlreadyKnown' => 'Kenne ich schon.',
     ],
-    'instant_responses' => [
+    [
         [
             'regex' => '#^Hakuna$#',
             'response' => 'Matata',
-            'break' => true
+            'break' => true,
         ],
     ],
-    'letter_conversion' => [
-        'from' => [
-            'ä', 'ö', 'ü', 'ß'
+    [
+        'function' => '',
+        'step' => 0.1,
+    ],
+    [
+        'math' => [
+            'decimalPoint' => ',',
+            'divisionByZeroResponse' => 'Durch Null teilen ist böse.',
         ],
-        'to' => [
-            'ae', 'oe', 'ue', 'ss'
-        ]
-    ],
-    'math' => [
-        'decimal_point' => ',',
-        'dbz_message' => 'Durch Null teilen ist böse.'
-    ],
-    'translation' => [
-        'fallback_language' => 'english',
-        'typical_language_ending' => 'isch'
-    ],
-    'karma' => [
-        'step' => 0.1
+        'translation' => [
+            'fallbackLanguage' => 'english',
+            'typicalLanguageEnding' => 'isch'
+        ],
+        'quotationMarks' => '"\'',
     ]
-];
+);
