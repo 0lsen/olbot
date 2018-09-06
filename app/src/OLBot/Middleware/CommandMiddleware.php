@@ -3,6 +3,7 @@
 namespace OLBot\Middleware;
 
 
+use OLBot\Command\AbstractCommand;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -12,65 +13,37 @@ class CommandMiddleware extends TextBasedMiddleware
     {
         //TODO: does the API tell me about the usage of a registered command already?
 
-        $found = $this->checkCommand('addJoke', 'Joke');
-        if ($found) {
-            return $response;
-        }
+        foreach ($this->storageService->settings->commands as $command) {
+            if ($this->commandFound('/' . $command->call)) {
+                $commandName = '\OLBot\Command\\'.$command->name;
+                /** @var AbstractCommand $commandObject */
+                $commandObject = new $commandName($this->storageService, $command->settings);
+                $this->storageService->sendResponse = true;
 
-        $found = $this->checkCommand('addFlattery', 'Karma', ['karma' => true]);
-        if ($found) {
-            return $response;
-        }
+                try {
+                    $commandObject->doStuff();
+                } catch (\Exception $e) {
+                    $this->storageService->response['main'][] = 'ERROR: ' . $e->getMessage();
+                }
 
-        $found = $this->checkCommand('addInsult', 'Karma', ['karma' => false]);
-        if ($found) {
-            return $response;
+                return $response;
+            }
         }
 
         return $next($request, $response);
     }
 
-    private function checkCommand($command, $eloquentModel, $conditions = [])
+    private function commandFound($call)
     {
-        if ($this->commandFound($command)) {
-            $this->storageService->sendResponse = true;
-            $alreadyKnown = $this->isTextAlreadyKnown($eloquentModel, $this->storageService->textCopy, $conditions);
-            $this->storageService->response['main'][] =
-                $alreadyKnown
-                ? $this->storageService->settings->commands->replyToEntryAlreadyKnown
-                : $this->storageService->settings->commands->replyToNewEntry;
-            if (!$alreadyKnown) {
-                $this->addNew($eloquentModel, $this->storageService->textCopy, $this->storageService->user->id, $conditions);
-            }
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private function commandFound($command)
-    {
-        $commandName = $command.'Command';
-        $needle = '/' . $this->storageService->settings->commands->$commandName . ' ';
-        $found = strpos($this->storageService->textCopy, $needle) === 0;
+        $found = strpos($this->storageService->textCopy, $call) === 0;
         if ($found) {
-            $this->storageService->textCopy = str_replace_first(
-                $needle,
-                '',
-                $this->storageService->textCopy
+            $this->storageService->textCopy = preg_replace(
+                ['#'.preg_quote($call, '#').'#', '#^\s+#'],
+                ['', ''],
+                $this->storageService->textCopy,
+                1
             );
         }
         return $found;
-    }
-
-    private function isTextAlreadyKnown($eloquentModel, $text, $conditions)
-    {
-        return call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::where', array_merge(['text' => $text], $conditions))->count();
-    }
-
-    private function addNew($eloquentModel, $text, $author, $conditions)
-    {
-        return call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::create', array_merge(['text' => $text, 'author' => $author], $conditions));
     }
 }

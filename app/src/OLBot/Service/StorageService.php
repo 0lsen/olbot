@@ -4,6 +4,7 @@ namespace OLBot\Service;
 
 
 use OLBot\Model\DB\AllowedUser;
+use OLBot\Model\SubjectCandidate;
 use OLBot\Settings;
 use Swagger\Client\Telegram\Message;
 
@@ -17,6 +18,9 @@ class StorageService
 
     /** @var AllowedUser */
     public $user;
+
+    /** @var SubjectCandidate[] */
+    public $subjectCandidates = [];
 
     public $sendResponse = false;
     public $response = ['main' => [], 'math' => []];

@@ -4,11 +4,19 @@ return new \OLBot\Settings(
     'asd',
     '123456789',
     [
-        'addJokeCommand' => 'neuerWitz',
-        'addFlatteryCommand' => 'neueSchmeichelei',
-        'addInsultCommand' => 'neueBeleidigung',
         'replyToNewEntry' => 'Vielen Dank!',
         'replyToEntryAlreadyKnown' => 'Kenne ich schon.',
+        'commands' => [
+            'addJoke' => [
+                'call' => 'neuerWitz',
+            ],
+            'addFlattery' => [
+                'call' => 'neueSchmeichelei',
+            ],
+            'addInsult' => [
+                'call' => 'neueBeleidigung',
+            ],
+        ],
     ],
     [
         [
@@ -31,5 +39,6 @@ return new \OLBot\Settings(
             'typicalLanguageEnding' => 'isch'
         ],
         'quotationMarks' => '"\'',
+        'subjectDelimiters' => ':',
     ]
 );

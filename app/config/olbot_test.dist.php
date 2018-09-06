@@ -4,11 +4,19 @@ return new \OLBot\Settings(
     'asd',
     '123456789',
     [
-        'addJokeCommand' => 'addJoke',
-        'addFlatteryCommand' => 'addFlattery',
-        'addInsultCommand' => 'addInsult',
         'replyToNewEntry' => 'Thank you for your contribution.',
         'replyToEntryAlreadyKnown' => 'I already know this.',
+        'commands' => [
+            'addJoke' => [
+                'call' => 'addJoke',
+            ],
+            'addFlattery' => [
+                'call' => 'addFlattery',
+            ],
+            'addInsult' => [
+                'call' => 'addInsult',
+            ],
+        ],
     ],
     [
         [
@@ -31,5 +39,6 @@ return new \OLBot\Settings(
             'typicalLanguageEnding' => 'ese'
         ],
         'quotationMarks' => '"\'',
+        'subjectDelimiters' => ':',
     ]
 );

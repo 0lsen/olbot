@@ -136,4 +136,16 @@ class CommandTest extends FeatureTestCase
         $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addJoke foo bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
+
+    function testAddSomethingWithNoArgument()
+    {
+        $this->expectedMessageContent = [
+            'chat_id' => $this->chat,
+            'text' => '"ERROR: not enough parameters."',
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ];
+
+        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addJoke'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
 }

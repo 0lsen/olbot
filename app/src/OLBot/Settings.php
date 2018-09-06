@@ -3,6 +3,7 @@
 namespace OLBot;
 
 
+use OLBot\Command\AbstractCommand;
 use OLBot\Settings\CommandSettings;
 use OLBot\Settings\InstantResponseSettings;
 use OLBot\Settings\KarmaSettings;
@@ -12,6 +13,7 @@ class Settings
 {
     public $token;
     public $botmasterId;
+    /** @var CommandSettings[] */
     public $commands;
     /** @var InstantResponseSettings[] */
     public $instantResponses;
@@ -23,14 +25,15 @@ class Settings
         $this->token = $token;
         $this->botmasterId = $botmasterId;
 
-        $this->commands = new CommandSettings(
-            $commands['addJokeCommand'],
-            $commands['addFlatteryCommand'],
-            $commands['addInsultCommand'],
-            $commands['replyToNewEntry'],
-            $commands['replyToEntryAlreadyKnown'],
-            $commands['customCommands'] ?? []
-        );
+        AbstractCommand::$standardReplyToNewEntry = $commands['replyToNewEntry'];
+        AbstractCommand::$standardReplyToEntryAlreadyKnown = $commands['replyToEntryAlreadyKnown'];
+        foreach ($commands['commands'] as $name => $command) {
+            $this->commands[] = new CommandSettings(
+                $command['call'],
+                $name,
+                $command['settings'] ?? []
+            );
+        }
 
         foreach ($instantResponses as $instantResponse) {
             $this->instantResponses[] = new InstantResponseSettings(
@@ -48,7 +51,8 @@ class Settings
         $this->parser = new ParserSettings(
             $parser['math'],
             $parser['translation'],
-            $parser['quotationMarks']
+            $parser['quotationMarks'],
+            $parser['subjectDelimiters']
         );
     }
 }
