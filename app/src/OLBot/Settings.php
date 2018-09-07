@@ -49,6 +49,7 @@ class Settings
         );
 
         $this->parser = new ParserSettings(
+            $parser['categories'],
             $parser['math'],
             $parser['translation'],
             $parser['quotationMarks'],

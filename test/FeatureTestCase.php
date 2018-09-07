@@ -1,4 +1,5 @@
 <?php
+include_once 'EloquentMock.php';
 
 use Illuminate\Database\Eloquent\Collection;
 
@@ -22,6 +23,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     {
         $this->mockAllowedUsersAndGroups();
         $this->mockKarma();
+        $this->mockKeywords();
         parent::setup();
     }
 
@@ -100,6 +102,15 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->andReturn($karmaNegativeCollection);
     }
 
+    private function mockKeywords()
+    {
+        // TODO: Mock this properly
+        $keywordMock = Mockery::mock('alias:OLBot\Model\DB\Keyword');
+        $keywordMock
+            ->shouldReceive('find')
+            ->andReturnUsing(function($word) {return $word == md5('math') ? new EloquentMock(['category' => 1]) : null; });
+    }
+
     protected function mockLogMessageIn()
     {
         $logMessageInMock = Mockery::mock('alias:OLBot\Model\DB\LogMessageIn');
@@ -145,25 +156,5 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $logMessageOutMock
             ->shouldReceive('create')
             ->once();
-    }
-}
-
-class EloquentMock
-{
-    private $mockData;
-
-    public function __construct($mockData = null)
-    {
-        $this->mockData = $mockData;
-    }
-
-    function __get($name)
-    {
-        return $this->mockData[$name];
-    }
-
-    function __call($name, $arguments)
-    {
-        return $this->mockData[$name] ?? 1;
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package OLBot\Model\DB
  * @method static Collection where(array $array)
  * @method static Eloquent create(array $array)
+ * @method static Eloquent find(string $id)
  */
 abstract class Eloquent extends Model
 {

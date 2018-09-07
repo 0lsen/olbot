@@ -13,7 +13,7 @@ class InstantResponseMiddleware extends TextBasedMiddleware
         foreach ($this->storageService->settings->instantResponses as $instant) {
             if (preg_match($instant->regex, $this->storageService->textCopy)) {
                 $this->storageService->sendResponse = true;
-                $this->storageService->response['main'][] = $instant->response;
+                $this->storageService->response->main[] = $instant->response;
 
                 if ($instant->break)
                     return $response;

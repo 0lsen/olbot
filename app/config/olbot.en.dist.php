@@ -7,13 +7,13 @@ return new \OLBot\Settings(
         'replyToNewEntry' => 'Thank you for your contribution.',
         'replyToEntryAlreadyKnown' => 'I already know this.',
         'commands' => [
-            'addJoke' => [
+            'AddJoke' => [
                 'call' => 'addJoke',
             ],
-            'addFlattery' => [
+            'AddFlattery' => [
                 'call' => 'addFlattery',
             ],
-            'addInsult' => [
+            'AddInsult' => [
                 'call' => 'addInsult',
             ],
         ],
@@ -30,6 +30,9 @@ return new \OLBot\Settings(
         'step' => 0.1,
     ],
     [
+        'categories' => [
+            1 => 'Math',
+        ],
         'math' => [
             'decimalPoint' => '.',
             'divisionByZeroResponse' => 'Division by Zero is evil.',

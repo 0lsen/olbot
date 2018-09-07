@@ -64,11 +64,7 @@ class MessageMiddleware
 
         $text = '';
 
-        foreach ($this->storageService->response['main'] as $message) {
-            $this->addLine($message, $text);
-        }
-
-        foreach ($this->storageService->response['math'] as $message) {
+        foreach ($this->storageService->response->main as $message) {
             $this->addLine($message, $text);
         }
 

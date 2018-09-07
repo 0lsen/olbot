@@ -7,13 +7,13 @@ return new \OLBot\Settings(
         'replyToNewEntry' => 'Vielen Dank!',
         'replyToEntryAlreadyKnown' => 'Kenne ich schon.',
         'commands' => [
-            'addJoke' => [
+            'AddJoke' => [
                 'call' => 'neuerWitz',
             ],
-            'addFlattery' => [
+            'AddFlattery' => [
                 'call' => 'neueSchmeichelei',
             ],
-            'addInsult' => [
+            'AddInsult' => [
                 'call' => 'neueBeleidigung',
             ],
         ],
@@ -30,6 +30,9 @@ return new \OLBot\Settings(
         'step' => 0.1,
     ],
     [
+        'categories' => [
+            1 => 'Math',
+        ],
         'math' => [
             'decimalPoint' => ',',
             'divisionByZeroResponse' => 'Durch Null teilen ist böse.',

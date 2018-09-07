@@ -54,7 +54,7 @@ class KarmaTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($from, $chat, 'foo 1+1 bar'));
+        $this->client->post('/incoming', $this->createMessage($from, $chat, 'math 1+1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -69,7 +69,7 @@ class KarmaTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($from, $chat, 'foo 1+1 bar'));
+        $this->client->post('/incoming', $this->createMessage($from, $chat, 'math 1+1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 }
