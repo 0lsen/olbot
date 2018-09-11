@@ -62,9 +62,20 @@ class MessageMiddleware
             return;
         }
 
+        if (sizeof($this->storageService->response->text) || !is_null($this->storageService->karma)) {
+            $this->sendMessage();
+        }
+
+        if (sizeof($this->storageService->response->pics)) {
+            $this->sendPictures();
+        }
+    }
+
+    private function sendMessage()
+    {
         $text = '';
 
-        foreach ($this->storageService->response->main as $message) {
+        foreach ($this->storageService->response->text as $message) {
             $this->addLine($message, $text);
         }
 
@@ -77,6 +88,17 @@ class MessageMiddleware
             $this->storageService->message->getChat()->getId(),
             $this->storageService->message->getMessageId()
         );
+    }
+
+    private function sendPictures()
+    {
+        foreach ($this->storageService->response->pics as $pic) {
+            $this->messageService->sendPicture(
+                $pic,
+                $this->storageService->message->getChat()->getId(),
+                $this->storageService->message->getMessageId()
+            );
+        }
     }
 
     private function addLine($message, &$text)

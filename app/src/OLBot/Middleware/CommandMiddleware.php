@@ -23,7 +23,7 @@ class CommandMiddleware extends TextBasedMiddleware
                 try {
                     $commandObject->doStuff();
                 } catch (\Exception $e) {
-                    $this->storageService->response->main[] = 'ERROR: ' . $e->getMessage();
+                    $this->storageService->response->text[] = 'ERROR: ' . $e->getMessage();
                 }
 
                 return $response;

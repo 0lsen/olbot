@@ -14,8 +14,11 @@ abstract class AbstractCategory
 
     public $requirementsMet = true;
 
-    public function __construct($subjectCandidateIndex)
+    protected $categoryNumber;
+
+    public function __construct($categoryNumber, $subjectCandidateIndex)
     {
+        $this->categoryNumber = $categoryNumber;
         $this->requirementsMet = !($this->needsSubject && !isset(self::$storageService->subjectCandidates[$subjectCandidateIndex]));
     }
 

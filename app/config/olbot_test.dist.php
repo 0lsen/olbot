@@ -32,6 +32,8 @@ return new \OLBot\Settings(
     [
         'categories' => [
             1 => 'Math',
+            2 => 'TextResponse',
+            3 => 'PictureResponse',
         ],
         'math' => [
             'decimalPoint' => '.',

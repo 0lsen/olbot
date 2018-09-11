@@ -38,7 +38,7 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('def" ghi', $storage->subjectCandidates[2]->text);
         $this->assertEquals(' mno "pqr stu"', $storage->subjectCandidates[3]->text);
 
-        $this->assertEquals('1+1 = 2', $storage->response->main[0]);
+        $this->assertEquals('1+1 = 2', $storage->response->text[0]);
     }
 
     private function mockKeywords()

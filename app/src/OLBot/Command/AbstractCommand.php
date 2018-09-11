@@ -40,7 +40,7 @@ abstract class AbstractCommand
 
     protected function tryToAddNewText($eloquentModel, $conditions = []) {
         $alreadyKnown = $this->isTextAlreadyKnown($eloquentModel, $this->storageService->textCopy, $conditions);
-        $this->storageService->response->main[] =
+        $this->storageService->response->text[] =
             $alreadyKnown
                 ? $this->replyToEntryAlreadyKnown
                 : $this->replyToNewEntry;

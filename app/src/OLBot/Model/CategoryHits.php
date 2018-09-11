@@ -5,11 +5,13 @@ namespace OLBot\Model;
 
 class CategoryHits
 {
+    public $id;
     public $category;
     public $hits = 0;
 
-    public function __construct(string $category)
+    public function __construct($id, string $category)
     {
+        $this->id = $id;
         $this->category = $category;
     }
 

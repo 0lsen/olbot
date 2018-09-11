@@ -36,7 +36,7 @@ class ParserMiddleware extends TextBasedMiddleware
             if ($categoryHit->hits) {
                 $className = '\OLBot\Category\\'.$categoryHit->category;
                 /** @var AbstractCategory $cat */
-                $cat = new $className(0);
+                $cat = new $className($categoryHit->id, 0);
                 if ($cat->requirementsMet) {
                     $cat->generateResponse();
                     $this->storageService->sendResponse = true;
@@ -135,7 +135,7 @@ class ParserMiddleware extends TextBasedMiddleware
     {
         $hits = [];
         foreach ($this->storageService->settings->parser->categories as $id => $category) {
-            $hits[$id] = new CategoryHits($category);
+            $hits[$id] = new CategoryHits($id, $category);
         }
 
         preg_match_all('#\w{3,}#', $text, $words);

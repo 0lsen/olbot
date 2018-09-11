@@ -18,6 +18,7 @@ class KarmaTest extends FeatureTestCase
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
 
+        $this->mockKeywords(['foo' => null, 'bar' => null, 'sweetie' => null]);
         $this->expectedMessageContent = [
             'chat_id' => $chat,
             'text' => '"Sweetie"',
@@ -33,6 +34,7 @@ class KarmaTest extends FeatureTestCase
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
 
+        $this->mockKeywords(['foo' => null, 'bar' => null, 'jerk' => null]);
         $this->expectedMessageContent = [
             'chat_id' => $chat,
             'text' => '"Jerk"',
@@ -48,6 +50,7 @@ class KarmaTest extends FeatureTestCase
         $from = self::USER_POSITIVE_KARMA;
         $chat = self::GROUP_ALLOWED;
 
+        $this->mockKeywords(['math' => 1, 'bar' => null]);
         $this->expectedMessageContent = [
             'chat_id' => $chat,
             'text' => '"1+1 = 2\\\\nSweetie"',
@@ -63,6 +66,7 @@ class KarmaTest extends FeatureTestCase
         $from = self::USER_NEGATIVE_KARMA;
         $chat = self::GROUP_ALLOWED;
 
+        $this->mockKeywords(['math' => 1, 'bar' => null]);
         $this->expectedMessageContent = [
             'chat_id' => $chat,
             'text' => '"1+1 = 2\\\\nJerk"',

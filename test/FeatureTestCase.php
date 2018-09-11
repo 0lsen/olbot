@@ -7,15 +7,19 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
     protected const USER_ALLOWED = 1;
     protected const USER_NOT_ALLOWED = 2;
-    protected const USER_POSITIVE_KARMA = 1;
-    protected const USER_NEGATIVE_KARMA = 2;
-    protected const USER_NEUTRAL_KARMA = 3;
+    protected const USER_POSITIVE_KARMA = 3;
+    protected const USER_NEGATIVE_KARMA = 4;
+    protected const USER_NEUTRAL_KARMA = 5;
     protected const GROUP_ALLOWED = -1;
     protected const GROUP_NOT_ALLOWED = -2;
     protected const MESSAGE_ID = 123;
 
     /** @var \Mockery\MockInterface */
     protected $karmaMock;
+    /** @var \Mockery\MockInterface */
+    protected $keywordMock;
+    /** @var \Mockery\MockInterface */
+    protected $answerMock;
 
     protected $expectedMessageContent = [];
 
@@ -23,7 +27,9 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     {
         $this->mockAllowedUsersAndGroups();
         $this->mockKarma();
-        $this->mockKeywords();
+        $this->keywordMock = Mockery::mock('alias:OLBot\Model\DB\Keyword');
+        $this->answerMock = Mockery::mock('alias:OLBot\Model\DB\Answer');
+
         parent::setup();
     }
 
@@ -50,16 +56,32 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $allowedUserMock = Mockery::mock('alias:OLBot\Model\DB\AllowedUser');
         $allowedUserMock
             ->shouldReceive('where')
+            ->with(['id' => self::USER_ALLOWED, 'active' => true])
+            ->andReturn(new EloquentMock(['count' => 1]));
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => self::USER_NOT_ALLOWED, 'active' => true])
+            ->andReturn(new EloquentMock(['count' => 0]));
+        $allowedUserMock
+            ->shouldReceive('where')
             ->with(['id' => self::USER_POSITIVE_KARMA, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 1]));
         $allowedUserMock
             ->shouldReceive('where')
             ->with(['id' => self::USER_NEGATIVE_KARMA, 'active' => true])
-            ->andReturn(new EloquentMock(['count' => 0]));
+            ->andReturn(new EloquentMock(['count' => 1]));
         $allowedUserMock
             ->shouldReceive('where')
             ->with(['id' => self::USER_NEUTRAL_KARMA, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 1]));
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => self::USER_ALLOWED])
+            ->andReturn(new EloquentMock(['karma' => 0, 'id' => self::USER_ALLOWED]));
+        $allowedUserMock
+            ->shouldReceive('where')
+            ->with(['id' => self::USER_NOT_ALLOWED])
+            ->andReturn(new EloquentMock(['karma' => 0, 'id' => self::USER_NOT_ALLOWED]));
         $allowedUserMock
             ->shouldReceive('where')
             ->with(['id' => self::USER_POSITIVE_KARMA])
@@ -102,13 +124,15 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->andReturn($karmaNegativeCollection);
     }
 
-    private function mockKeywords()
+    protected function mockKeywords($words = ['foo' => null, 'bar' => null])
     {
-        // TODO: Mock this properly
-        $keywordMock = Mockery::mock('alias:OLBot\Model\DB\Keyword');
-        $keywordMock
-            ->shouldReceive('find')
-            ->andReturnUsing(function($word) {return $word == md5('math') ? new EloquentMock(['category' => 1]) : null; });
+        foreach ($words as $index => $category) {
+            $this->keywordMock
+                ->shouldReceive('find')
+                ->with(md5($index))
+                ->once()
+                ->andReturn(is_null($category) ? null : new EloquentMock(['category' => $category]));
+        }
     }
 
     protected function mockLogMessageIn()

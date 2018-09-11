@@ -9,6 +9,7 @@ use OLBot\Model\DB\LogMessageOut;
 use Swagger\Client\ObjectSerializer;
 use Swagger\Client\Telegram\Message;
 use Swagger\Client\Telegram\SendMessageBody;
+use Swagger\Client\Telegram\SendPhotoLinkBody;
 
 class Logger
 {
@@ -28,11 +29,14 @@ class Logger
         ]);
     }
 
-    public static function logMessageOut(SendMessageBody $messageBody)
+    /**
+     * @param SendMessageBody|SendPhotoLinkBody $message
+     */
+    public static function logMessageOut($message)
     {
         LogMessageOut::create([
-            'id_in' => $messageBody->getReplyToMessageId(),
-            'content' => json_encode(ObjectSerializer::sanitizeForSerialization($messageBody))
+            'id_in' => $message->getReplyToMessageId(),
+            'content' => json_encode(ObjectSerializer::sanitizeForSerialization($message))
         ]);
     }
 }
