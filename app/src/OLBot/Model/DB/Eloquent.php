@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static Collection where(array $array)
  * @method static Eloquent create(array $array)
  * @method static Eloquent find(string $id)
+ * @method static Collection whereNotNull(string $field)
+ * @method static Eloquent firstOrCreate(array $array)
  */
 abstract class Eloquent extends Model
 {
