@@ -12,7 +12,7 @@ $connection->bootEloquent();
 \OLBot\Console\Command::$settings = $botSettings;
 
 $app = new \Symfony\Component\Console\Application();
-$app->add(new \OLBot\Console\SendHappyBirthdayInGroups());
+$app->add(new \OLBot\Console\SendBirthdayGreetings());
 $app->add(new \OLBot\Console\SendBirthdayReminders());
 $app->add(new \OLBot\Console\TeachKeywords());
 
