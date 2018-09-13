@@ -19,3 +19,18 @@ class EloquentMock
         return $this->mockData[$name] ?? 1;
     }
 }
+
+class BuilderMock
+{
+    private $return;
+
+    public function __construct($return)
+    {
+        $this->return = $return;
+    }
+
+    public function __call($name, $arguments)
+    {
+        return $this->return;
+    }
+}

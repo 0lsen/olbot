@@ -33,11 +33,12 @@ class AllowedTest extends FeatureTestCase
     {
         $answerCollection = new \Illuminate\Database\Eloquent\Collection();
         $answerCollection->add((object) ['text' => 'does not compute']);
+        $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')
             ->with(['category' => 99])
             ->once()
-            ->andReturn($answerCollection);
+            ->andReturn($answerBuilder);
 
         $this->expectedMessageContent = [
             'chat_id' => $chat,

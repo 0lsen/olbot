@@ -1,5 +1,5 @@
 <?php
-include_once 'EloquentMock.php';
+include_once 'TestMocks.php';
 
 use Illuminate\Database\Eloquent\Collection;
 
@@ -113,15 +113,18 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $karmaNegativeCollection = new Collection();
         $karmaNegativeCollection->add((object)['text' => 'jerk', 'author' => null]);
 
+        $karmaPositiveBuilder = new BuilderMock($karmaPositiveCollection);
+        $karmaNegativeBuilder = new BuilderMock($karmaNegativeCollection);
+
         $this->karmaMock = Mockery::mock('alias:OLBot\Model\DB\Karma');
         $this->karmaMock
             ->shouldReceive('where')
             ->with(['karma' => true])
-            ->andReturn($karmaPositiveCollection);
+            ->andReturn($karmaPositiveBuilder);
         $this->karmaMock
             ->shouldReceive('where')
             ->with(['karma' => false])
-            ->andReturn($karmaNegativeCollection);
+            ->andReturn($karmaNegativeBuilder);
     }
 
     protected function mockKeywords($words = ['foo' => null, 'bar' => null])

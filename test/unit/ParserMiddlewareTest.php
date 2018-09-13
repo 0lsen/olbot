@@ -4,8 +4,8 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
     {
-        if (file_exists('../EloquentMock.php'))
-            include_once '../EloquentMock.php';
+        if (file_exists('../TestMocks.php'))
+            include_once '../TestMocks.php';
         parent::setUp();
     }
 
