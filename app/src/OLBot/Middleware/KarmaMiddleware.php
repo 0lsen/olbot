@@ -57,7 +57,7 @@ class KarmaMiddleware extends TextBasedMiddleware
 //        if (apcu_exists('olbot_insults')) {
 //            return apcu_fetch('olbot_insults');
 //        } else {
-            $insults = Karma::where(['karma' => false]);
+            $insults = Karma::where(['karma' => false])->get();
 //            apcu_add('olbot_insults', $insults);
             return $insults;
 //        }
@@ -70,7 +70,7 @@ class KarmaMiddleware extends TextBasedMiddleware
 //        if (apcu_exists('olbot_flattery')) {
 //            return apcu_fetch('olbot_flattery');
 //        } else {
-        $flattery = Karma::where(['karma' => true]);
+        $flattery = Karma::where(['karma' => true])->get();
 //            apcu_add('olbot_flattery', $flattery);
         return $flattery;
 //        }
