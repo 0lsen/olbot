@@ -14,8 +14,8 @@ use Slim\Http\Response;
 
 class ParserMiddleware extends TextBasedMiddleware
 {
-    private const OPEN_TAG = '#{\d+}#';
-    private const CLOSE_TAG = '#{/\d+}#';
+    const OPEN_TAG = '#{\d+}#';
+    const CLOSE_TAG = '#{/\d+}#';
 
     public function __invoke(Request $request, Response $response, $next)
     {

@@ -5,14 +5,14 @@ use Illuminate\Database\Eloquent\Collection;
 
 class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
-    protected const USER_ALLOWED = 1;
-    protected const USER_NOT_ALLOWED = 2;
-    protected const USER_POSITIVE_KARMA = 3;
-    protected const USER_NEGATIVE_KARMA = 4;
-    protected const USER_NEUTRAL_KARMA = 5;
-    protected const GROUP_ALLOWED = -1;
-    protected const GROUP_NOT_ALLOWED = -2;
-    protected const MESSAGE_ID = 123;
+    const USER_ALLOWED = 1;
+    const USER_NOT_ALLOWED = 2;
+    const USER_POSITIVE_KARMA = 3;
+    const USER_NEGATIVE_KARMA = 4;
+    const USER_NEUTRAL_KARMA = 5;
+    const GROUP_ALLOWED = -1;
+    const GROUP_NOT_ALLOWED = -2;
+    const MESSAGE_ID = 123;
 
     /** @var \Mockery\MockInterface */
     protected $karmaMock;

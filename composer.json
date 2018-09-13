@@ -16,11 +16,11 @@
     }
   ],
   "require": {
-    "php": "^7.1",
+    "php": "^7.0",
     "slim/slim": "3.10.0",
     "guzzlehttp/guzzle": "6.3.3",
-    "illuminate/database": "v5.6.29",
-    "symfony/console": "v4.1.2",
+    "illuminate/database": "v5.5.39",
+    "symfony/console": "v3.4.14",
     "olsen/olmath": "^0.0.1"
   },
   "require-dev": {
