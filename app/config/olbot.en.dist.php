@@ -7,6 +7,9 @@ return new \OLBot\Settings(
     # ID of the bot master
     '123456789',
 
+    # fallback error response
+    'Something went terribly wrong',
+
     # command settings
     [
         # fallback replies to commands (assuming standard commands are used to add some new piece of knowledge)

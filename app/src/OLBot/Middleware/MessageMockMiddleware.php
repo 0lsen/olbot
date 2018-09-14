@@ -3,7 +3,9 @@
 namespace OLBot\Middleware;
 
 
+use OLBot\Category\AbstractCategory;
 use OLBot\Logger;
+use OLBot\Model\DB\Answer;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Swagger\Client\ObjectSerializer;
@@ -26,7 +28,19 @@ class MessageMockMiddleware extends TextBasedMiddleware
         $this->storageService->message = $message;
         $this->storageService->textCopy = $message->getText();
 
-        return $next($request, $response);
+        try {
+            $response = $next($request, $response);
+        } catch (\Throwable $t) {
+            try {
+                $answer = Answer::where(['category' => AbstractCategory::CAT_ERROR])->inRandomOrder()->first()->text;
+            } catch (\Throwable $t2) {
+                $answer = $this->storageService->settings->fallbackErrorResponse;
+            }
+            $this->storageService->sendResponse = true;
+            $this->storageService->response->text = [$answer];
+        }
+
+        return $response;
     }
 
     private function insufficientMessageData(Message $message)

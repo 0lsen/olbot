@@ -13,6 +13,7 @@ class Settings
 {
     public $token;
     public $botmasterId;
+    public $fallbackErrorResponse;
     /** @var CommandSettings[] */
     public $commands;
     /** @var InstantResponseSettings[] */
@@ -20,10 +21,11 @@ class Settings
     public $karma;
     public $parser;
 
-    public function __construct($token, $botmasterId, $commands, $instantResponses, $karma, $parser)
+    public function __construct($token, $botmasterId, $fallbackErrorResponse, $commands, $instantResponses, $karma, $parser)
     {
         $this->token = $token;
         $this->botmasterId = $botmasterId;
+        $this->fallbackErrorResponse = $fallbackErrorResponse;
 
         AbstractCommand::$standardReplyToNewEntry = $commands['replyToNewEntry'];
         AbstractCommand::$standardReplyToEntryAlreadyKnown = $commands['replyToEntryAlreadyKnown'];

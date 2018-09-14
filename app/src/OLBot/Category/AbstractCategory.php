@@ -7,9 +7,13 @@ use OLBot\Service\StorageService;
 
 abstract class AbstractCategory
 {
-    const CAT_FALLBACK = 99;
-    const CAT_BIRTHDAY_GREETING = 98;
-    const CAT_BIRTHDAY_REMINDER = 97;
+    // 70+ for cron related categories (for now)
+    const CAT_BIRTHDAY_REMINDER = 70;
+    const CAT_BIRTHDAY_GREETING = 71;
+
+    // 90+ for misc. categories (for now)
+    const CAT_FALLBACK = 90;
+    const CAT_ERROR = 91;
 
     /** @var StorageService */
     public static $storageService;

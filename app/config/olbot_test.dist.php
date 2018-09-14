@@ -3,6 +3,7 @@
 return new \OLBot\Settings(
     'asd',
     '123456789',
+    'Something went terribly wrong.',
     [
         'replyToNewEntry' => 'Thank you for your contribution.',
         'replyToEntryAlreadyKnown' => 'I already know this.',

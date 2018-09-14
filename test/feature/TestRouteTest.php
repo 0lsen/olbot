@@ -1,5 +1,7 @@
 <?php
 
+use OLBot\Category\AbstractCategory;
+
 /**
  * @runTestsInSeparateProcesses
  */
@@ -27,7 +29,7 @@ class TestRouteTest extends FeatureTestCase
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')
-            ->with(['category' => 99])
+            ->with(['category' => AbstractCategory::CAT_FALLBACK])
             ->once()
             ->andReturn($answerBuilder);
 
