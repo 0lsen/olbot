@@ -15,3 +15,13 @@ $app->post('/incoming', 'incoming:evaluate')
     ->add(new \OLBot\Middleware\CommandMiddleware($container['storage']))
     ->add(new \OLBot\Middleware\AllowedMiddleware($container['storage']))
     ->add(new \OLBot\Middleware\MessageMiddleware($container['storage'], $container['message']));
+
+// test route that mocks messages and logs and returns those instead (as json)
+$app->post('/testing', 'incoming:evaluate')
+    ->add(new \OLBot\Middleware\KarmaMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\ParserMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\InstantResponseMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\CommandMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\AllowedMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\MessageMockMiddleware($container['storage']))
+    ->add(new \OLBot\Middleware\TestMiddleware($container['storage']));
