@@ -16,5 +16,6 @@ $app = new \Symfony\Component\Console\Application();
 $app->add(new \OLBot\Console\SendBirthdayGreetings());
 $app->add(new \OLBot\Console\SendBirthdayReminders());
 $app->add(new \OLBot\Console\TeachKeywords());
+$app->add(new \OLBot\Console\ErrorReport());
 
 $app->run();

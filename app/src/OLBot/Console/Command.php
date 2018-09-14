@@ -24,7 +24,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
         $message->setText($text);
 
         try {
-            self::$api->sendMessage($message);
+            self::$api->sendMessage(self::$settings->token, $message);
             Logger::logMessageOut($message);
             $output->writeln('text sent to ' . $chatId . ': ' . $text);
         } catch (\Throwable $t) {
