@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Eloquent
  * @package OLBot\Model\DB
- * @method static Builder where(array $array)
+ * @method static Builder where(array|string $array, string $operator=null, mixed  $value=null)
  * @method static Eloquent create(array $array)
  * @method static Eloquent find(string $id)
  * @method static Collection whereNotNull(string $field)

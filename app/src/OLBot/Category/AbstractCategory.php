@@ -10,6 +10,7 @@ abstract class AbstractCategory
     // 70+ for cron related categories (for now)
     const CAT_BIRTHDAY_REMINDER = 70;
     const CAT_BIRTHDAY_GREETING = 71;
+    const CAT_ERROR_REPORT = 72;
 
     // 90+ for misc. categories (for now)
     const CAT_FALLBACK = 90;
