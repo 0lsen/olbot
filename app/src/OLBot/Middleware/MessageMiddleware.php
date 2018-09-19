@@ -45,7 +45,9 @@ class MessageMiddleware
             $response = $next($request, $response);
         } catch (\Throwable $t) {
             try {
-                $answer = Answer::where(['category' => AbstractCategory::CAT_ERROR])->inRandomOrder()->first()->text;
+                $answers = Answer::where(['category' => AbstractCategory::CAT_ERROR]);
+                if (!$answers->count()) throw new \Exception('no error answer found.');
+                $answer = $answers->inRandomOrder()->first()->text;
             } catch (\Throwable $t2) {
                 $answer = $this->storageService->settings->fallbackErrorResponse;
             }

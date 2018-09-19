@@ -15,7 +15,9 @@ class IncomingController extends TextBasedMiddleware
     {
         if (!$this->storageService->sendResponse) {
             $this->storageService->sendResponse = true;
-            $this->storageService->response->text[] = Answer::where(['category' => AbstractCategory::CAT_FALLBACK])->inRandomOrder()->first()->text;
+            $answers = Answer::where(['category' => AbstractCategory::CAT_FALLBACK]);
+            if (!$answers->count()) throw new \Exception('no fallback answer found.');
+            $this->storageService->response->text[] = $answers->inRandomOrder()->first()->text;
         }
         return $response;
     }

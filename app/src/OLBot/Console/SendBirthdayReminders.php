@@ -29,7 +29,8 @@ class SendBirthdayReminders extends Command
         foreach ($users as $user) {
             $years = Util::isUsersBirthdayToday($user);
             if (!is_null($years)) {
-                $text = Answer::where(['category' => AbstractCategory::CAT_BIRTHDAY_REMINDER])->inRandomOrder()->first()->text;
+                $texts = Answer::where(['category' => AbstractCategory::CAT_BIRTHDAY_REMINDER]);
+                $text = $texts->count() ? $texts->inRandomOrder()->first()->text : 'Reminder: it\'s #name#\'s #year#-th birthday today.';
                 Util::replacePlaceholders(['name' => $user->name, 'years' => $years], $text);
                 $this->sendTextMessage(self::$settings->botmasterId, $text, $output);
             }

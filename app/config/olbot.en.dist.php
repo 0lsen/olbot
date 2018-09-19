@@ -59,7 +59,6 @@ return new \OLBot\Settings(
     # parser settings
     [
         # list of categories, numbers corresponding to those in the keywords db
-        # TODO: check if category exists in list. DB might know more categories than specified here
         'categories' => [
             1 => 'Math',
             2 => 'TextResponse',

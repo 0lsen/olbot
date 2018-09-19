@@ -9,6 +9,8 @@ class TextResponse extends AbstractCategory
 {
     public function generateResponse()
     {
-        self::$storageService->response->text[] = Answer::where(['category' => $this->categoryNumber])->random()->text;
+        $ansers = Answer::where(['category' => $this->categoryNumber]);
+        if (!$ansers->count()) throw new \Exception('no answer found for category '.$this->categoryNumber);
+        self::$storageService->response->text[] = $ansers->inRandomOrder()->first()->text;
     }
 }

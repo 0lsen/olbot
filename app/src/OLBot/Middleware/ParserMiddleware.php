@@ -142,7 +142,7 @@ class ParserMiddleware extends TextBasedMiddleware
 
         foreach ($words[0] as $word) {
             $keyword = Keyword::find(md5(strtolower($word)));
-            if (!is_null($keyword)) {
+            if (!is_null($keyword) && isset($hits[$keyword->category])) {
                 $hits[$keyword->category]->hits++;
             }
         }

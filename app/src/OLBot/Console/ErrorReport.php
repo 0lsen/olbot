@@ -24,7 +24,8 @@ class ErrorReport extends Command
         $noOfErrors = LogError::where('time', '>', time()-(24*60*60))->count();
 
         if ($noOfErrors > 0) {
-            $text = Answer::where(['category' => AbstractCategory::CAT_ERROR_REPORT])->inRandomOrder()->first()->text;
+            $texts = Answer::where(['category' => AbstractCategory::CAT_ERROR_REPORT]);
+            $text = $texts->count() ? $texts->inRandomOrder()->first()->text : '#number# errors recorded.';
             Util::replacePlaceholders(['number' => $noOfErrors], $text);
             $this->sendTextMessage(self::$settings->botmasterId, $text, $output);
         }

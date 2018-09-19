@@ -8,7 +8,6 @@ use OLBot\Model\DB\AllowedUser;
 use OLBot\Model\DB\Answer;
 use OLBot\Model\DB\GroupUser;
 use OLBot\Util;
-use Swagger\Client\Api\MessagesApi;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -23,8 +22,6 @@ class SendBirthdayGreetings extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $api = new MessagesApi();
-
         $users = AllowedUser::whereNotNull('birthday');
 
         foreach ($users as $user) {
@@ -32,7 +29,12 @@ class SendBirthdayGreetings extends Command
             if (!is_null($years)) {
                 $groups = GroupUser::where(['user' => $user->id]);
                 foreach ($groups as $group) {
-                    $text = Answer::where(['category' => AbstractCategory::CAT_BIRTHDAY_GREETING])->inRandomOrder()->first()->text;
+                    $texts = Answer::where(['category' => AbstractCategory::CAT_BIRTHDAY_GREETING]);
+                    if (!$texts->count()) {
+                        $output->writeln('no birthday greeting answers found.');
+                        return;
+                    }
+                    $text = $texts->inRandomOrder()->first()->text;
                     Util::replacePlaceholders(['name' => $user->name, 'years' => $years], $text);
                     $this->sendTextMessage($group->group, $text, $output);
                 }
