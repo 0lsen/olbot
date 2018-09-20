@@ -8,14 +8,24 @@ return new \OLBot\Settings(
         'replyToNewEntry' => 'Thank you for your contribution.',
         'replyToEntryAlreadyKnown' => 'I already know this.',
         'commands' => [
-            'AddJoke' => [
+            [
+                'class' => 'AddJoke',
                 'call' => 'addJoke',
             ],
-            'AddFlattery' => [
+            [
+                'class' => 'AddFlattery',
                 'call' => 'addFlattery',
             ],
-            'AddInsult' => [
+            [
+                'class' => 'AddInsult',
                 'call' => 'addInsult',
+            ],
+            [
+                'class' => 'AddCategoryAnswer',
+                'call' => 'addCategoryAnswer',
+                'settings' => [
+                    'category' => 1,
+                ]
             ],
         ],
     ],

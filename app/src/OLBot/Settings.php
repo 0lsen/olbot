@@ -29,10 +29,10 @@ class Settings
 
         AbstractCommand::$standardReplyToNewEntry = $commands['replyToNewEntry'];
         AbstractCommand::$standardReplyToEntryAlreadyKnown = $commands['replyToEntryAlreadyKnown'];
-        foreach ($commands['commands'] as $name => $command) {
+        foreach ($commands['commands'] as $command) {
             $this->commands[] = new CommandSettings(
                 $command['call'],
-                $name,
+                $command['class'],
                 $command['settings'] ?? []
             );
         }

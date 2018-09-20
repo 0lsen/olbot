@@ -148,4 +148,26 @@ class CommandTest extends FeatureTestCase
         $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addJoke'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
+
+    function testAddCategoryAnswer()
+    {
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['text' => 'foo bar', 'category' => 1])
+            ->once()
+            ->andReturn(new EloquentMock(['count' => 0]));
+        $this->answerMock
+            ->shouldReceive('create')
+            ->with(['text' => 'foo bar', 'author' => $this->chat, 'category' => 1])
+            ->once();
+
+        $this->expectedMessageContent = [
+            'chat_id' => $this->chat,
+            'text' => '"Thank you for your contribution."',
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ];
+
+        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addCategoryAnswer foo bar'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
 }

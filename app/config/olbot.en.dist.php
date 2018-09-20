@@ -17,23 +17,35 @@ return new \OLBot\Settings(
         'replyToEntryAlreadyKnown' => 'I already know this.',
 
         # list of commands
-        # key is the command's class name
+        # 'class' specifies what class to use
         # 'call' specifies which string '/call' triggers the command
-        # 'settings' is an optional array to specify a command's replies or add parameters needed in a custom command class' constructor
-        #            this might also be possible as a value: \OLBot\Model\DB\Answer::where(['category' => #no])->random()->text
+        # 'settings'
+        #       'replyToNewEntry' / 'replyToEntryAlreadyKnown': custom responses
+        #       'numberOfArguments': for custom commands: expected number of arguments
+        #       'category': for AddCategoryAnswer: what category will the provided answer be added to
         'commands' => [
-            'AddJoke' => [
+            [
+                'class' => 'AddJoke',
                 'call' => 'addJoke',
                 'settings' => [
                     'replyToNewEntry' => 'lol'
                 ]
             ],
-            'AddFlattery' => [
+            [
+                'class' => 'AddFlattery',
                 'call' => 'addFlattery',
             ],
-            'AddInsult' => [
+            [
+                'class' => 'AddInsult',
                 'call' => 'addInsult',
             ],
+            [
+                'class' => 'AddCategoryAnswer',
+                'call' => 'addCustomCategoryAnswer',
+                'settings' => [
+                    'category' => 1
+                ]
+            ]
         ],
     ],
 
