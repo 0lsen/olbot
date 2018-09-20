@@ -43,11 +43,12 @@ class ParserTest extends FeatureTestCase
 
         $answerCollection = new \Illuminate\Database\Eloquent\Collection();
         $answerCollection->add((object) ['text' => 'polo']);
+        $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')
             ->with(['category' => 2])
             ->once()
-            ->andReturn($answerCollection);
+            ->andReturn($answerBuilder);
 
         $this->client->post('/incoming', $this->createMessage($from, $chat, 'marco bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -67,11 +68,12 @@ class ParserTest extends FeatureTestCase
 
         $answerCollection = new \Illuminate\Database\Eloquent\Collection();
         $answerCollection->add((object) ['text' => 'https://example.com/picture.jpg']);
+        $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')
             ->with(['category' => 3])
             ->once()
-            ->andReturn($answerCollection);
+            ->andReturn($answerBuilder);
 
         $this->client->post('/incoming', $this->createMessage($from, $chat, 'picture bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());

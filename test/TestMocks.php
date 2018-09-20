@@ -24,7 +24,7 @@ class BuilderMock
 {
     private $return;
 
-    public function __construct($return)
+    public function __construct(\Illuminate\Database\Eloquent\Collection $return)
     {
         $this->return = $return;
     }
