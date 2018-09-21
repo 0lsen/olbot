@@ -7,6 +7,7 @@ use OLBot\Model\DB\AllowedGroup;
 use OLBot\Model\DB\AllowedUser;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Swagger\Client\Telegram\MessageEntity;
 
 class AllowedMiddleware extends TextBasedMiddleware
 {
@@ -19,7 +20,11 @@ class AllowedMiddleware extends TextBasedMiddleware
             if ($this->isBotmaster($id)) {
                 $this->storageService->botmaster = true;
             }
-            return $next($request, $response);
+            if ($this->shouldICare()) {
+                return $next($request, $response);
+            } else {
+                return $response;
+            }
         } else {
             return $response->withStatus(403);
         }
@@ -42,6 +47,31 @@ class AllowedMiddleware extends TextBasedMiddleware
 
     private function isBotmaster($id) {
          return $id == $this->storageService->settings->botmasterId;
+    }
 
+    private function shouldICare()
+    {
+        return $this->storageService->message->getChat()->getId() > 0 || $this->wasIMentioned();
+    }
+
+    private function wasIMentioned()
+    {
+        $entities = $this->storageService->message->getEntities();
+        if ($entities) {
+            foreach ($entities as $entity) {
+                if (
+                    $entity->getType() == MessageEntity::TYPE_MENTION
+                    && $entity->getOffset() === 0
+                ) {
+                    $text = $this->storageService->textCopy;
+                    $text = str_replace_first('@' . $this->storageService->settings->botName . ' ', '', $text);
+                    $this->storageService->textCopy = $text;
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

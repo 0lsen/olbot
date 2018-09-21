@@ -37,6 +37,7 @@ class MessageService
 
     function sendPicture($url, $idOut, $idIn)
     {
+        // TODO: fuck, this isn't right. That's what the AttachmentsApi is for...
         $message = new SendPhotoLinkBody();
         $message->setChatId($idOut);
         $message->setReplyToMessageId($idIn);

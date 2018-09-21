@@ -5,9 +5,9 @@ namespace OLBot\Category;
 
 class Math extends AbstractCategory
 {
-    public function __construct($categoryNumber, $subjectCandidateIndex)
+    public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits)
     {
-        parent::__construct($categoryNumber, $subjectCandidateIndex);
+        parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits);
         $this->requirementsMet = sizeof(self::$storageService->response->math) > 0;
     }
 

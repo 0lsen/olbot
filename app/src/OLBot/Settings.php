@@ -12,6 +12,7 @@ use OLBot\Settings\ParserSettings;
 class Settings
 {
     public $token;
+    public $botName;
     public $botmasterId;
     public $fallbackErrorResponse;
     /** @var CommandSettings[] */
@@ -21,17 +22,19 @@ class Settings
     public $karma;
     public $parser;
 
-    public function __construct($token, $botmasterId, $fallbackErrorResponse, $commands, $instantResponses, $karma, $parser)
+    public function __construct($token, $botName, $botmasterId, $fallbackErrorResponse, $commands, $instantResponses, $karma, $parser)
     {
         $this->token = $token;
+        $this->botName = $botName;
         $this->botmasterId = $botmasterId;
         $this->fallbackErrorResponse = $fallbackErrorResponse;
 
         AbstractCommand::$standardReplyToNewEntry = $commands['replyToNewEntry'];
         AbstractCommand::$standardReplyToEntryAlreadyKnown = $commands['replyToEntryAlreadyKnown'];
-        foreach ($commands['commands'] as $command) {
-            $this->commands[] = new CommandSettings(
-                $command['call'],
+        AbstractCommand::$standardReplyToInvalidInput = $commands['replyToInvalidInput'];
+
+        foreach ($commands['commands'] as $index => $command) {
+            $this->commands[$index] = new CommandSettings(
                 $command['class'],
                 $command['settings'] ?? []
             );
@@ -52,6 +55,7 @@ class Settings
 
         $this->parser = new ParserSettings(
             $parser['categories'],
+            $parser['stringReplacements'],
             $parser['math'],
             $parser['translation'],
             $parser['quotationMarks'],

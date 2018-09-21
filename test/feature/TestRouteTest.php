@@ -12,7 +12,7 @@ class TestRouteTest extends FeatureTestCase
     {
         $this->mockKeywords();
         $this->mockFallbackAnswer(self::USER_ALLOWED);
-        $this->client->post('/testing', $this->createMessage(self::USER_ALLOWED, self::USER_ALLOWED));
+        $this->client->post('/testing', $this->createMessageUpdate(self::USER_ALLOWED, self::USER_ALLOWED));
         $this->assertEquals(200, $this->client->response->getStatusCode());
         $json = (string) $this->client->response->getBody();
         $this->assertJson($json);

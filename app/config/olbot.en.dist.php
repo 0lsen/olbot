@@ -4,6 +4,9 @@ return new \OLBot\Settings(
     # bot token
     'asd',
 
+    # bot name to react to group mentions
+    'olbot',
+
     # ID of the bot master
     '123456789',
 
@@ -15,35 +18,33 @@ return new \OLBot\Settings(
         # fallback replies to commands (assuming standard commands are used to add some new piece of knowledge)
         'replyToNewEntry' => 'Thank you for your contribution.',
         'replyToEntryAlreadyKnown' => 'I already know this.',
+        'replyToInvalidInput' => 'Invalid Input.',
 
         # list of commands
         # 'class' specifies what class to use
         # 'call' specifies which string '/call' triggers the command
         # 'settings'
-        #       'replyToNewEntry' / 'replyToEntryAlreadyKnown': custom responses
+        #       'replyToNewEntry'/'replyToEntryAlreadyKnown'/'replyToInvalidInput': custom responses
         #       'numberOfArguments': for custom commands: expected number of arguments
         #       'category': for AddCategoryAnswer: what category will the provided answer be added to
         'commands' => [
-            [
+            'addJoke' => [
                 'class' => 'AddJoke',
-                'call' => 'addJoke',
                 'settings' => [
                     'replyToNewEntry' => 'lol'
                 ]
             ],
-            [
+            'addFlattery' => [
                 'class' => 'AddFlattery',
-                'call' => 'addFlattery',
             ],
-            [
+            'addInsult' => [
                 'class' => 'AddInsult',
-                'call' => 'addInsult',
             ],
-            [
+            'addCustomCategoryAnswer' => [
                 'class' => 'AddCategoryAnswer',
-                'call' => 'addCustomCategoryAnswer',
                 'settings' => [
-                    'category' => 1
+                    'category' => 1,
+                    'type' => 'text' // expecting 'text' or 'pic' so far, 'text' is default
                 ]
             ]
         ],
@@ -72,9 +73,28 @@ return new \OLBot\Settings(
     [
         # list of categories, numbers corresponding to those in the keywords db
         'categories' => [
-            1 => 'Math',
-            2 => 'TextResponse',
-            3 => 'PictureResponse',
+            1 => [
+                # 'class' specifying the category class (duh)
+                # 'settings'
+                #       'requiredCategoryHits' specifying how many hits on specific categories are required
+                'class' => 'Math',
+                'settings' => [
+                    'requiredCategoryHits' => [
+                        1 => 1,
+                    ]
+                ]
+            ],
+            2 => [
+                'class' => 'TextResponse',
+            ],
+            3 => [
+                'class' => 'PictureResponse',
+            ],
+        ],
+
+        # replacements to perform before checking keywords, for now mainly to lowercase special characters (like umlauts)
+        'stringReplacements' => [
+            'Ä' => 'Ae'
         ],
 
         # math settings

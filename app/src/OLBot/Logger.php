@@ -17,7 +17,7 @@ class Logger
     {
         LogError::create([
             'id_in' => $idIn,
-            'message' => $t->getCode() . ' - ' . $t->getMessage() . ' [' . $t->getFile() . '::' . $t->getLine() . ']'
+            'message' => $t->getCode() . ' - ' . $t->getMessage() . ' [' . $t->getFile() . '::' . $t->getLine() . '] \n' . $t->getTraceAsString()
         ]);
     }
 

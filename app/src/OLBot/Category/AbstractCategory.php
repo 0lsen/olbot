@@ -3,6 +3,7 @@
 namespace OLBot\Category;
 
 
+use OLBot\Model\CategoryHits;
 use OLBot\Service\StorageService;
 
 abstract class AbstractCategory
@@ -21,15 +22,51 @@ abstract class AbstractCategory
 
     protected $needsSubject = false;
 
+    protected $requiredCategoryHits;
+
     public $requirementsMet = true;
 
     protected $categoryNumber;
 
-    public function __construct($categoryNumber, $subjectCandidateIndex)
+    public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits)
     {
         $this->categoryNumber = $categoryNumber;
-        $this->requirementsMet = !($this->needsSubject && !isset(self::$storageService->subjectCandidates[$subjectCandidateIndex]));
+        $this->requiredCategoryHits = $settings['requiredCategoryHits'] ?? [];
+        $this->requirementsMet = $this->areRequirementsMet($subjectCandidateIndex, $categoryhits);
     }
 
     public function generateResponse() {}
+
+    private function areRequirementsMet($subjectCandidateIndex, $categoryHits)
+    {
+        return $this->subjectRequirements($subjectCandidateIndex)
+            && $this->categoryRequirements($categoryHits);
+    }
+
+    private function subjectRequirements($subjectCandidateIndex)
+    {
+        return !($this->needsSubject && !isset(self::$storageService->subjectCandidates[$subjectCandidateIndex]));
+    }
+
+    private function categoryRequirements($categoryHits)
+    {
+        $requirementsMet = true;
+        foreach ($this->requiredCategoryHits as $category => $requiredHits) {
+            $hit = false;
+            /** @var CategoryHits $hits */
+            foreach ($categoryHits as $hits) {
+                if ($hits->id == $category) {
+                    if ($hits->hits >= $requiredHits) {
+                        $hit = true;
+                    }
+                    break;
+                }
+            }
+            if (!$hit) {
+                $requirementsMet = false;
+                break;
+            }
+        }
+        return $requirementsMet;
+    }
 }

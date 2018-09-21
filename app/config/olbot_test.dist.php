@@ -2,29 +2,34 @@
 
 return new \OLBot\Settings(
     'asd',
+    'olbot',
     '123456789',
     'Something went terribly wrong.',
     [
         'replyToNewEntry' => 'Thank you for your contribution.',
         'replyToEntryAlreadyKnown' => 'I already know this.',
+        'replyToInvalidInput' => 'Invalid Input.',
         'commands' => [
-            [
+            'addJoke' => [
                 'class' => 'AddJoke',
-                'call' => 'addJoke',
             ],
-            [
+            'addFlattery' => [
                 'class' => 'AddFlattery',
-                'call' => 'addFlattery',
             ],
-            [
+            'addInsult' => [
                 'class' => 'AddInsult',
-                'call' => 'addInsult',
             ],
-            [
+            'addCategoryAnswer' => [
                 'class' => 'AddCategoryAnswer',
-                'call' => 'addCategoryAnswer',
                 'settings' => [
                     'category' => 1,
+                ]
+            ],
+            'addCategoryPicture' => [
+                'class' => 'AddCategoryAnswer',
+                'settings' => [
+                    'category' => 1,
+                    'type' => 'pic'
                 ]
             ],
         ],
@@ -42,9 +47,27 @@ return new \OLBot\Settings(
     ],
     [
         'categories' => [
-            1 => 'Math',
-            2 => 'TextResponse',
-            3 => 'PictureResponse',
+            1 => [
+                'class' => 'Math',
+            ],
+            2 => [
+                'class' => 'TextResponse',
+            ],
+            3 => [
+                'class' => 'PictureResponse',
+            ],
+            4 => [
+                'class' => 'TextResponse',
+                'settings' => [
+                    'requiredCategoryHits' => [
+                        4 => 2,
+                        5 => 1
+                    ]
+                ]
+            ]
+        ],
+        'stringReplacements' => [
+            'ö' => 'o'
         ],
         'math' => [
             'decimalPoint' => '.',

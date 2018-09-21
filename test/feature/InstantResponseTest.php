@@ -24,7 +24,7 @@ class InstantResponseTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($from, $chat, 'Hakuna'));
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'Hakuna'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 

@@ -14,6 +14,8 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     const GROUP_NOT_ALLOWED = -2;
     const MESSAGE_ID = 123;
 
+    const BOT_NAME = 'olbot';
+
     /** @var \Mockery\MockInterface */
     protected $karmaMock;
     /** @var \Mockery\MockInterface */
@@ -79,7 +81,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->with(['id' => self::USER_ALLOWED])
             ->andReturn(new EloquentMock(['karma' => 0, 'id' => self::USER_ALLOWED]));
         $allowedUserMock
-            ->shouldReceive('where')
+              ->shouldReceive('where')
             ->with(['id' => self::USER_NOT_ALLOWED])
             ->andReturn(new EloquentMock(['karma' => 0, 'id' => self::USER_NOT_ALLOWED]));
         $allowedUserMock
@@ -146,18 +148,37 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->once();
     }
 
-    protected function createMessage($fromId, $chatId, $text = 'foo bar')
+    protected function createMessageUpdate($fromId, $chatId, $text = 'foo bar')
+    {
+        $message = $this->createMessage($fromId, $chatId, $text);
+
+        $update = new \Swagger\Client\Telegram\Update();
+        $update->setMessage($message);
+
+        return \Swagger\Client\ObjectSerializer::sanitizeForSerialization($update);
+    }
+
+    protected function createMessage($fromId, $chatId, $text) : \Swagger\Client\Telegram\Message
     {
         $message = new \Swagger\Client\Telegram\Message();
         $message->setMessageId(self::MESSAGE_ID);
-        $message->setText($text);
+        $message->setText(($chatId < 0 ? '@' . self::BOT_NAME . ' ' : '') . $text);
         $chat = new \Swagger\Client\Telegram\Chat();
         $chat->setId($chatId);
         $message->setChat($chat);
         $from = new \Swagger\Client\Telegram\User();
         $from->setId($fromId);
         $message->setFrom($from);
-        return ['message' => \Swagger\Client\ObjectSerializer::sanitizeForSerialization($message)];
+
+        if ($chatId < 0) {
+            $entity = new \Swagger\Client\Telegram\MessageEntity();
+            $entity->setType(\Swagger\Client\Telegram\MessageEntity::TYPE_MENTION);
+            $entity->setOffset(0);
+            $entity->setLength(strlen(self::BOT_NAME)+1);
+            $message->setEntities([$entity]);
+        }
+
+        return $message;
     }
 
     protected function expectMessage()

@@ -9,9 +9,11 @@ abstract class AbstractCommand
 {
     static $standardReplyToNewEntry;
     static $standardReplyToEntryAlreadyKnown;
+    static $standardReplyToInvalidInput;
 
     protected $replyToNewEntry;
     protected $replyToEntryAlreadyKnown;
+    protected $replyToInvalidInput;
 
     protected $storageService;
 
@@ -22,6 +24,7 @@ abstract class AbstractCommand
         $this->storageService = $storageService;
         $this->replyToNewEntry = $settings['replyToNewEntry'] ?? self::$standardReplyToNewEntry;
         $this->replyToEntryAlreadyKnown = $settings['replyToEntryAlreadyKnown'] ?? self::$standardReplyToEntryAlreadyKnown;
+        $this->replyToInvalidInput = $settings['replyToInvalidInput'] ?? self::$standardReplyToInvalidInput;
         $this->numberOfArguments = $settings['numberOfArguments'] ?? 0;
     }
 

@@ -33,10 +33,10 @@ class ParserMiddleware extends TextBasedMiddleware
         $categoryHits = $this->getCategoryHits($text);
 
         foreach ($categoryHits as $categoryHit) {
-            if ($categoryHit->hits) {
+            if ($categoryHit->hits && $categoryHit->category) {
                 $className = '\OLBot\Category\\'.$categoryHit->category;
                 /** @var AbstractCategory $cat */
-                $cat = new $className($categoryHit->id, 0);
+                $cat = new $className($categoryHit->id, 0, $categoryHit->settings, $categoryHits);
                 if ($cat->requirementsMet) {
                     $cat->generateResponse();
                     $this->storageService->sendResponse = true;
@@ -133,16 +133,21 @@ class ParserMiddleware extends TextBasedMiddleware
      */
     private function getCategoryHits($text)
     {
+        $this->cleanUp($text);
+
         $hits = [];
         foreach ($this->storageService->settings->parser->categories as $id => $category) {
-            $hits[$id] = new CategoryHits($id, $category);
+            $hits[$id] = new CategoryHits($id, $category['class'], $category['settings'] ?? []);
         }
 
         preg_match_all('#\w{3,}#', $text, $words);
 
         foreach ($words[0] as $word) {
             $keyword = Keyword::find(md5(strtolower($word)));
-            if (!is_null($keyword) && isset($hits[$keyword->category])) {
+            if (!is_null($keyword)) {
+                if (!isset($hits[$keyword->category])) {
+                    $hits[$keyword->category] = new CategoryHits($keyword->category, '', []);
+                }
                 $hits[$keyword->category]->hits++;
             }
         }
@@ -150,5 +155,14 @@ class ParserMiddleware extends TextBasedMiddleware
         usort($hits, ['OLBot\Model\CategoryHits', 'cmp']);
 
         return $hits;
+    }
+
+    private function cleanUp(&$text)
+    {
+        foreach ($this->storageService->settings->parser->stringReplacements as $find => $replace) {
+            $text = str_replace($find, $replace, $text);
+        }
+
+        $text = strtolower($text);
     }
 }

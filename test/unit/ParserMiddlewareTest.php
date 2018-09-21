@@ -12,7 +12,8 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
     function testFindSubjectCandidatesAndMathExpression()
     {
         $settings = new SettingsMock(new \OLBot\Settings\ParserSettings(
-            [1 => 'Math',],
+            [1 => ['class' => 'Math',]],
+            [],
             ['decimalPoint' => '', 'divisionByZeroResponse' => ''],
             ['fallbackLanguage' => '', 'typicalLanguageEnding' => ''],
             '"\'',

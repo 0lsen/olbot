@@ -25,7 +25,7 @@ class ParserTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($from, $chat, 'math 1 + 1 bar'));
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'math 1 + 1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -50,32 +50,82 @@ class ParserTest extends FeatureTestCase
             ->once()
             ->andReturn($answerBuilder);
 
-        $this->client->post('/incoming', $this->createMessage($from, $chat, 'marco bar'));
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'Marcö bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
-    function testPictureResponse()
+//    function testPictureResponse()
+//    {
+//        $from = self::USER_NEUTRAL_KARMA;
+//        $chat = self::GROUP_ALLOWED;
+//
+//        $this->mockKeywords(['picture' => 3, 'bar' => null]);
+//        $this->expectedMessageContent = [
+//            'chat_id' => $chat,
+//            'photo' => '"https:\/\/example.com\/picture.jpg"',
+//            'reply_to_message_id' => self::MESSAGE_ID,
+//        ];
+//
+//        $answerCollection = new \Illuminate\Database\Eloquent\Collection();
+//        $answerCollection->add((object) ['text' => 'https://example.com/picture.jpg']);
+//        $answerBuilder = new BuilderMock($answerCollection);
+//        $this->answerMock
+//            ->shouldReceive('where')
+//            ->with(['category' => 3])
+//            ->once()
+//            ->andReturn($answerBuilder);
+//
+//        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'picture bar'));
+//        $this->assertEquals(200, $this->client->response->getStatusCode());
+//    }
+
+    public function testRequiredCategoryHitsPositive()
     {
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
 
-        $this->mockKeywords(['picture' => 3, 'bar' => null]);
+        $this->mockKeywords(['categoryfourone' => 4, 'categoryfourtwo' => 4, 'categoryfive' => 5]);
         $this->expectedMessageContent = [
             'chat_id' => $chat,
-            'photo' => '"https:\/\/example.com\/picture.jpg"',
+            'text' => '"success"',
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
         $answerCollection = new \Illuminate\Database\Eloquent\Collection();
-        $answerCollection->add((object) ['text' => 'https://example.com/picture.jpg']);
+        $answerCollection->add((object) ['text' => 'success']);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')
-            ->with(['category' => 3])
+            ->with(['category' => 4])
             ->once()
             ->andReturn($answerBuilder);
 
-        $this->client->post('/incoming', $this->createMessage($from, $chat, 'picture bar'));
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'categoryfourone categoryfourtwo categoryfive'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
+
+    public function testRequiredCategoryHitsNegative()
+    {
+        $from = self::USER_NEUTRAL_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->mockKeywords(['categoryfour' => 4, 'categoryfive' => 5]);
+        $this->expectedMessageContent = [
+            'chat_id' => $chat,
+            'text' => '"fallback"',
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ];
+
+        $answerCollection = new \Illuminate\Database\Eloquent\Collection();
+        $answerCollection->add((object) ['text' => 'fallback']);
+        $answerBuilder = new BuilderMock($answerCollection);
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['category' => \OLBot\Category\AbstractCategory::CAT_FALLBACK])
+            ->once()
+            ->andReturn($answerBuilder);
+
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'categoryfour categoryfive'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 }

@@ -6,44 +6,38 @@ namespace OLBot\Middleware;
 use OLBot\Command\AbstractCommand;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Swagger\Client\Telegram\MessageEntity;
 
 class CommandMiddleware extends TextBasedMiddleware
 {
     public function __invoke(Request $request, Response $response, $next)
     {
-        //TODO: does the API tell me about the usage of a registered command already?
+        $entities = $this->storageService->message->getEntities();
 
-        foreach ($this->storageService->settings->commands as $command) {
-            if ($this->commandFound('/' . $command->call)) {
-                $commandName = '\OLBot\Command\\'.$command->name;
-                /** @var AbstractCommand $commandObject */
-                $commandObject = new $commandName($this->storageService, $command->settings);
-                $this->storageService->sendResponse = true;
+        if($entities) {
+            foreach ($entities as $entity) {
+                if ($entity->getType() == MessageEntity::TYPE_BOT_COMMAND) {
+                    $commandCall = substr($this->storageService->textCopy, $entity->getOffset()+1, $entity->getLength()-1);
+                    if (isset($this->storageService->settings->commands[$commandCall])) {
+                        $command = $this->storageService->settings->commands[$commandCall];
+                        $this->storageService->textCopy = str_replace_first('/'.$commandCall.' ', '', $this->storageService->textCopy);
+                        $commandName = '\OLBot\Command\\'.$command->name;
+                        /** @var AbstractCommand $commandObject */
+                        $commandObject = new $commandName($this->storageService, $command->settings);
+                        $this->storageService->sendResponse = true;
 
-                try {
-                    $commandObject->doStuff();
-                } catch (\Exception $e) {
-                    $this->storageService->response->text[] = 'ERROR: ' . $e->getMessage();
+                        try {
+                            $commandObject->doStuff();
+                        } catch (\Exception $e) {
+                            $this->storageService->response->text[] = 'ERROR: ' . $e->getMessage();
+                        }
+
+                        return $response;
+                    }
                 }
-
-                return $response;
             }
         }
 
         return $next($request, $response);
-    }
-
-    private function commandFound($call)
-    {
-        $found = strpos($this->storageService->textCopy, $call) === 0;
-        if ($found) {
-            $this->storageService->textCopy = preg_replace(
-                ['#'.preg_quote($call, '#').'#', '#^\s+#'],
-                ['', ''],
-                $this->storageService->textCopy,
-                1
-            );
-        }
-        return $found;
     }
 }

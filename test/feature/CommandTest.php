@@ -1,5 +1,8 @@
 <?php
 
+use Swagger\Client\Telegram\MessageEntity;
+use Swagger\Client\Telegram\Update;
+
 /**
  * @runTestsInSeparateProcesses
  */
@@ -29,7 +32,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addFlattery foo bar'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addFlattery'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -51,7 +54,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addFlattery foo bar'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addFlattery'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -69,7 +72,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addInsult foo bar'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addInsult'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -91,7 +94,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addInsult foo bar'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addInsult'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -110,7 +113,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addJoke foo bar'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addJoke'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -133,7 +136,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addJoke foo bar'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addJoke'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -145,7 +148,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addJoke'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addJoke', ''));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -167,7 +170,45 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createMessage($this->chat, $this->chat, '/addCategoryAnswer foo bar'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
+
+    function testAddCategoryPicture()
+    {
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['text' => 'https://example.com/picture.jpg', 'category' => 1])
+            ->once()
+            ->andReturn(new EloquentMock(['count' => 0]));
+        $this->answerMock
+            ->shouldReceive('create')
+            ->with(['text' => 'https://example.com/picture.jpg', 'author' => $this->chat, 'category' => 1])
+            ->once();
+
+        $this->expectedMessageContent = [
+            'chat_id' => $this->chat,
+            'text' => '"Thank you for your contribution."',
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ];
+
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryPicture', 'https://example.com/picture.jpg'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
+
+    private function createCommandUpdate($fromId, $chatId, $command, $text = 'foo bar')
+    {
+        $entity = new MessageEntity();
+        $entity->setType(MessageEntity::TYPE_BOT_COMMAND);
+        $entity->setOffset(0);
+        $entity->setLength(strlen($command)+1);
+
+        $message = $this->createMessage($fromId, $chatId, '/' . $command . ' ' . $text);
+        $message->setEntities([$entity]);
+
+        $update = new Update();
+        $update->setMessage($message);
+
+        return \Swagger\Client\ObjectSerializer::sanitizeForSerialization($update);
     }
 }
