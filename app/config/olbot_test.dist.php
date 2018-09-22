@@ -10,9 +10,6 @@ return new \OLBot\Settings(
         'replyToEntryAlreadyKnown' => 'I already know this.',
         'replyToInvalidInput' => 'Invalid Input.',
         'commands' => [
-            'addJoke' => [
-                'class' => 'AddJoke',
-            ],
             'addFlattery' => [
                 'class' => 'AddFlattery',
             ],

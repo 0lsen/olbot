@@ -98,48 +98,6 @@ class CommandTest extends FeatureTestCase
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
-    function testAddNewJokeNegative()
-    {
-        $jokeMock = Mockery::mock('alias:OLBot\Model\DB\Joke');
-        $jokeMock
-            ->shouldReceive('where')
-            ->with(['text' => 'foo bar'])
-            ->once()
-            ->andReturn(new EloquentMock(['count' => 1]));
-
-        $this->expectedMessageContent = [
-            'chat_id' => $this->chat,
-            'text' => '"I already know this."',
-            'reply_to_message_id' => self::MESSAGE_ID,
-        ];
-
-        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addJoke'));
-        $this->assertEquals(200, $this->client->response->getStatusCode());
-    }
-
-    function testAddNewJokePositive()
-    {
-        $jokeMock = Mockery::mock('alias:OLBot\Model\DB\Joke');
-        $jokeMock
-            ->shouldReceive('where')
-            ->with(['text' => 'foo bar'])
-            ->once()
-            ->andReturn(new EloquentMock(['count' => 0]));
-        $jokeMock
-            ->shouldReceive('create')
-            ->with(['text' => 'foo bar', 'author' => $this->chat])
-            ->once();
-
-        $this->expectedMessageContent = [
-            'chat_id' => $this->chat,
-            'text' => '"Thank you for your contribution."',
-            'reply_to_message_id' => self::MESSAGE_ID,
-        ];
-
-        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addJoke'));
-        $this->assertEquals(200, $this->client->response->getStatusCode());
-    }
-
     function testAddSomethingWithNoArgument()
     {
         $this->expectedMessageContent = [
@@ -148,11 +106,11 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
-        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addJoke', ''));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer', ''));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
-    function testAddCategoryAnswer()
+    function testAddCategoryAnswerPositive()
     {
         $this->answerMock
             ->shouldReceive('where')
@@ -167,6 +125,24 @@ class CommandTest extends FeatureTestCase
         $this->expectedMessageContent = [
             'chat_id' => $this->chat,
             'text' => '"Thank you for your contribution."',
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ];
+
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
+
+    function testAddCategoryAnswerNegative()
+    {
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['text' => 'foo bar', 'category' => 1])
+            ->once()
+            ->andReturn(new EloquentMock(['count' => 1]));
+
+        $this->expectedMessageContent = [
+            'chat_id' => $this->chat,
+            'text' => '"I already know this."',
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 

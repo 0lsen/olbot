@@ -28,12 +28,6 @@ return new \OLBot\Settings(
         #       'numberOfArguments': for custom commands: expected number of arguments
         #       'category': for AddCategoryAnswer: what category will the provided answer be added to
         'commands' => [
-            'addJoke' => [
-                'class' => 'AddJoke',
-                'settings' => [
-                    'replyToNewEntry' => 'lol'
-                ]
-            ],
             'addFlattery' => [
                 'class' => 'AddFlattery',
             ],
