@@ -21,7 +21,7 @@ class ErrorReport extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $noOfErrors = LogError::where('time', '>', time()-(24*60*60))->count();
+        $noOfErrors = LogError::where('time', '>', date('Y-m-d', time()-(24*60*60)))->count();
 
         if ($noOfErrors > 0) {
             $texts = Answer::where(['category' => AbstractCategory::CAT_ERROR_REPORT]);
