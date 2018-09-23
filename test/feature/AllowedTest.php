@@ -1,6 +1,8 @@
 <?php
 
 use OLBot\Category\AbstractCategory;
+use Swagger\Client\Telegram\ParseMode;
+use Swagger\Client\Telegram\SendMessageBody;
 
 /**
  * @runTestsInSeparateProcesses
@@ -42,10 +44,11 @@ class AllowedTest extends FeatureTestCase
             ->once()
             ->andReturn($answerBuilder);
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => '"does not compute"',
+            'text' => 'does not compute',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
     }
 }

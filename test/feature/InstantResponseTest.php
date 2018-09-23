@@ -1,5 +1,8 @@
 <?php
 
+use Swagger\Client\Telegram\ParseMode;
+use Swagger\Client\Telegram\SendMessageBody;
+
 /**
  * @runTestsInSeparateProcesses
  */
@@ -18,11 +21,12 @@ class InstantResponseTest extends FeatureTestCase
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => '"Matata"',
+            'text' => 'Matata',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'Hakuna'));
         $this->assertEquals(200, $this->client->response->getStatusCode());

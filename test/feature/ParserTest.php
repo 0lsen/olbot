@@ -1,5 +1,8 @@
 <?php
 
+use Swagger\Client\Telegram\ParseMode;
+use Swagger\Client\Telegram\SendMessageBody;
+
 /**
  * @runTestsInSeparateProcesses
  */
@@ -19,11 +22,12 @@ class ParserTest extends FeatureTestCase
         $chat = self::GROUP_ALLOWED;
 
         $this->mockKeywords(['math' => 1, 'bar' => null]);
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => '"<code>1 + 1 = 2<\/code>"',
+            'text' => '<code>1 + 1 = 2</code>',
+            'parse_mode' => ParseMode::HTML,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'math 1 + 1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -35,11 +39,12 @@ class ParserTest extends FeatureTestCase
         $chat = self::GROUP_ALLOWED;
 
         $this->mockKeywords(['marco' => 2, 'bar' => null]);
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => '"polo"',
+            'text' => 'polo',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $answerCollection = new \Illuminate\Database\Eloquent\Collection();
         $answerCollection->add((object) ['text' => 'polo']);
@@ -85,11 +90,12 @@ class ParserTest extends FeatureTestCase
         $chat = self::GROUP_ALLOWED;
 
         $this->mockKeywords(['categoryfourone' => 4, 'categoryfourtwo' => 4, 'categoryfive' => 5]);
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => '"success\\\\n    _-' . self::USER_ALLOWED . '_"',
+            'text' => 'success\\n    _-' . self::USER_ALLOWED . '_',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $answerCollection = new \Illuminate\Database\Eloquent\Collection();
         $answerCollection->add((object) ['text' => 'success', 'author' => self::USER_ALLOWED]);
@@ -110,11 +116,12 @@ class ParserTest extends FeatureTestCase
         $chat = self::GROUP_ALLOWED;
 
         $this->mockKeywords(['categoryfour' => 4, 'categoryfive' => 5]);
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => '"fallback"',
+            'text' => 'fallback',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $answerCollection = new \Illuminate\Database\Eloquent\Collection();
         $answerCollection->add((object) ['text' => 'fallback']);

@@ -23,7 +23,9 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     /** @var \Mockery\MockInterface */
     protected $answerMock;
 
-    protected $expectedMessageContent = [];
+    protected $token;
+    /** @var \Swagger\Client\Telegram\SendMessageBody */
+    protected $expectedMessage;
 
     function setup()
     {
@@ -183,19 +185,12 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 
     protected function expectMessage()
     {
-        $guzzleMock = Mockery::mock('overload:GuzzleHttp\Client');
+        $guzzleMock = Mockery::mock('overload:Swagger\Client\Api\MessagesApi');
         $guzzleMock
-            ->shouldReceive('send')
-            ->withArgs(function (\GuzzleHttp\Psr7\Request $request){
-                $body = $request->getBody()->getContents();
-                $match = $request->getUri()->getPath() == '/botasd/sendMessage';
-                foreach ($this->expectedMessageContent as $key => $value) {
-                    if (strpos($body, '"'.$key.'": '.$value) === false) {
-                        $match = false;
-                        break;
-                    }
-                }
-                return $match;
+            ->shouldReceive('sendMessage')
+            ->withArgs(function ($token, \Swagger\Client\Telegram\SendMessageBody $message) {
+                $this->assertEquals($this->expectedMessage, $message);
+                return true;
             })
             ->once()
             ->andReturn(new \GuzzleHttp\Psr7\Response(200));

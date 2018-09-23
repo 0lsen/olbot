@@ -4,21 +4,23 @@ namespace OLBot\Service;
 
 
 use OLBot\Logger;
+use Swagger\Client\Api\AttachmentsApi;
 use Swagger\Client\Api\MessagesApi;
 use Swagger\Client\Telegram\ParseMode;
 use Swagger\Client\Telegram\SendMessageBody;
-use Swagger\Client\Telegram\SendPhotoLinkBody;
 
 class MessageService
 {
     static $parseMode = ParseMode::MARKDOWN;
 
-    private $api;
+    private $messagesApi;
+    private $attachmentApi;
     private $token;
 
     function __construct($token)
     {
-        $this->api = new MessagesApi();
+        $this->messagesApi = new MessagesApi();
+        $this->attachmentApi = new AttachmentsApi();
         $this->token = $token;
     }
 
@@ -30,7 +32,7 @@ class MessageService
         $message->setText($text);
         $message->setParseMode(self::$parseMode);
         try {
-            $this->api->sendMessage($this->token, $message);
+            $this->messagesApi->sendMessage($this->token, $message);
             Logger::logMessageOut($message);
         } catch (\Throwable $t) {
             Logger::logError($idIn, $t);
@@ -39,14 +41,16 @@ class MessageService
 
     function sendPicture($url, $idOut, $idIn)
     {
-        // TODO: fuck, this isn't right. That's what the AttachmentsApi is for...
-        $message = new SendPhotoLinkBody();
-        $message->setChatId($idOut);
-        $message->setReplyToMessageId($idIn);
-        $message->setPhoto($url);
         try {
-            $this->api->sendMessage($this->token, $message);
-            Logger::logMessageOut($message);
+            // Todo: write test
+            $this->attachmentApi->sendPhoto(
+                $this->token,
+                $idOut,
+                $url,
+                null, null, null,
+                $reply_to_message_id = $idIn
+            );
+            Logger::logMessageOut($url);
         } catch (\Throwable $t) {
             Logger::logError($idIn, $t);
         }

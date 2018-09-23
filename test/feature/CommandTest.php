@@ -1,6 +1,8 @@
 <?php
 
 use Swagger\Client\Telegram\MessageEntity;
+use Swagger\Client\Telegram\ParseMode;
+use Swagger\Client\Telegram\SendMessageBody;
 use Swagger\Client\Telegram\Update;
 
 /**
@@ -26,11 +28,12 @@ class CommandTest extends FeatureTestCase
             ->once()
             ->andReturn(new EloquentMock(['count' => 1]));
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => '"I already know this."',
+            'text' => 'I already know this.',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addFlattery'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -48,11 +51,12 @@ class CommandTest extends FeatureTestCase
             ->with(['text' => 'foo bar', 'author' => $this->chat, 'karma' => true])
             ->once();
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => '"Thank you for your contribution."',
+            'text' => 'Thank you for your contribution.',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addFlattery'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -66,11 +70,12 @@ class CommandTest extends FeatureTestCase
             ->once()
             ->andReturn(new EloquentMock(['count' => 1]));
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => '"I already know this."',
+            'text' => 'I already know this.',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addInsult'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -88,11 +93,12 @@ class CommandTest extends FeatureTestCase
             ->with(['text' => 'foo bar', 'author' => $this->chat, 'karma' => false])
             ->once();
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => '"Thank you for your contribution."',
+            'text' => 'Thank you for your contribution.',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addInsult'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -100,11 +106,12 @@ class CommandTest extends FeatureTestCase
 
     function testAddSomethingWithNoArgument()
     {
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => '"ERROR: not enough parameters."',
+            'text' => 'ERROR: not enough parameters.',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer', ''));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -122,11 +129,12 @@ class CommandTest extends FeatureTestCase
             ->with(['text' => 'foo bar', 'author' => $this->chat, 'category' => 1])
             ->once();
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => '"Thank you for your contribution."',
+            'text' => 'Thank you for your contribution.',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -140,11 +148,12 @@ class CommandTest extends FeatureTestCase
             ->once()
             ->andReturn(new EloquentMock(['count' => 1]));
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => '"I already know this."',
+            'text' => 'I already know this.',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
@@ -162,11 +171,12 @@ class CommandTest extends FeatureTestCase
             ->with(['text' => 'https://example.com/picture.jpg', 'author' => $this->chat, 'category' => 1])
             ->once();
 
-        $this->expectedMessageContent = [
+        $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => '"Thank you for your contribution."',
+            'text' => 'Thank you for your contribution.',
+            'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
-        ];
+        ]);
 
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryPicture', 'https://example.com/picture.jpg'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
