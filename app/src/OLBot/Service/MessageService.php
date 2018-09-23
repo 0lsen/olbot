@@ -11,6 +11,8 @@ use Swagger\Client\Telegram\SendPhotoLinkBody;
 
 class MessageService
 {
+    static $parseMode = ParseMode::MARKDOWN;
+
     private $api;
     private $token;
 
@@ -26,7 +28,7 @@ class MessageService
         $message->setChatId($idOut);
         $message->setReplyToMessageId($idIn);
         $message->setText($text);
-        $message->setParseMode(ParseMode::MARKDOWN);
+        $message->setParseMode(self::$parseMode);
         try {
             $this->api->sendMessage($this->token, $message);
             Logger::logMessageOut($message);

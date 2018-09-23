@@ -3,6 +3,9 @@
 namespace OLBot\Category;
 
 
+use OLBot\Service\MessageService;
+use Swagger\Client\Telegram\ParseMode;
+
 class Math extends AbstractCategory
 {
     public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits)
@@ -13,8 +16,9 @@ class Math extends AbstractCategory
 
     public function generateResponse()
     {
+        MessageService::$parseMode = ParseMode::HTML;
         foreach (self::$storageService->response->math as $math) {
-            self::$storageService->response->text[] = $math;
+            self::$storageService->response->text[] = '<code>' . $math . '</code>';
         }
     }
 }

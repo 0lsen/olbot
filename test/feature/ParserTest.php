@@ -21,7 +21,7 @@ class ParserTest extends FeatureTestCase
         $this->mockKeywords(['math' => 1, 'bar' => null]);
         $this->expectedMessageContent = [
             'chat_id' => $chat,
-            'text' => '"1 + 1 = 2"',
+            'text' => '"<code>1 + 1 = 2<\/code>"',
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
