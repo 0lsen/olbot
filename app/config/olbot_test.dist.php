@@ -19,7 +19,7 @@ return new \OLBot\Settings(
             'addCategoryAnswer' => [
                 'class' => 'AddCategoryAnswer',
                 'settings' => [
-                    'category' => 1,
+                    'category' => 1
                 ]
             ],
             'addCategoryPicture' => [
@@ -59,7 +59,8 @@ return new \OLBot\Settings(
                     'requiredCategoryHits' => [
                         4 => 2,
                         5 => 1
-                    ]
+                    ],
+                    'appendAuthor' => true
                 ]
             ]
         ],

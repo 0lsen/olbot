@@ -87,12 +87,12 @@ class ParserTest extends FeatureTestCase
         $this->mockKeywords(['categoryfourone' => 4, 'categoryfourtwo' => 4, 'categoryfive' => 5]);
         $this->expectedMessageContent = [
             'chat_id' => $chat,
-            'text' => '"success"',
+            'text' => '"success\\\\n    _-' . self::USER_ALLOWED . '_"',
             'reply_to_message_id' => self::MESSAGE_ID,
         ];
 
         $answerCollection = new \Illuminate\Database\Eloquent\Collection();
-        $answerCollection->add((object) ['text' => 'success']);
+        $answerCollection->add((object) ['text' => 'success', 'author' => self::USER_ALLOWED]);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')

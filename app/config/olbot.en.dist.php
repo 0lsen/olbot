@@ -71,11 +71,13 @@ return new \OLBot\Settings(
                 # 'class' specifying the category class (duh)
                 # 'settings'
                 #       'requiredCategoryHits' specifying how many hits on specific categories are required
+                #       'appendAuthor' for class 'TextResponse': sign line with the answer's author, if available
                 'class' => 'Math',
                 'settings' => [
                     'requiredCategoryHits' => [
                         1 => 1,
-                    ]
+                    ],
+                    'appendAuthor' => true
                 ]
             ],
             2 => [
