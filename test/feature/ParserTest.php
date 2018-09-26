@@ -92,7 +92,7 @@ class ParserTest extends FeatureTestCase
         $this->mockKeywords(['categoryfourone' => 4, 'categoryfourtwo' => 4, 'categoryfive' => 5]);
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => 'success\\n    _-' . self::USER_ALLOWED . '_',
+            'text' => "success\n    _-User Allowed_",
             'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);

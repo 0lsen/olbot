@@ -58,7 +58,7 @@ class KarmaTest extends FeatureTestCase
         $this->mockKeywords(['math' => 1, 'bar' => null]);
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => '<code>1+1 = 2</code>\\nSweetie',
+            'text' => "<code>1+1 = 2</code>\nSweetie",
             'parse_mode' => ParseMode::HTML,
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
@@ -75,7 +75,7 @@ class KarmaTest extends FeatureTestCase
         $this->mockKeywords(['math' => 1, 'bar' => null]);
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => '<code>1+1 = 2</code>\\nJerk',
+            'text' => "<code>1+1 = 2</code>\nJerk",
             'parse_mode' => ParseMode::HTML,
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);

@@ -3,6 +3,7 @@
 namespace OLBot\Category;
 
 
+use OLBot\Model\DB\AllowedUser;
 use OLBot\Model\DB\Answer;
 
 class TextResponse extends AbstractCategory
@@ -20,7 +21,12 @@ class TextResponse extends AbstractCategory
         $answers = Answer::where(['category' => $this->categoryNumber]);
         if (!$answers->count()) throw new \Exception('no answer found for category '.$this->categoryNumber);
         $answer = $answers->inRandomOrder()->first();
-        $text = $this->appendAuthor && $answer->author ? $answer->text . '\n    _-' . $answer->author . '_' : $answer->text;
-        self::$storageService->response->text[] = $text;
+        if ($this->appendAuthor && $answer->author) {
+            $author = AllowedUser::find($answer->author);
+            if ($author) {
+                $answer->text .= "\n    _-" . $author->name . "_";
+            }
+        }
+        self::$storageService->response->text[] = $answer->text;;
     }
 }

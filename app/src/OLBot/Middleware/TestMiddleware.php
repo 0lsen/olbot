@@ -70,7 +70,7 @@ class TestMiddleware extends TextBasedMiddleware
 
     private function addLine($message, &$text)
     {
-        if ($text) $text .= '\n';
+        if ($text) $text .= "\n";
         $text .= $message;
     }
 }

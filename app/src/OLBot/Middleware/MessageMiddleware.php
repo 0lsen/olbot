@@ -50,6 +50,7 @@ class MessageMiddleware
                 $answer = $answers->inRandomOrder()->first()->text;
             } catch (\Throwable $t2) {
                 $answer = $this->storageService->settings->fallbackErrorResponse;
+                Logger::logError($this->storageService->message->getMessageId(), $t2);
             }
             $this->storageService->sendResponse = true;
             $this->storageService->response->text = [$answer];
@@ -117,7 +118,7 @@ class MessageMiddleware
 
     private function addLine($message, &$text)
     {
-        if ($text) $text .= '\n';
+        if ($text) $text .= "\n";
         $text .= $message;
     }
 }
