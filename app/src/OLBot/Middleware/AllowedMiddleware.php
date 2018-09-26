@@ -42,7 +42,7 @@ class AllowedMiddleware extends TextBasedMiddleware
 
     private function getUser() {
         //TODO: register (inactive?) User if unknown
-        return AllowedUser::where(['id' => $this->storageService->message->getFrom()->getId()]);
+        return AllowedUser::find($this->storageService->message->getFrom()->getId());
     }
 
     private function isBotmaster($id) {

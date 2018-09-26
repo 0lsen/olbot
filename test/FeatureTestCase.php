@@ -78,25 +78,26 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
             ->shouldReceive('where')
             ->with(['id' => self::USER_NEUTRAL_KARMA, 'active' => true])
             ->andReturn(new EloquentMock(['count' => 1]));
+
         $allowedUserMock
-            ->shouldReceive('where')
-            ->with(['id' => self::USER_ALLOWED])
+            ->shouldReceive('find')
+            ->with(self::USER_ALLOWED)
             ->andReturn(new EloquentMock(['karma' => 0, 'id' => self::USER_ALLOWED]));
         $allowedUserMock
-              ->shouldReceive('where')
-            ->with(['id' => self::USER_NOT_ALLOWED])
+              ->shouldReceive('find')
+            ->with(self::USER_NOT_ALLOWED)
             ->andReturn(new EloquentMock(['karma' => 0, 'id' => self::USER_NOT_ALLOWED]));
         $allowedUserMock
-            ->shouldReceive('where')
-            ->with(['id' => self::USER_POSITIVE_KARMA])
+            ->shouldReceive('find')
+            ->with(self::USER_POSITIVE_KARMA)
             ->andReturn(new EloquentMock(['karma' => 1, 'id' => self::USER_POSITIVE_KARMA]));
         $allowedUserMock
-            ->shouldReceive('where')
-            ->with(['id' => self::USER_NEGATIVE_KARMA])
+            ->shouldReceive('find')
+            ->with(self::USER_NEGATIVE_KARMA)
             ->andReturn(new EloquentMock(['karma' => -1, 'id' => self::USER_NEGATIVE_KARMA]));
         $allowedUserMock
-            ->shouldReceive('where')
-            ->with(['id' => self::USER_NEUTRAL_KARMA])
+            ->shouldReceive('find')
+            ->with(self::USER_NEUTRAL_KARMA)
             ->andReturn(new EloquentMock(['karma' => 0, 'id' => self::USER_NEUTRAL_KARMA]));
 
         $allowedGroupMock = Mockery::mock('alias:OLBot\Model\DB\AllowedGroup');
