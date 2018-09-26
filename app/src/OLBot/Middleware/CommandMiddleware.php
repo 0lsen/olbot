@@ -20,7 +20,7 @@ class CommandMiddleware extends TextBasedMiddleware
                     $commandCall = substr($this->storageService->textCopy, $entity->getOffset()+1, $entity->getLength()-1);
                     if (isset($this->storageService->settings->commands[$commandCall])) {
                         $command = $this->storageService->settings->commands[$commandCall];
-                        $this->storageService->textCopy = str_replace_first('/'.$commandCall.' ', '', $this->storageService->textCopy);
+                        $this->storageService->textCopy = preg_replace('#^/'.$commandCall.'\s*#', '', $this->storageService->textCopy, 1);
                         $commandName = '\OLBot\Command\\'.$command->name;
                         /** @var AbstractCommand $commandObject */
                         $commandObject = new $commandName($this->storageService, $command->settings);

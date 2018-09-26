@@ -17,7 +17,8 @@ class AddCategoryAnswer extends AbstractCommand
         }
         $this->category = $settings['category'];
         $this->type = $settings['type'] ?? 'text';
-        parent::__construct($storageService, $settings);
+        // Todo: Test number of arguments
+        parent::__construct($storageService, array_merge($settings, ['numberOfArguments' => 1]));
     }
 
     public function doStuff()
