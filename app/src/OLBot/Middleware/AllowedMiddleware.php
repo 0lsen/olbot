@@ -62,6 +62,7 @@ class AllowedMiddleware extends TextBasedMiddleware
                 if (
                     $entity->getType() == MessageEntity::TYPE_MENTION
                     && $entity->getOffset() === 0
+                    && substr($this->storageService->textCopy, 1, $entity->getLength()-1) == $this->storageService->settings->botName
                 ) {
                     $text = $this->storageService->textCopy;
                     $text = str_replace_first('@' . $this->storageService->settings->botName . ' ', '', $text);
