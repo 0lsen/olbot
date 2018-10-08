@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection;
+use OLBot\Category\AbstractCategory;
 use Swagger\Client\Telegram\ParseMode;
 use Swagger\Client\Telegram\SendMessageBody;
 
@@ -46,7 +48,7 @@ class ParserTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
-        $answerCollection = new \Illuminate\Database\Eloquent\Collection();
+        $answerCollection = new Collection();
         $answerCollection->add((object) ['text' => 'polo']);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
@@ -71,7 +73,7 @@ class ParserTest extends FeatureTestCase
 //            'reply_to_message_id' => self::MESSAGE_ID,
 //        ];
 //
-//        $answerCollection = new \Illuminate\Database\Eloquent\Collection();
+//        $answerCollection = new Collection();
 //        $answerCollection->add((object) ['text' => 'https://example.com/picture.jpg']);
 //        $answerBuilder = new BuilderMock($answerCollection);
 //        $this->answerMock
@@ -97,7 +99,7 @@ class ParserTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
-        $answerCollection = new \Illuminate\Database\Eloquent\Collection();
+        $answerCollection = new Collection();
         $answerCollection->add((object) ['text' => 'success', 'author' => self::USER_ALLOWED]);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
@@ -123,12 +125,12 @@ class ParserTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
-        $answerCollection = new \Illuminate\Database\Eloquent\Collection();
+        $answerCollection = new Collection();
         $answerCollection->add((object) ['text' => 'fallback']);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')
-            ->with(['category' => \OLBot\Category\AbstractCategory::CAT_FALLBACK])
+            ->with(['category' => AbstractCategory::CAT_FALLBACK])
             ->once()
             ->andReturn($answerBuilder);
 

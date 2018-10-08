@@ -1,5 +1,6 @@
 <?php
 
+use Swagger\Client\ObjectSerializer;
 use Swagger\Client\Telegram\MessageEntity;
 use Swagger\Client\Telegram\ParseMode;
 use Swagger\Client\Telegram\SendMessageBody;
@@ -195,6 +196,6 @@ class CommandTest extends FeatureTestCase
         $update = new Update();
         $update->setMessage($message);
 
-        return \Swagger\Client\ObjectSerializer::sanitizeForSerialization($update);
+        return ObjectSerializer::sanitizeForSerialization($update);
     }
 }

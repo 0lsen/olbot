@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection;
 use OLBot\Category\AbstractCategory;
 use Swagger\Client\Telegram\ParseMode;
 use Swagger\Client\Telegram\SendMessageBody;
@@ -35,7 +36,7 @@ class AllowedTest extends FeatureTestCase
 
     private function mockFallbackAnswer($chat)
     {
-        $answerCollection = new \Illuminate\Database\Eloquent\Collection();
+        $answerCollection = new Collection();
         $answerCollection->add((object) ['text' => 'does not compute']);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock

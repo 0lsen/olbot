@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection;
 use OLBot\Category\AbstractCategory;
 
 /**
@@ -24,7 +25,7 @@ class TestRouteTest extends FeatureTestCase
 
     private function mockFallbackAnswer()
     {
-        $answerCollection = new \Illuminate\Database\Eloquent\Collection();
+        $answerCollection = new Collection();
         $answerCollection->add((object) ['text' => 'does not compute']);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock

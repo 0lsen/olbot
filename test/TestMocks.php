@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection;
+
 class EloquentMock
 {
     private $mockData;
@@ -24,7 +26,7 @@ class BuilderMock
 {
     private $return;
 
-    public function __construct(\Illuminate\Database\Eloquent\Collection $return)
+    public function __construct(Collection $return)
     {
         $this->return = $return;
     }

@@ -2,6 +2,13 @@
 include_once 'TestMocks.php';
 
 use Illuminate\Database\Eloquent\Collection;
+use Swagger\Client\ObjectSerializer;
+use Swagger\Client\Telegram\Chat;
+use Swagger\Client\Telegram\Message;
+use Swagger\Client\Telegram\MessageEntity;
+use Swagger\Client\Telegram\SendMessageBody;
+use Swagger\Client\Telegram\Update;
+use Swagger\Client\Telegram\User;
 
 class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
@@ -155,27 +162,27 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     {
         $message = $this->createMessage($fromId, $chatId, $text);
 
-        $update = new \Swagger\Client\Telegram\Update();
+        $update = new Update();
         $update->setMessage($message);
 
-        return \Swagger\Client\ObjectSerializer::sanitizeForSerialization($update);
+        return ObjectSerializer::sanitizeForSerialization($update);
     }
 
-    protected function createMessage($fromId, $chatId, $text) : \Swagger\Client\Telegram\Message
+    protected function createMessage($fromId, $chatId, $text) : Message
     {
-        $message = new \Swagger\Client\Telegram\Message();
+        $message = new Message();
         $message->setMessageId(self::MESSAGE_ID);
         $message->setText(($chatId < 0 ? '@' . self::BOT_NAME . ' ' : '') . $text);
-        $chat = new \Swagger\Client\Telegram\Chat();
+        $chat = new Chat();
         $chat->setId($chatId);
         $message->setChat($chat);
-        $from = new \Swagger\Client\Telegram\User();
+        $from = new User();
         $from->setId($fromId);
         $message->setFrom($from);
 
         if ($chatId < 0) {
-            $entity = new \Swagger\Client\Telegram\MessageEntity();
-            $entity->setType(\Swagger\Client\Telegram\MessageEntity::TYPE_MENTION);
+            $entity = new MessageEntity();
+            $entity->setType(MessageEntity::TYPE_MENTION);
             $entity->setOffset(0);
             $entity->setLength(strlen(self::BOT_NAME)+1);
             $message->setEntities([$entity]);
@@ -189,7 +196,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $guzzleMock = Mockery::mock('overload:Swagger\Client\Api\MessagesApi');
         $guzzleMock
             ->shouldReceive('sendMessage')
-            ->withArgs(function ($token, \Swagger\Client\Telegram\SendMessageBody $message) {
+            ->withArgs(function ($token, SendMessageBody $message) {
                 $this->assertEquals($this->expectedMessage, $message);
                 return true;
             })
