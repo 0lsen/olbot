@@ -8,6 +8,7 @@ use Swagger\Client\Api\AttachmentsApi;
 use Swagger\Client\Api\MessagesApi;
 use Swagger\Client\Telegram\ParseMode;
 use Swagger\Client\Telegram\SendMessageBody;
+use Swagger\Client\Telegram\SendPhotoLinkBody;
 
 class MessageService
 {
@@ -41,16 +42,14 @@ class MessageService
 
     function sendPicture($url, $idOut, $idIn)
     {
+        // Todo: write test
+        $message = new SendPhotoLinkBody();
+        $message->setChatId($idOut);
+        $message->setReplyToMessageId($idIn);
+        $message->setPhoto($url);
         try {
-            // Todo: write test
-            $this->attachmentApi->sendPhoto(
-                $this->token,
-                $idOut,
-                $url,
-                null, null, null,
-                $reply_to_message_id = $idIn
-            );
-            Logger::logMessageOut($url);
+            $this->attachmentApi->sendPhotoLink($this->token, $message);
+            Logger::logMessageOut($message);
         } catch (\Throwable $t) {
             Logger::logError($idIn, $t);
         }
