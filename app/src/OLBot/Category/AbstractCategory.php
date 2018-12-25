@@ -16,6 +16,7 @@ abstract class AbstractCategory
     // 90+ for misc. categories (for now)
     const CAT_FALLBACK = 90;
     const CAT_ERROR = 91;
+    const CAT_LATEST = 92;
 
     /** @var StorageService */
     public static $storageService;
@@ -28,11 +29,28 @@ abstract class AbstractCategory
 
     protected $categoryNumber;
 
+    protected $latest;
+
     public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits)
     {
         $this->categoryNumber = $categoryNumber;
         $this->requiredCategoryHits = $settings['requiredCategoryHits'] ?? [];
+        $this->latest = ($settings['allowLatest'] ?? false) && $this->latestCategoryHit($categoryhits);
         $this->requirementsMet = $this->areRequirementsMet($subjectCandidateIndex, $categoryhits);
+    }
+
+    /**
+     * @param CategoryHits[] $categoryHits
+     * @return bool
+     */
+    private function latestCategoryHit($categoryHits)
+    {
+        foreach ($categoryHits as $category) {
+            if ($category->id == self::CAT_LATEST && $category->hits) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function generateResponse() {}

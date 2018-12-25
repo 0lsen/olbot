@@ -137,4 +137,32 @@ class ParserTest extends FeatureTestCase
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'categoryfour categoryfive'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
+
+    public function testLatestTextResponse()
+    {
+        $from = self::USER_NEUTRAL_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->mockKeywords(['latest' => AbstractCategory::CAT_LATEST, 'categorytwo' => 2]);
+
+        $this->expectedMessage = new SendMessageBody([
+            'chat_id' => $chat,
+            'text' => "latest",
+            'parse_mode' => ParseMode::MARKDOWN,
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ]);
+
+        $answerCollection = new Collection();
+        $answerCollection->add((object) ['time' => '2018-01-01 01:00:00', 'text' => 'first', 'author' => '']);
+        $answerCollection->add((object) ['time' => '2018-01-01 02:00:00', 'text' => 'latest', 'author' => '']);
+        $answerBuilder = new BuilderMock($answerCollection);
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['category' => 2])
+            ->once()
+            ->andReturn($answerBuilder);
+
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'categorytwo latest'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
 }

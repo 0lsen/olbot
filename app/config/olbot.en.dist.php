@@ -72,12 +72,14 @@ return new \OLBot\Settings(
                 # 'settings'
                 #       'requiredCategoryHits' specifying how many hits on specific categories are required
                 #       'appendAuthor' for class 'TextResponse': sign line with the answer's author, if available
+                #       'allowLatest' allows to request the newest answer by a hit on category 92
                 'class' => 'Math',
                 'settings' => [
                     'requiredCategoryHits' => [
                         1 => 1,
                     ],
-                    'appendAuthor' => true
+                    'appendAuthor' => true,
+                    'allowLatest' => true
                 ]
             ],
             2 => [

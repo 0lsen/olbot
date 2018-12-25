@@ -49,6 +49,9 @@ return new \OLBot\Settings(
             ],
             2 => [
                 'class' => 'TextResponse',
+                'settings' => [
+                    'allowLatest' => true
+                ]
             ],
             3 => [
                 'class' => 'PictureResponse',
