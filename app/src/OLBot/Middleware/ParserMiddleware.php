@@ -141,8 +141,9 @@ class ParserMiddleware extends TextBasedMiddleware
         }
 
         preg_match_all('#\w{3,}#', $text, $words);
+        $words = array_unique($words[0]);
 
-        foreach ($words[0] as $word) {
+        foreach ($words as $word) {
             $keyword = Keyword::find(md5(strtolower($word)));
             if (!is_null($keyword)) {
                 if (!isset($hits[$keyword->category])) {
