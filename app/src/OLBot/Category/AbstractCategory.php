@@ -4,6 +4,7 @@ namespace OLBot\Category;
 
 
 use OLBot\Model\CategoryHits;
+use OLBot\Model\DB\Answer;
 use OLBot\Service\StorageService;
 
 abstract class AbstractCategory
@@ -86,5 +87,12 @@ abstract class AbstractCategory
             }
         }
         return $requirementsMet;
+    }
+
+    protected function getAnswer()
+    {
+        $answers = Answer::where(['category' => $this->categoryNumber]);
+        if (!$answers->count()) throw new \Exception('no answer found for category '.$this->categoryNumber);
+        return $this->latest ? $answers->get()->last() : $answers->inRandomOrder()->first();
     }
 }
