@@ -65,6 +65,17 @@ return new \OLBot\Settings(
                     ],
                     'appendAuthor' => true
                 ]
+            ],
+            6 => [
+                'class' => 'Weather',
+                'settings' => [
+                    'openWeatherSettings' => [
+                        'apiKey' => 'foo',
+                        'fallbackPlace' => 'Berlin',
+                        'units' => 'metric',
+                        'lang' => 'en'
+                    ]
+                ]
             ]
         ],
         'stringReplacements' => [

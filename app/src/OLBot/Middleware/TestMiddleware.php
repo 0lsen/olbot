@@ -38,32 +38,14 @@ class TestMiddleware extends TextBasedMiddleware
         $response = $next($request, $response);
 
         $content = [
-            'logs' => $this->logs
+            'logs' => $this->logs,
+            'storage' => [
+                'karma' => $this->storageService->karma,
+                'response' => $this->storageService->response,
+                'sendResponse' => $this->storageService->sendResponse,
+                'subjectCandidates' => $this->storageService->subjectCandidates
+            ]
         ];
-
-        if ($this->storageService->sendResponse) {
-
-            if (sizeof($this->storageService->response->text) || !is_null($this->storageService->karma)) {
-                $text = '';
-
-                foreach ($this->storageService->response->text as $message) {
-                    $this->addLine($message, $text);
-                }
-
-                if (!is_null($this->storageService->karma)) {
-                    $this->addLine(ucwords($this->storageService->karma->text), $text);
-                }
-
-                $content['text'] = $text;
-            }
-
-            if (sizeof($this->storageService->response->pics)) {
-                $content['pics'] = [];
-                foreach ($this->storageService->response->pics as $pic) {
-                    $content['pics'][] = $pic;
-                }
-            }
-        }
 
         return $response->withJson($content);
     }

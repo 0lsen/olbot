@@ -1,1 +1,0 @@
-java -jar swagger-codegen-cli-2.3.1.jar generate -i telegram_swagger.yaml -l php --model-package \Telegram

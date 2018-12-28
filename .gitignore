@@ -1,5 +1,4 @@
 vendor
 .idea
 composer.phar
-**/.swagger*
-**/SwaggerClient*
+app/src/Api/**

@@ -31,7 +31,12 @@
   "autoload": {
     "psr-4": {
       "OLBot\\": "app/src/OLBot/",
-      "Swagger\\Client\\": "app/src/SwaggerClient-php/lib/"
+      "Swagger\\Client\\": [
+        "app/src/Api/Telegram/SwaggerClient-php/lib/"
+      ],
+      "OpenAPI\\Client\\": [
+        "app/src/Api/OpenWeather/lib/"
+      ]
     }
   }
 }

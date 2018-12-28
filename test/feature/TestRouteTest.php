@@ -18,8 +18,17 @@ class TestRouteTest extends FeatureTestCase
         $json = (string) $this->client->response->getBody();
         $this->assertJson($json);
         $this->assertEquals([
-            'text' => 'does not compute',
-            'logs' => ['In: foo bar']
+            'logs' => ['In: foo bar'],
+            'storage' => [
+                'karma' => null,
+                'response' => [
+                    'math' => [],
+                    'pics' => [],
+                    'text' => ['does not compute']
+                ],
+                'sendResponse' => true,
+                'subjectCandidates' => []
+            ]
         ], json_decode($json, true));
     }
 
