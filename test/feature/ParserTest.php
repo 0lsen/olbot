@@ -2,14 +2,14 @@
 
 use Illuminate\Database\Eloquent\Collection;
 use OLBot\Category\AbstractCategory;
-use OpenAPI\Client\Configuration;
-use OpenAPI\Client\OpenWeather\Main;
-use OpenAPI\Client\OpenWeather\Model200;
-use OpenAPI\Client\OpenWeather\Sys;
-use OpenAPI\Client\OpenWeather\Weather;
-use OpenAPI\Client\OpenWeather\Wind;
-use Swagger\Client\Telegram\ParseMode;
-use Swagger\Client\Telegram\SendMessageBody;
+use OpenWeather\Configuration;
+use OpenWeather\Model\Main;
+use OpenWeather\Model\Model200;
+use OpenWeather\Model\Sys;
+use OpenWeather\Model\Weather;
+use OpenWeather\Model\Wind;
+use Telegram\Model\ParseMode;
+use Telegram\Model\SendMessageBody;
 
 /**
  * @runTestsInSeparateProcesses
@@ -24,7 +24,7 @@ class ParserTest extends FeatureTestCase
         parent::setup();
     }
 
-    function testMath()
+    function testMath($mock = true)
     {
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
@@ -37,11 +37,13 @@ class ParserTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
+        if ($mock) $this->mockMath('1 + 1', '2');
+
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'math 1 + 1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
-    function testWeather()
+    function testWeather($mock = true)
     {
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
@@ -54,7 +56,7 @@ class ParserTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
-        $this->mockWeather();
+        if ($mock) $this->mockWeather();
 
         $answerCollection = new Collection();
         $answerCollection->add((object) ['text' => 'The weather in #place# is #situation# at #temp# °C and #wind# km/h wind.']);
@@ -78,7 +80,7 @@ class ParserTest extends FeatureTestCase
         $weatherResponse->setWeather([new Weather(['description' => 'misty'])]);
         $weatherResponse->setWind(new Wind(['speed' => 2.6]));
 
-        $openweatherMock = Mockery::mock('overload:OpenAPI\Client\Api\CurrentWeatherDataApi');
+        $openweatherMock = Mockery::mock('overload:OpenWeather\Api\CurrentWeatherDataApi');
         $openweatherMock
             ->expects('getConfig')
             ->once()

@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Eloquent\Collection;
 use OLBot\Category\AbstractCategory;
-use Swagger\Client\Telegram\ParseMode;
-use Swagger\Client\Telegram\SendMessageBody;
+use Telegram\Model\ParseMode;
+use Telegram\Model\SendMessageBody;
 
 /**
  * @runTestsInSeparateProcesses

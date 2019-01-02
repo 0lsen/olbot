@@ -7,9 +7,9 @@ use OLBot\Category\AbstractCategory;
 use OLBot\Model\DB\AllowedUser;
 use OLBot\Model\DB\Answer;
 use OLBot\Util;
-use Swagger\Client\Api\MessagesApi;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Telegram\Api\MessagesApi;
 
 class SendBirthdayReminders extends Command
 {

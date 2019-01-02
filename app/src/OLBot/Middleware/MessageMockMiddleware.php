@@ -8,8 +8,8 @@ use OLBot\Logger;
 use OLBot\Model\DB\Answer;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Swagger\Client\ObjectSerializer;
-use Swagger\Client\Telegram\Message;
+use Telegram\Model\Message;
+use Telegram\ObjectSerializer;
 
 class MessageMockMiddleware extends TextBasedMiddleware
 {
@@ -17,7 +17,7 @@ class MessageMockMiddleware extends TextBasedMiddleware
     {
         $messageObject = json_decode(json_encode($request->getParsedBodyParam('message')));
         /** @var Message $message */
-        $message = ObjectSerializer::deserialize($messageObject, 'Swagger\Client\Telegram\Message');
+        $message = ObjectSerializer::deserialize($messageObject, 'Telegram\Model\Message');
 
         Logger::logMessageIn($message);
 

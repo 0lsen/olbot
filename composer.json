@@ -21,8 +21,7 @@
     "guzzlehttp/guzzle": "6.3.3",
     "illuminate/database": "v5.5.39",
     "symfony/console": "v3.4.14",
-    "mockery/mockery": "1.1.0",
-    "olsen/olmath": "^0.0.1"
+    "mockery/mockery": "1.1.0"
   },
   "require-dev": {
     "phpunit/phpunit": "6.5.9",
@@ -31,12 +30,9 @@
   "autoload": {
     "psr-4": {
       "OLBot\\": "app/src/OLBot/",
-      "Swagger\\Client\\": [
-        "app/src/Api/Telegram/SwaggerClient-php/lib/"
-      ],
-      "OpenAPI\\Client\\": [
-        "app/src/Api/OpenWeather/lib/"
-      ]
+      "OpenWeather\\": "app/src/Api/OpenWeather/lib/",
+      "PHPythagoras\\": "app/src/Api/PHPythagoras/SwaggerClient-php/lib/",
+      "Telegram\\": "app/src/Api/Telegram/SwaggerClient-php/lib/"
     }
   }
 }

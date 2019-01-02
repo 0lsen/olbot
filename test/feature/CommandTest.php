@@ -1,10 +1,10 @@
 <?php
 
-use Swagger\Client\ObjectSerializer;
-use Swagger\Client\Telegram\MessageEntity;
-use Swagger\Client\Telegram\ParseMode;
-use Swagger\Client\Telegram\SendMessageBody;
-use Swagger\Client\Telegram\Update;
+use Telegram\Model\MessageEntity;
+use Telegram\Model\ParseMode;
+use Telegram\Model\SendMessageBody;
+use Telegram\Model\Update;
+use Telegram\ObjectSerializer;
 
 /**
  * @runTestsInSeparateProcesses

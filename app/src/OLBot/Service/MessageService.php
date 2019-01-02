@@ -4,11 +4,11 @@ namespace OLBot\Service;
 
 
 use OLBot\Logger;
-use Swagger\Client\Api\AttachmentsApi;
-use Swagger\Client\Api\MessagesApi;
-use Swagger\Client\Telegram\ParseMode;
-use Swagger\Client\Telegram\SendMessageBody;
-use Swagger\Client\Telegram\SendPhotoLinkBody;
+use Telegram\Api\AttachmentsApi;
+use Telegram\Api\MessagesApi;
+use Telegram\Model\ParseMode;
+use Telegram\Model\SendMessageBody;
+use Telegram\Model\SendPhotoLinkBody;
 
 class MessageService
 {

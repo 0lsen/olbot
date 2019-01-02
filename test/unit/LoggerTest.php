@@ -1,5 +1,8 @@
 <?php
 
+use Telegram\Model\Message;
+use Telegram\Model\SendMessageBody;
+
 class LoggerTest extends \PHPUnit\Framework\TestCase
 {
     function testLogError()
@@ -31,7 +34,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
             })
             ->once();
 
-        \OLBot\Logger::logMessageIn(new \Swagger\Client\Telegram\Message(['text' => 'foo bar', 'message_id' => 123]));
+        \OLBot\Logger::logMessageIn(new Message(['text' => 'foo bar', 'message_id' => 123]));
 
         Mockery::close();
     }
@@ -48,7 +51,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
             })
             ->once();
 
-        \OLBot\Logger::logMessageOut(new \Swagger\Client\Telegram\SendMessageBody(['text' => 'foo bar', 'reply_to_message_id' => 123]));
+        \OLBot\Logger::logMessageOut(new SendMessageBody(['text' => 'foo bar', 'reply_to_message_id' => 123]));
 
         Mockery::close();
     }

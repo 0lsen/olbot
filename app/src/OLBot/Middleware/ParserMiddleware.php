@@ -3,8 +3,6 @@
 namespace OLBot\Middleware;
 
 
-use Math\Parser;
-use Math\Result;
 use OLBot\Category\AbstractCategory;
 use OLBot\Model\CategoryHits;
 use OLBot\Model\DB\Keyword;
@@ -25,7 +23,6 @@ class ParserMiddleware extends TextBasedMiddleware
 
         $this->removeTags($textCopy);
 
-        $this->findMathExpressions($textCopy);
         $this->findSubjectCandidates($textCopy);
 
         // TODO: foreach over all subject candidates and find best result (by best subject candidate? by best category result?)
@@ -55,9 +52,8 @@ class ParserMiddleware extends TextBasedMiddleware
 
     private function findSubjectCandidates(&$text)
     {
-        $quotationMarks = $this->storageService->settings->parser->quotationMarks;
-        foreach (str_split($quotationMarks) as $mark) {
-            $regexPattern = '#(?:{(?<i>\d+)}|(?<!{\d}))'.$mark.'([^'.$mark.']+)'.$mark.'(?!{/(?P=i)})#';
+        foreach ($this->storageService->settings->parser->quotationMarks as $start => $end) {
+            $regexPattern = '#(?:{(?<i>\d+)}|(?<!{\d}))'.preg_quote($start, '#').'([^'.preg_quote($end, '#').']+)'.preg_quote($end, '#').'(?!{/(?P=i)})#';
             preg_match_all($regexPattern, $text, $matches);
             for ($i = 0; $i < sizeof($matches[0]); $i++) {
                 $match = $matches[2][$i];
@@ -81,9 +77,8 @@ class ParserMiddleware extends TextBasedMiddleware
 //        // limit to 10 because of '(?<!{\d})' - lookbehind fixed width prevents the use of '\d+' here
 //        while (preg_match($regexPattern, $text, $match) && sizeof($this->storageService->subjectCandidates) < 10)
 
-        $subjectDelimiters = $this->storageService->settings->parser->subjectDelimiter;
-        foreach (str_split($subjectDelimiters) as $delimiter) {
-            if (preg_match('#'.$delimiter.'([^'.$delimiter.']+)$#', $text, $matches)) {
+        foreach ($this->storageService->settings->parser->subjectDelimiter as $delimiter) {
+            if (preg_match('#'.preg_quote($delimiter, '#').'(.+)$#', $text, $matches)) {
                 $match = $matches[1];
                 $this->removeTags($match);
                 $this->storageService->subjectCandidates[] = new SubjectCandidate(
@@ -99,26 +94,6 @@ class ParserMiddleware extends TextBasedMiddleware
                     1
                 );
             }
-        }
-    }
-
-    private function findMathExpressions(&$text)
-    {
-        Parser::init();
-        $results = Parser::evaluate($text);
-        foreach ($results as $result) {
-            // TODO: Encapsulate in $text like subject candidates
-            $this->storageService->response->math[] = $this->formatMathResult($result);
-        }
-    }
-
-    private function formatMathResult(Result $result)
-    {
-        if ($result->dbz) {
-            return $this->storageService->settings->parser->math->divisionByZeroResponse;
-        } else {
-            $string = $result->original . ' = ' . $result->result;
-            return str_replace('.', $this->storageService->settings->parser->math->decimalPoint, $string);
         }
     }
 

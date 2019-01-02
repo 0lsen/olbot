@@ -22,7 +22,6 @@ class TestRouteTest extends FeatureTestCase
             'storage' => [
                 'karma' => null,
                 'response' => [
-                    'math' => [],
                     'pics' => [],
                     'text' => ['does not compute']
                 ],

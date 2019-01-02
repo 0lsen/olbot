@@ -4,10 +4,10 @@ namespace OLBot\Service;
 
 
 use OLBot\Model\DB\AllowedUser;
-use OLBot\Model\Reponse;
+use OLBot\Model\Response;
 use OLBot\Model\SubjectCandidate;
 use OLBot\Settings;
-use Swagger\Client\Telegram\Message;
+use Telegram\Model\Message;
 
 class StorageService
 {
@@ -30,6 +30,6 @@ class StorageService
     public function __construct(Settings $settings)
     {
         $this->settings = $settings;
-        $this->response = new Reponse();
+        $this->response = new Response();
     }
 }

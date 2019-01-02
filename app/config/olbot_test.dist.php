@@ -46,6 +46,14 @@ return new \OLBot\Settings(
         'categories' => [
             1 => [
                 'class' => 'Math',
+                'settings' => [
+                    'phpythagorasSettings' => [
+                        'apiKey' => 'foo',
+                        'decimalpoint' => '.',
+                        'groupSeparator' => ',',
+                        'divisionByZeroResponse' => 'I refuse to divide by zero.'
+                    ]
+                ]
             ],
             2 => [
                 'class' => 'TextResponse',
@@ -81,15 +89,15 @@ return new \OLBot\Settings(
         'stringReplacements' => [
             'ö' => 'o'
         ],
-        'math' => [
-            'decimalPoint' => '.',
-            'divisionByZeroResponse' => 'Division by Zero is evil.',
-        ],
         'translation' => [
             'fallbackLanguage' => 'english',
             'typicalLanguageEnding' => 'ese'
         ],
-        'quotationMarks' => '"\'',
-        'subjectDelimiters' => ':',
+        'quotationMarks' => [
+            '"' => '"',
+            '\'' => '\'',
+            '„' => '“',
+        ],
+        'subjectDelimiters' => [':', 'in '],
     ]
 );

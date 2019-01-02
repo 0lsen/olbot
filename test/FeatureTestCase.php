@@ -2,13 +2,15 @@
 include_once 'TestMocks.php';
 
 use Illuminate\Database\Eloquent\Collection;
-use Swagger\Client\ObjectSerializer;
-use Swagger\Client\Telegram\Chat;
-use Swagger\Client\Telegram\Message;
-use Swagger\Client\Telegram\MessageEntity;
-use Swagger\Client\Telegram\SendMessageBody;
-use Swagger\Client\Telegram\Update;
-use Swagger\Client\Telegram\User;
+use PHPythagoras\Configuration;
+use PHPythagoras\Model\FormulaResponseBody;
+use Telegram\Model\Chat;
+use Telegram\Model\Message;
+use Telegram\Model\MessageEntity;
+use Telegram\Model\SendMessageBody;
+use Telegram\Model\Update;
+use Telegram\Model\User;
+use Telegram\ObjectSerializer;
 
 class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
@@ -31,7 +33,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     protected $answerMock;
 
     protected $token;
-    /** @var \Swagger\Client\Telegram\SendMessageBody */
+    /** @var SendMessageBody */
     protected $expectedMessage;
 
     function setup()
@@ -193,7 +195,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 
     protected function expectMessage()
     {
-        $guzzleMock = Mockery::mock('overload:Swagger\Client\Api\MessagesApi');
+        $guzzleMock = Mockery::mock('overload:Telegram\Api\MessagesApi');
         $guzzleMock
             ->shouldReceive('sendMessage')
             ->withArgs(function ($token, SendMessageBody $message) {
@@ -207,5 +209,22 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $logMessageOutMock
             ->shouldReceive('create')
             ->once();
+    }
+
+    protected function mockMath($formula, $result)
+    {
+        $mathResponse = new FormulaResponseBody();
+        $mathResponse->setOk(true);
+        $mathResponse->setResultString($formula . ' = ' . $result);
+
+        $phpythagorasMock = Mockery::mock('overload:PHPythagoras\Api\DefaultApi');
+        $phpythagorasMock
+            ->expects('getConfig')
+            ->once()
+            ->andReturn(new Configuration());
+        $phpythagorasMock
+            ->expects('formulaEvaluateFulltextPost')
+            ->once()
+            ->andReturn($mathResponse);
     }
 }

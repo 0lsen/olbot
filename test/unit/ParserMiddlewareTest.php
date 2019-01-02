@@ -12,34 +12,31 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
     function testFindSubjectCandidatesAndMathExpression()
     {
         $settings = new SettingsMock(new \OLBot\Settings\ParserSettings(
-            [1 => ['class' => 'Math',]],
+            [1 => ['class' => 'Math', 'settings' => ['phpythagorasSettings' => []]]],
             [],
-            ['decimalPoint' => '', 'divisionByZeroResponse' => ''],
             ['fallbackLanguage' => '', 'typicalLanguageEnding' => ''],
-            '"\'',
-            ':'
+            ['“' => '”', '\'' => '\''],
+            [':', 'in ']
         ));
 
         $storage = new \OLBot\Service\StorageService($settings);
-        $storage->textCopy = '{123}foo 1+1 "abc \'def" ghi\' jkl: mno "pqr stu"';
+        $storage->textCopy = '{123}foo “abc \'def” ghi\' jkl: mno “pqr in stu”';
         $detector = new \OLBot\Middleware\ParserMiddleware($storage);
 
         $this->mockKeywords();
 
         $detector(new RequestMock(), new \Slim\Http\Response(), function ($a, $b) {return $b;});
 
-        $this->assertEncapsulatedText('"abc.*def"', $storage->textCopy);
+        $this->assertEncapsulatedText('“abc.*def”', $storage->textCopy);
         $this->assertEncapsulatedText('\'def.*ghi\'', $storage->textCopy);
-        $this->assertEncapsulatedText('"pqr.*stu"', $storage->textCopy);
-        $this->assertEncapsulatedText(' mno.*stu"', $storage->textCopy);
+        $this->assertEncapsulatedText('“pqr.*stu”', $storage->textCopy);
+        $this->assertEncapsulatedText(' mno.*stu”', $storage->textCopy);
 
-        $this->assertEquals('1+1 = 2', $storage->response->math[0]);
         $this->assertEquals('abc \'def', $storage->subjectCandidates[0]->text);
-        $this->assertEquals('pqr stu', $storage->subjectCandidates[1]->text);
-        $this->assertEquals('def" ghi', $storage->subjectCandidates[2]->text);
-        $this->assertEquals(' mno "pqr stu"', $storage->subjectCandidates[3]->text);
-
-        $this->assertEquals('<code>1+1 = 2</code>', $storage->response->text[0]);
+        $this->assertEquals('pqr in stu', $storage->subjectCandidates[1]->text);
+        $this->assertEquals('def” ghi', $storage->subjectCandidates[2]->text);
+        $this->assertEquals(' mno “pqr in stu”', $storage->subjectCandidates[3]->text);
+        $this->assertEquals('stu”', $storage->subjectCandidates[4]->text);
     }
 
     private function mockKeywords()
@@ -48,7 +45,7 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
         $keywordMock
             ->shouldReceive('find')
             ->with(md5('foo'))
-            ->andReturn(new EloquentMock(['category' => 1]));
+            ->andReturnNull();
         $keywordMock
             ->shouldReceive('find')
             ->with(md5('ghi'))

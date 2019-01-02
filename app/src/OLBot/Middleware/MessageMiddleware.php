@@ -10,8 +10,8 @@ use OLBot\Service\MessageService;
 use OLBot\Service\StorageService;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Swagger\Client\ObjectSerializer;
-use Swagger\Client\Telegram\Message;
+use Telegram\Model\Message;
+use Telegram\ObjectSerializer;
 
 class MessageMiddleware
 {
@@ -30,7 +30,7 @@ class MessageMiddleware
     {
         $messageObject = json_decode(json_encode($request->getParsedBodyParam('message')));
         /** @var Message $message */
-        $message = ObjectSerializer::deserialize($messageObject, 'Swagger\Client\Telegram\Message');
+        $message = ObjectSerializer::deserialize($messageObject, 'Telegram\Model\Message');
 
         Logger::logMessageIn($message);
 

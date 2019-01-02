@@ -1,7 +1,7 @@
 <?php
 
-use Swagger\Client\Telegram\ParseMode;
-use Swagger\Client\Telegram\SendMessageBody;
+use Telegram\Model\ParseMode;
+use Telegram\Model\SendMessageBody;
 
 /**
  * @runTestsInSeparateProcesses
@@ -63,6 +63,8 @@ class KarmaTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
+        $this->mockMath('1+1', '2');
+
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'math 1+1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
@@ -79,6 +81,8 @@ class KarmaTest extends FeatureTestCase
             'parse_mode' => ParseMode::HTML,
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
+
+        $this->mockMath('1+1', '2');
 
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'math 1+1 bar'));
         $this->assertEquals(200, $this->client->response->getStatusCode());

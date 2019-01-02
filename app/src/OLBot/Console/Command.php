@@ -5,9 +5,9 @@ namespace OLBot\Console;
 
 use OLBot\Logger;
 use OLBot\Settings;
-use Swagger\Client\Api\MessagesApi;
-use Swagger\Client\Telegram\SendMessageBody;
 use Symfony\Component\Console\Output\OutputInterface;
+use Telegram\Api\MessagesApi;
+use Telegram\Model\SendMessageBody;
 
 abstract class Command extends \Symfony\Component\Console\Command\Command
 {

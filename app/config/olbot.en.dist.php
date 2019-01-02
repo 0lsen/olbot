@@ -79,7 +79,23 @@ return new \OLBot\Settings(
                         1 => 1,
                     ],
                     'appendAuthor' => true,
-                    'allowLatest' => true
+                    'allowLatest' => true,
+
+                    # Special for Math: 'phpythagorasSettings'
+                    'phpythagorasSettings' => [
+                        'apiKey' => 'foo',
+                        'decimalpoint' => '.',
+                        'groupSeparator' => ',',
+                        'divisionByZeroResponse' => 'I refuse to divide by zero.'
+                    ],
+
+                    # Special for Weather: 'openWeatherSettings'
+                    'openWeatherSettings' => [
+                        'apiKey' => 'bar',
+                        'fallbackPlace' => 'Berlin',
+                        'units' => 'metric',
+                        'lang' => 'en'
+                    ]
                 ]
             ],
             2 => [
@@ -95,20 +111,18 @@ return new \OLBot\Settings(
             'Ä' => 'Ae'
         ],
 
-        # math settings
-        'math' => [
-            'decimalPoint' => '.',
-            'divisionByZeroResponse' => 'Division by Zero is evil.',
-        ],
-
         # TODO: implement this crap
         'translation' => [
             'fallbackLanguage' => 'english',
             'typicalLanguageEnding' => 'ese'
         ],
 
-        # stuff to find possible subjects, like 'foo "i am a possible subject"' and 'foo: i am too'
-        'quotationMarks' => '"\'',
-        'subjectDelimiters' => ':',
+        # stuff to find possible subjects, like 'foo „i am a possible subject“' and 'foo: i am too'
+        'quotationMarks' => [
+            '"' => '"',
+            '\'' => '\'',
+            '„' => '“',
+        ],
+        'subjectDelimiters' => [':', 'in '],
     ]
 );

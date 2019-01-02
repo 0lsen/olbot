@@ -56,7 +56,6 @@ class Settings
         $this->parser = new ParserSettings(
             $parser['categories'],
             $parser['stringReplacements'],
-            $parser['math'],
             $parser['translation'],
             $parser['quotationMarks'],
             $parser['subjectDelimiters']

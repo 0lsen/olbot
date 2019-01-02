@@ -6,8 +6,8 @@ namespace OLBot\Middleware;
 use Mockery;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Swagger\Client\ObjectSerializer;
-use Swagger\Client\Telegram\Message;
+use Telegram\Model\Message;
+use Telegram\ObjectSerializer;
 
 class TestMiddleware extends TextBasedMiddleware
 {

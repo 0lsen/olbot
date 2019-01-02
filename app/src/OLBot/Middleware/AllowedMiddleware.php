@@ -7,7 +7,7 @@ use OLBot\Model\DB\AllowedGroup;
 use OLBot\Model\DB\AllowedUser;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Swagger\Client\Telegram\MessageEntity;
+use Telegram\Model\MessageEntity;
 
 class AllowedMiddleware extends TextBasedMiddleware
 {

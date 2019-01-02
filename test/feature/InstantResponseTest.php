@@ -1,7 +1,7 @@
 <?php
 
-use Swagger\Client\Telegram\ParseMode;
-use Swagger\Client\Telegram\SendMessageBody;
+use Telegram\Model\ParseMode;
+use Telegram\Model\SendMessageBody;
 
 /**
  * @runTestsInSeparateProcesses

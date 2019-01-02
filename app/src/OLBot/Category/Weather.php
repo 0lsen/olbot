@@ -3,8 +3,8 @@
 namespace OLBot\Category;
 
 
-use OpenAPI\Client\Api\CurrentWeatherDataApi;
-use OpenAPI\Client\OpenWeather\Model200;
+use OpenWeather\Api\CurrentWeatherDataApi;
+use OpenWeather\Model\Model200;
 
 class Weather extends AbstractCategory
 {

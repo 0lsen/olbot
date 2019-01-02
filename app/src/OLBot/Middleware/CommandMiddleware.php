@@ -6,7 +6,7 @@ namespace OLBot\Middleware;
 use OLBot\Command\AbstractCommand;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Swagger\Client\Telegram\MessageEntity;
+use Telegram\Model\MessageEntity;
 
 class CommandMiddleware extends TextBasedMiddleware
 {

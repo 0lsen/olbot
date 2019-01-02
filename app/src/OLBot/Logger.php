@@ -6,10 +6,10 @@ namespace OLBot;
 use OLBot\Model\DB\LogError;
 use OLBot\Model\DB\LogMessageIn;
 use OLBot\Model\DB\LogMessageOut;
-use Swagger\Client\ObjectSerializer;
-use Swagger\Client\Telegram\Message;
-use Swagger\Client\Telegram\SendMessageBody;
-use Swagger\Client\Telegram\SendPhotoLinkBody;
+use Telegram\Model\Message;
+use Telegram\Model\SendMessageBody;
+use Telegram\Model\SendPhotoLinkBody;
+use Telegram\ObjectSerializer;
 
 class Logger
 {
