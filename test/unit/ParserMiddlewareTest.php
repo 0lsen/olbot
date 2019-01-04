@@ -1,5 +1,7 @@
 <?php
 
+include_once 'SettingsMock.php';
+
 class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
 {
     public function setUp()
@@ -76,12 +78,5 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
 class RequestMock extends \Slim\Http\Request {
     public function __construct()
     {
-    }
-}
-
-class SettingsMock extends \OLBot\Settings {
-    public function __construct($parser)
-    {
-        $this->parser = $parser;
     }
 }

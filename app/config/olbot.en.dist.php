@@ -83,7 +83,7 @@ return new \OLBot\Settings(
 
                     # Special for Math: 'phpythagorasSettings'
                     'phpythagorasSettings' => [
-                        'apiKey' => 'foo',
+                        'apiKey' => 'foo', #required
                         'decimalpoint' => '.',
                         'groupSeparator' => ',',
                         'divisionByZeroResponse' => 'I refuse to divide by zero.'
@@ -91,11 +91,23 @@ return new \OLBot\Settings(
 
                     # Special for Weather: 'openWeatherSettings'
                     'openWeatherSettings' => [
-                        'apiKey' => 'bar',
-                        'fallbackPlace' => 'Berlin',
+                        'apiKey' => 'bar', #required
+                        'fallbackPlace' => 'Berlin', #required (sort of)
                         'units' => 'metric',
                         'lang' => 'en'
-                    ]
+                    ],
+
+                    # Special for Markov: 'markovSettings'
+                    'markovSettings' => [
+                        'resources' => [ #required
+                            'example.txt'
+                        ],
+                        'cacheKey' => false,
+                        'ignoreCache' => false,
+                        'sentenceThreshold' => 3,
+                        'wordThreshold' => 50,
+                        'endOfSentence' => '.:!?¿'
+                    ],
                 ]
             ],
             2 => [
