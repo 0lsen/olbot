@@ -51,7 +51,7 @@ class ParserTest extends FeatureTestCase
         $this->mockKeywords(['how' => null, 'the' => null, 'weather' => 6]);
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => 'The weather in London, GB is misty at 7.5 °C and 2.6 km/h wind.',
+            'text' => 'The weather in London (GB) is misty at 7.5 °C and 2.6 km/h wind.',
             'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);

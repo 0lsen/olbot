@@ -42,7 +42,7 @@ class Weather extends AbstractCategory
             function($match) use($data) {
                 switch ($match[1]) {
                     case 'place':
-                        return $data->getName() . ', ' . $data->getSys()->getCountry();
+                        return $data->getName() . ' (' . $data->getSys()->getCountry() . ')';
                     case 'temp':
                         return $data->getMain()->getTemp();
                     case 'wind':
