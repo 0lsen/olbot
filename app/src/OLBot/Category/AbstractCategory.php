@@ -3,9 +3,11 @@
 namespace OLBot\Category;
 
 
+use Illuminate\Database\Eloquent\Builder;
 use OLBot\Model\CategoryHits;
 use OLBot\Model\DB\Answer;
 use OLBot\Service\StorageService;
+use OLBot\Util;
 
 abstract class AbstractCategory
 {
@@ -32,7 +34,10 @@ abstract class AbstractCategory
 
     protected $latest;
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits)
+    /** @var Builder */
+    private $answers = null;
+
+    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
     {
         $this->categoryNumber = $categoryNumber;
         $this->requiredCategoryHits = $settings['requiredCategoryHits'] ?? [];
@@ -89,10 +94,35 @@ abstract class AbstractCategory
         return $requirementsMet;
     }
 
+    protected function similiarAnswerIsKnown($text1) {
+        $this->replaceText($text1);
+        $this->getAnswers();
+        foreach ($this->answers->get() as $answer) {
+            $text2 = $answer->text;
+            $this->replaceText($text2);
+            if (Util::textIsSimilar($text1, $text2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function replaceText(&$text) {
+        foreach (self::$storageService->settings->parser->stringReplacements as $find => $replace) {
+            $text = str_replace($find, $replace, $text);
+        }
+    }
+
+    private function getAnswers() {
+        if (is_null($this->answers)) {
+            $this->answers = Answer::where(['category' => $this->categoryNumber]);
+        }
+    }
+
     protected function getAnswer()
     {
-        $answers = Answer::where(['category' => $this->categoryNumber]);
-        if (!$answers->count()) throw new \Exception('no answer found for category '.$this->categoryNumber);
-        return $this->latest ? $answers->get()->last() : $answers->inRandomOrder()->first();
+        $this->getAnswers();
+        if (!$this->answers->count()) throw new \Exception('no answer found for category '.$this->categoryNumber);
+        return $this->latest ? $this->answers->get()->last() : $this->answers->inRandomOrder()->first();
     }
 }

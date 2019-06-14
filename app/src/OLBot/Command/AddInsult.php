@@ -3,13 +3,11 @@
 namespace OLBot\Command;
 
 
-use OLBot\Service\StorageService;
-
 class AddInsult extends AbstractCommand
 {
-    public function __construct(StorageService $storageService, array $settings = [])
+    public function __construct(array $settings = [])
     {
-        parent::__construct($storageService, array_merge($settings, ['numberOfArguments' => 1]));
+        parent::__construct(array_merge(['numberOfArguments' => 1], $settings));
     }
 
     public function doStuff()

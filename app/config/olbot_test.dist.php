@@ -16,17 +16,24 @@ return new \OLBot\Settings(
             'addInsult' => [
                 'class' => 'AddInsult',
             ],
-            'addCategoryAnswer' => [
-                'class' => 'AddCategoryAnswer',
+            'categoryAnswer' => [
+                'class' => 'CategoryAnswer',
                 'settings' => [
-                    'category' => 1
+                    'category' => 2
                 ]
             ],
-            'addCategoryPicture' => [
-                'class' => 'AddCategoryAnswer',
+            'categoryPicture' => [
+                'class' => 'CategoryAnswer',
                 'settings' => [
                     'category' => 1,
                     'type' => 'pic'
+                ]
+            ],
+            'category2Arguments' => [
+                'class' => 'CategoryAnswer',
+                'settings' => [
+                    'category' => 2,
+                    'numberOfArguments' => 2
                 ]
             ],
         ],
@@ -73,6 +80,9 @@ return new \OLBot\Settings(
                     ],
                     'appendAuthor' => true
                 ]
+            ],
+            5 => [
+                'class' => 'LearningTextResponse'
             ],
             6 => [
                 'class' => 'Weather',

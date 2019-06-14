@@ -13,7 +13,7 @@ class Math extends AbstractCategory
     private $phpythagorasSettings;
     private $results;
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits)
+    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryHits = [])
     {
         $this->phpythagorasSettings = $settings['phpythagorasSettings'];
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits);

@@ -17,8 +17,6 @@ class ParserMiddleware extends TextBasedMiddleware
 
     public function __invoke(Request $request, Response $response, $next)
     {
-        AbstractCategory::$storageService = $this->storageService;
-
         $textCopy = &$this->storageService->textCopy;
 
         $this->removeTags($textCopy);

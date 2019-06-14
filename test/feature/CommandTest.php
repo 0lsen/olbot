@@ -1,11 +1,13 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection;
 use Telegram\Model\MessageEntity;
 use Telegram\Model\ParseMode;
 use Telegram\Model\SendMessageBody;
 use Telegram\Model\Update;
 use Telegram\ObjectSerializer;
 
+//include_once '../bootstrap.php';
 /**
  * @runTestsInSeparateProcesses
  */
@@ -105,7 +107,7 @@ class CommandTest extends FeatureTestCase
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
-    function testAddSomethingWithNoArgument()
+    function testAddSomethingWithNotEnoughArguments()
     {
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
@@ -114,7 +116,29 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
-        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer', ''));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'category2Arguments', 'asd'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
+
+    function testGetSomething()
+    {
+        $this->expectedMessage = new SendMessageBody([
+            'chat_id' => $this->chat,
+            'text' => 'answer',
+            'parse_mode' => ParseMode::MARKDOWN,
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ]);
+
+        $answerCollection = new Collection();
+        $answerCollection->add((object) ['text' => 'answer']);
+        $answerBuilder = new BuilderMock($answerCollection);
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['category' => 2])
+            ->once()
+            ->andReturn($answerBuilder);
+
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'categoryAnswer', ''));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -122,12 +146,12 @@ class CommandTest extends FeatureTestCase
     {
         $this->answerMock
             ->shouldReceive('where')
-            ->with(['text' => 'foo bar', 'category' => 1])
+            ->with(['text' => 'foo bar', 'category' => 2])
             ->once()
             ->andReturn(new EloquentMock(['count' => 0]));
         $this->answerMock
             ->shouldReceive('create')
-            ->with(['text' => 'foo bar', 'author' => $this->chat, 'category' => 1])
+            ->with(['text' => 'foo bar', 'author' => $this->chat, 'category' => 2])
             ->once();
 
         $this->expectedMessage = new SendMessageBody([
@@ -137,7 +161,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
-        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'categoryAnswer'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -145,7 +169,7 @@ class CommandTest extends FeatureTestCase
     {
         $this->answerMock
             ->shouldReceive('where')
-            ->with(['text' => 'foo bar', 'category' => 1])
+            ->with(['text' => 'foo bar', 'category' => 2])
             ->once()
             ->andReturn(new EloquentMock(['count' => 1]));
 
@@ -156,7 +180,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
-        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryAnswer'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'categoryAnswer'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -179,7 +203,7 @@ class CommandTest extends FeatureTestCase
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
-        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addCategoryPicture', 'https://example.com/picture.jpg'));
+        $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'categoryPicture', 'https://example.com/picture.jpg'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 

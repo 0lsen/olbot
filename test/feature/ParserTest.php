@@ -11,6 +11,7 @@ use OpenWeather\Model\Wind;
 use Telegram\Model\ParseMode;
 use Telegram\Model\SendMessageBody;
 
+//include_once '../bootstrap.php';
 /**
  * @runTestsInSeparateProcesses
  */
@@ -174,7 +175,7 @@ class ParserTest extends FeatureTestCase
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
 
-        $this->mockKeywords(['categoryfour' => 4, 'categoryfive' => 5]);
+        $this->mockKeywords(['categoryfour' => 4, 'unknown' => null]);
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
             'text' => 'fallback',
@@ -191,7 +192,7 @@ class ParserTest extends FeatureTestCase
             ->once()
             ->andReturn($answerBuilder);
 
-        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'categoryfour categoryfive'));
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'categoryfour unknown'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
@@ -220,6 +221,64 @@ class ParserTest extends FeatureTestCase
             ->andReturn($answerBuilder);
 
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'categorytwo latest'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
+
+    public function testLearningTextResponsePositive()
+    {
+        $from = self::USER_NEUTRAL_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->mockKeywords(['momma' => 5, 'fat' => 5]);
+
+        $this->expectedMessage = new SendMessageBody([
+            'chat_id' => $chat,
+            'text' => "yo momma supa fat",
+            'parse_mode' => ParseMode::MARKDOWN,
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ]);
+
+        $answerCollection = new Collection();
+        $answerCollection->add((object) ['time' => '2018-01-01 01:00:00', 'text' => 'yo momma supa fat', 'author' => '']);
+        $answerBuilder = new BuilderMock($answerCollection);
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['category' => 5])
+            ->once()
+            ->andReturn($answerBuilder);
+        $this->answerMock
+            ->shouldReceive('create')
+            ->with(['category' => 5, 'text' => 'yo momma so fat', 'author' => 5])
+            ->once();
+
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'yo momma so fat'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
+
+    public function testLearningTextResponsenegative()
+    {
+        $from = self::USER_NEUTRAL_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->mockKeywords(['momma' => 5, 'fat' => 5]);
+
+        $this->expectedMessage = new SendMessageBody([
+            'chat_id' => $chat,
+            'text' => "yo momma so fat",
+            'parse_mode' => ParseMode::MARKDOWN,
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ]);
+
+        $answerCollection = new Collection();
+        $answerCollection->add((object) ['time' => '2018-01-01 01:00:00', 'text' => 'yo momma so fat', 'author' => '']);
+        $answerBuilder = new BuilderMock($answerCollection);
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['category' => 5])
+            ->once()
+            ->andReturn($answerBuilder);
+
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'yo momma so fat'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 }

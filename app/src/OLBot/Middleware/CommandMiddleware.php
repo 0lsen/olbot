@@ -3,6 +3,7 @@
 namespace OLBot\Middleware;
 
 
+use OLBot\Category\AbstractCategory;
 use OLBot\Command\AbstractCommand;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -12,6 +13,9 @@ class CommandMiddleware extends TextBasedMiddleware
 {
     public function __invoke(Request $request, Response $response, $next)
     {
+        AbstractCommand::$storageService = $this->storageService;
+        AbstractCategory::$storageService = $this->storageService;
+
         $entities = $this->storageService->message->getEntities();
 
         if($entities) {
@@ -23,7 +27,7 @@ class CommandMiddleware extends TextBasedMiddleware
                         $this->storageService->textCopy = preg_replace('#^/'.$commandCall.'\s*#', '', $this->storageService->textCopy, 1);
                         $commandName = '\OLBot\Command\\'.$command->name;
                         /** @var AbstractCommand $commandObject */
-                        $commandObject = new $commandName($this->storageService, $command->settings);
+                        $commandObject = new $commandName($command->settings);
                         $this->storageService->sendResponse = true;
 
                         try {

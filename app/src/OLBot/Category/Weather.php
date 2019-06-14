@@ -11,7 +11,7 @@ class Weather extends AbstractCategory
     private $openWeatherSettings;
     private $subjectPlace;
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits)
+    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
     {
         $this->openWeatherSettings = $settings['openWeatherSettings'];
         $this->subjectPlace = self::$storageService->subjectCandidates[$subjectCandidateIndex] ?? null;

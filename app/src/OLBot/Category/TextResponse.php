@@ -9,7 +9,7 @@ class TextResponse extends AbstractCategory
 {
     private $appendAuthor;
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits)
+    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
     {
         $this->appendAuthor = $settings['appendAuthor'] ?? false;
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits);

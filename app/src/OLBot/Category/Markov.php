@@ -10,7 +10,7 @@ class Markov extends AbstractCategory
     private $elementLength;
     private $sentenceStart = '###START###';
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits)
+    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryHits = [])
     {
         $this->markovSettings = $settings['markovSettings'];
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits);
