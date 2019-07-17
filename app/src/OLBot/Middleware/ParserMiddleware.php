@@ -23,15 +23,17 @@ class ParserMiddleware extends TextBasedMiddleware
 
         $this->findSubjectCandidates($textCopy);
 
-        // TODO: foreach over all subject candidates and find best result (by best subject candidate? by best category result?)
-        $text = $this->removeSubjectCandidate(1, $textCopy);
+        $bestCandidate = $this->chooseBestSubjectCandidate();
+
+        $text = $this->removeSubjectCandidate($bestCandidate+1, $textCopy);
+
         $categoryHits = $this->getCategoryHits($text);
 
         foreach ($categoryHits as $categoryHit) {
             if ($categoryHit->hits && $categoryHit->category) {
                 $className = '\OLBot\Category\\'.$categoryHit->category;
                 /** @var AbstractCategory $cat */
-                $cat = new $className($categoryHit->id, 0, $categoryHit->settings, $categoryHits);
+                $cat = new $className($categoryHit->id, $bestCandidate, $categoryHit->settings, $categoryHits);
                 if ($cat->requirementsMet) {
                     $cat->generateResponse();
                     $this->storageService->sendResponse = true;
@@ -51,7 +53,7 @@ class ParserMiddleware extends TextBasedMiddleware
     private function findSubjectCandidates(&$text)
     {
         foreach ($this->storageService->settings->parser->quotationMarks as $start => $end) {
-            $regexPattern = '#(?:{(?<i>\d+)}|(?<!{\d}))'.preg_quote($start, '#').'([^'.preg_quote($end, '#').']+)'.preg_quote($end, '#').'(?!{/(?P=i)})#';
+            $regexPattern = '#(?:{(?<i>\d+)}|(?<!{\d}))'.preg_quote($start, '#').'([^'.preg_quote($start.$end, '#').']+)'.preg_quote($end, '#').'(?!{/(?P=i)})#';
             preg_match_all($regexPattern, $text, $matches);
             for ($i = 0; $i < sizeof($matches[0]); $i++) {
                 $match = $matches[2][$i];
@@ -93,6 +95,27 @@ class ParserMiddleware extends TextBasedMiddleware
                 );
             }
         }
+    }
+
+    private function chooseBestSubjectCandidate()
+    {
+        $index = null;
+        $words = 0;
+
+        foreach ($this->storageService->subjectCandidates as $i => $candidate) {
+            if (is_null($index)) {
+                $index = $i;
+                $words = preg_match_all('#\w+#', $candidate->text);
+            } else {
+                $wordsNew = preg_match_all('#\w+#', $candidate->text);
+                if ($wordsNew > $words) {
+                    $index = $i;
+                    $words = $wordsNew;
+                }
+            }
+        }
+
+        return $index;
     }
 
     private function removeSubjectCandidate($index, $text)

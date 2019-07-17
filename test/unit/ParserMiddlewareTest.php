@@ -16,7 +16,6 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
         $settings = new SettingsMock(new \OLBot\Settings\ParserSettings(
             [1 => ['class' => 'Math', 'settings' => ['phpythagorasSettings' => []]]],
             [],
-            ['fallbackLanguage' => '', 'typicalLanguageEnding' => ''],
             ['“' => '”', '\'' => '\''],
             [':', 'in ']
         ));
@@ -46,6 +45,14 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
         $keywordMock = Mockery::mock('alias:OLBot\Model\DB\Keyword');
         $keywordMock
             ->shouldReceive('find')
+            ->with(md5('abc'))
+            ->andReturnNull();
+        $keywordMock
+            ->shouldReceive('find')
+            ->with(md5('def'))
+            ->andReturnNull();
+        $keywordMock
+            ->shouldReceive('find')
             ->with(md5('foo'))
             ->andReturnNull();
         $keywordMock
@@ -55,18 +62,6 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
         $keywordMock
             ->shouldReceive('find')
             ->with(md5('jkl'))
-            ->andReturnNull();
-        $keywordMock
-            ->shouldReceive('find')
-            ->with(md5('mno'))
-            ->andReturnNull();
-        $keywordMock
-            ->shouldReceive('find')
-            ->with(md5('pqr'))
-            ->andReturnNull();
-        $keywordMock
-            ->shouldReceive('find')
-            ->with(md5('stu'))
             ->andReturnNull();
     }
 

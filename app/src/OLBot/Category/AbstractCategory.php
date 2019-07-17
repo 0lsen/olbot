@@ -26,6 +26,8 @@ abstract class AbstractCategory
 
     protected $needsSubject = false;
 
+    protected $subjectIndex;
+
     protected $requiredCategoryHits;
 
     public $requirementsMet = true;
@@ -69,7 +71,11 @@ abstract class AbstractCategory
 
     private function subjectRequirements($subjectCandidateIndex)
     {
-        return !($this->needsSubject && !isset(self::$storageService->subjectCandidates[$subjectCandidateIndex]));
+        $requirementMet = !($this->needsSubject && !is_null($subjectCandidateIndex) && !isset(self::$storageService->subjectCandidates[$subjectCandidateIndex]));
+        if ($this->needsSubject && $requirementMet) {
+            $this->subjectIndex = $subjectCandidateIndex;
+        }
+        return $requirementMet;
     }
 
     private function categoryRequirements($categoryHits)

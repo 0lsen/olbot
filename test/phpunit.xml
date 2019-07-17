@@ -6,5 +6,8 @@
         <testsuite name="UnitTests">
             <directory>unit</directory>
         </testsuite>
+<!--        <testsuite name="IntegrationTests">-->
+<!--            <directory>integration</directory>-->
+<!--        </testsuite>-->
     </testsuites>
 </phpunit>

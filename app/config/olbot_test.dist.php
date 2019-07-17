@@ -94,14 +94,19 @@ return new \OLBot\Settings(
                         'lang' => 'en'
                     ]
                 ]
+            ],
+            7 => [
+                'class' => 'Translation',
+                'settings' => [
+                    'yandexTranslationSettings' => [
+                        'apiKey' => 'foo',
+                        'standardLanguage' => 'en'
+                    ]
+                ]
             ]
         ],
         'stringReplacements' => [
             'ö' => 'o'
-        ],
-        'translation' => [
-            'fallbackLanguage' => 'english',
-            'typicalLanguageEnding' => 'ese'
         ],
         'quotationMarks' => [
             '"' => '"',
