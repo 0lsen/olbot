@@ -25,11 +25,11 @@ class MessageService
         $this->token = $token;
     }
 
-    function sendMessage($text, $idOut, $idIn)
+    function sendMessage($text, $idOut, $idIn, $asReply = true)
     {
         $message = new SendMessageBody();
         $message->setChatId($idOut);
-        $message->setReplyToMessageId($idIn);
+        if ($asReply) $message->setReplyToMessageId($idIn);
         $message->setText($text);
         $message->setParseMode(self::$parseMode);
         try {
