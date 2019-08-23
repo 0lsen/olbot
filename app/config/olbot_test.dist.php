@@ -65,7 +65,8 @@ return new \OLBot\Settings(
             2 => [
                 'class' => 'TextResponse',
                 'settings' => [
-                    'allowLatest' => true
+                    'allowLatest' => true,
+                    'appendAuthor' => true
                 ]
             ],
             3 => [

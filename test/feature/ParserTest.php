@@ -101,13 +101,13 @@ class ParserTest extends FeatureTestCase
         $this->mockKeywords(['marco' => 2, 'bar' => null]);
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => 'polo',
+            'text' => "polo\n    _-User Allowed_",
             'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
         $answerCollection = new Collection();
-        $answerCollection->add((object) ['text' => 'polo']);
+        $answerCollection->add((object) ['text' => 'polo', 'author' => self::USER_ALLOWED]);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')
