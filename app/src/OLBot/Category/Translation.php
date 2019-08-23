@@ -10,13 +10,11 @@ class Translation extends AbstractCategory
 {
     private $langCodeRegex = '#^\w{2}$#';
     private $url = 'https://translate.yandex.net/api/v1.5/tr.json/translate';
-    private $text;
     private $translationSettings;
 
     public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
     {
         $this->needsSubject = true;
-        $this->text = self::$storageService->subjectCandidates[$subjectCandidateIndex]->text ?? null;
         $this->translationSettings = $settings['yandexTranslationSettings'];
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits);
     }
@@ -61,11 +59,6 @@ class Translation extends AbstractCategory
         }
     }
 
-    private function getText()
-    {
-        return self::$storageService->subjectCandidates[$this->subjectIndex]->text;
-    }
-
     private function isSubjectLanguage($text)
     {
         if (
@@ -90,10 +83,5 @@ class Translation extends AbstractCategory
             }
         }
         return null;
-    }
-
-    private function removeSubjectCandidate()
-    {
-        return preg_replace('#\{'.($this->subjectIndex+1).'}.+{/'.($this->subjectIndex+1).'}#', '', self::$storageService->textCopy);
     }
 }

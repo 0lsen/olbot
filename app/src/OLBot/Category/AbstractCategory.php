@@ -131,4 +131,14 @@ abstract class AbstractCategory
         if (!$this->answers->count()) throw new \Exception('no answer found for category '.$this->categoryNumber);
         return $this->latest ? $this->answers->get()->last() : $this->answers->inRandomOrder()->first();
     }
+
+    protected function getText()
+    {
+        return self::$storageService->subjectCandidates[$this->subjectIndex]->text;
+    }
+
+    protected function removeSubjectCandidate()
+    {
+        return preg_replace('#\{'.($this->subjectIndex+1).'}.+{/'.($this->subjectIndex+1).'}#', '', self::$storageService->textCopy);
+    }
 }
