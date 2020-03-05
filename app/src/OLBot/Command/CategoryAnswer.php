@@ -35,9 +35,10 @@ class CategoryAnswer extends AbstractCommand
     }
 
     private function createCategoryResponse() {
-        $className = '\OLBot\Category\\'.self::$storageService->settings->parser->categories[$this->category]['class'];
+        $categorySettings = self::$storageService->settings->parser->categories[$this->category];
+        $className = '\OLBot\Category\\'.$categorySettings['class'];
         /** @var AbstractCategory $category */
-        $category = new $className($this->category, null, $this->storageService->settings->parser->categories[$this->category]['settings'] ?? []);
+        $category = new $className($this->category, null, $categorySettings['settings'] ?? []);
         $category->generateResponse();
     }
 }
