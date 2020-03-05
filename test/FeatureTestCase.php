@@ -50,7 +50,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     {
         $app = new \Slim\App();
 
-        $settings = require PROJECT_ROOT . '/app/config/olbot_test.php';
+        $settings = require PROJECT_ROOT . '/app/config/olbot_test.dist.php';
 
         require_once APP_ROOT.'/dependencies.php';
         require_once APP_ROOT.'/routes.php';
