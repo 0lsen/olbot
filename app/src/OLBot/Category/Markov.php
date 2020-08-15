@@ -21,20 +21,38 @@ class Markov extends AbstractCategory
         $this->endOfSentence = $this->markovSettings['endOfSentence'] ?? '.!?';
         $this->elementLength = $this->markovSettings['elementLength'] ?? 1;
 
-        $ignoreCache = $this->markovSettings['ignoreCache'] ?? false;
-        if (!$ignoreCache) {
-            $cacheKey = $this->markovSettings['cacheKey'] ?? 'markovCache';
-            $elements = apcu_fetch($cacheKey);
+        $cache = isset($this->markovSettings['cache'], $this->markovSettings['cache']['active']) ?? false;
+        if ($cache) {
+            $cacheKey = 'olbot_markov_'.$this->categoryNumber;
+            switch ($this->markovSettings['cache']['type']) {
+                case 'apcu':
+                    $elements = apcu_fetch($cacheKey);
+                    break;
+                case 'tmp':
+                    $tmp = file_get_contents(sys_get_temp_dir().'/'.$cacheKey);
+                    $elements = $tmp ? unserialize($tmp) : null;
+                    break;
+                default:
+                    $elements = null;
+            }
         } else {
             $elements = null;
         }
+
         if (!$elements) {
             $elements = $this->buildChainElements();
             if (sizeof($elements) < 2) {
                 throw new \Exception('Markov could not acquire knowledge.');
             }
-            if (!$ignoreCache) {
-                apcu_store($cacheKey, $elements, 24*60*60);
+            if ($cache) {
+                switch ($this->markovSettings['cache']['type']) {
+                    case 'apcu':
+                        apcu_store($cacheKey, $elements, 24*60*60);
+                        break;
+                    case 'tmp':
+                        file_put_contents(sys_get_temp_dir().'/'.$cacheKey, serialize($elements));
+                        break;
+                }
             }
         }
 
