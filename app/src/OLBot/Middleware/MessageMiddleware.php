@@ -32,6 +32,8 @@ class MessageMiddleware
         /** @var Message $message */
         $message = ObjectSerializer::deserialize($messageObject, 'Telegram\Model\Message');
 
+        if (!$message) return $response;
+
         Logger::logMessageIn($message);
 
         if ($this->insufficientMessageData($message)) {
