@@ -2,52 +2,52 @@
 
 return new \OLBot\Settings(
     # bot token
-    'asd',
+    '123:token',
 
-    # bot name to react to group mentions
-    'olbot',
+    # bot name
+    'oLbot',
 
     # ID of the bot master
-    '123456789',
+    '1234566',
 
     # fallback error response
-    'Something went terribly wrong',
+    'Oops, something went wrong.',
 
-    # command settings
+    # commands
     [
-        # fallback replies to commands (assuming standard commands are used to add some new piece of knowledge)
+        # fallback replies
         'replyToNewEntry' => 'Thank you for your contribution.',
         'replyToEntryAlreadyKnown' => 'I already know this.',
         'replyToInvalidInput' => 'Invalid Input.',
 
         # list of commands
-        # 'class' specifies what class to use
-        # 'call' specifies which string '/call' triggers the command
-        # 'settings'
-        #       'replyToNewEntry'/'replyToEntryAlreadyKnown'/'replyToInvalidInput': custom responses
-        #       'numberOfArguments': for custom commands: expected number of arguments
-        #       'category': for AddCategoryAnswer: what category will the provided answer be added to
+        #   class: OLBot\Command\ class
+        #   settings: (for class 'CategoryAnswer')
+        #     category: referenced category (see categories)
+        #     type: text(default), pic
         'commands' => [
-            'addFlattery' => [
-                'class' => 'AddFlattery',
-            ],
-            'addInsult' => [
-                'class' => 'AddInsult',
-            ],
-            'addCustomCategoryAnswer' => [
-                'class' => 'AddCategoryAnswer',
+            'joke' => [
+                # text command - without an argument a known text is fetched from DB, with an argument it will be added
+                'class' => 'CategoryAnswer',
                 'settings' => [
-                    'category' => 1,
-                    'type' => 'text' // expecting 'text' or 'pic' so far, 'text' is default
+                    'category' => 1
                 ]
-            ]
+            ],
+            'catpic' => [
+                # pic command - without an argument a known pic (URL) is fetched from DB, with an argument (URL) it will be added
+               'class' => 'CategoryAnswer',
+               'settings' => [
+                   'category' => 2,
+                   'type' => 'pic'
+               ]
+            ],
         ],
     ],
 
-    # instant responses as a list
-    # 'regex' specifies the responses trigger
-    # 'response' is the response (duh) added to your answer
-    # 'break' decides an instant return is triggered
+    # instant responses
+    #   regex: regex trigger 
+    #   response: what it says
+    #   break: continue processing request?
     [
         [
             'regex' => '#^Hakuna$#',
@@ -56,8 +56,7 @@ return new \OLBot\Settings(
         ],
     ],
 
-    # karma settings
-    # TODO: implement functions to calculate karma (string or actual function)
+    # karma (WIP)
     [
         'function' => '',
         'step' => 0.1,
@@ -65,71 +64,129 @@ return new \OLBot\Settings(
 
     # parser settings
     [
-        # list of categories, numbers corresponding to those in the keywords db
+        # list of categories triggered by keyword(s)
         'categories' => [
             1 => [
-                # 'class' specifying the category class (duh)
-                # 'settings'
-                #       'requiredCategoryHits' specifying how many hits on specific categories are required
-                #       'appendAuthor' for class 'TextResponse': sign line with the answer's author, if available
-                #       'allowLatest' allows to request the newest answer by a hit on category 92
-                'class' => 'Math',
+                # text from taught text (all settings optional)
+                #   appendAuthor: append user name that provided the chosen text via command
+                #   allowLatest: with keyword from category 92 the newest text may be requested
+                #   requiredCategoryHits: describes in detail which category hits are necessary to trigger
+                'class' => 'TextResponse',
                 'settings' => [
-                    'requiredCategoryHits' => [
-                        1 => 1,
-                    ],
                     'appendAuthor' => true,
                     'allowLatest' => true,
-
-                    # Special for Math: 'phpythagorasSettings'
-                    'phpythagorasSettings' => [
-                        'apiKey' => 'foo', #required
-                        'decimalpoint' => '.',
-                        'groupSeparator' => ',',
-                        'divisionByZeroResponse' => 'I refuse to divide by zero.'
-                    ],
-
-                    # Special for Weather: 'openWeatherSettings'
-                    'openWeatherSettings' => [
-                        'apiKey' => 'bar', #required
-                        'fallbackPlace' => 'Berlin', #required (sort of)
-                        'units' => 'metric',
-                        'lang' => 'en'
-                    ],
-
-                    # Special for Markov: 'markovSettings'
-                    'markovSettings' => [
-                        'resources' => [ #required
-                            'example.txt'
-                        ],
-                        'cacheKey' => false,
-                        'ignoreCache' => false,
-                        'sentenceThreshold' => 3,
-                        'wordThreshold' => 50,
-                        'endOfSentence' => '.:!?¿'
+                    'requiredCategoryHits' => [
+                        1 => 2,
                     ],
                 ]
             ],
             2 => [
-                'class' => 'TextResponse',
-            ],
-            3 => [
+                # pic from taught pics
                 'class' => 'PictureResponse',
             ],
+            3 => [
+                # math: forwards a string to the PHPythagoras API for evaluation
+                # query string is defined by `quotationMarks` & `subjectDelimiters` (see below)
+                'class' => 'Math',
+                'settings' => [
+                    'phpythagorasSettings' => [
+                        'apiKey' => 'myapikey',
+                        'decimalpoint' => ',',
+                        'groupSeparator' => '.',
+                        'divisionByZeroResponse' => 'I refuse to divide by zero.'
+                    ]
+                ]
+            ],
+            4 => [
+                # text with learning property (e.g. "yo moma..." jokes)
+                # checks if a similiar text (= 80% of words in common) is already known
+                #   replacements: regex replacements to avoid double entries and help uniformity
+                'class' => 'LearningTextResponse',
+                'settings' => [
+                    'replacements' => [
+                        '#^yo#' => 'Yo',
+                        '#(m|M)other#' => 'moma'
+                    ]
+                ]
+            ],
+            5 => [
+                # weather for a certain place
+                # query string is defined by `quotationMarks` & `subjectDelimiters` (see below), otherwise fallback
+                'class' => 'Weather',
+                'settings' => [
+                    'openWeatherSettings' => [
+                        'apiKey' => 'apiKey',
+                        'fallbackPlace' => 'London',
+                        'units' => 'metric',
+                        'lang' => 'en'
+                    ]
+                ]
+            ],
+            6 => [
+                # Markov-chain based response, generated from `resources`
+                #   resources: files in resources folder
+                #   cache: active (default false), type ('tmp' or 'apcu')
+                'class' => 'Markov',
+                'settings' => [
+                    'markovSettings' => [
+                        'resources' => [
+                            'test.txt'
+                        ],
+                        'cache' => [
+                            'active' => true,
+                            'type' => 'apcu'
+                        ],
+                        'sentenceThreshold' => 4,
+                        'wordThreshold' => 50,
+                        'elementLength' => 2
+                    ],
+                ]
+            ],
+            7 => [
+                # morse code translation via simple API
+                # query string is defined by `quotationMarks` & `subjectDelimiters` (see below)
+                'class' => 'Morse',
+                'settings' => [
+                    'url' => 'http://www.morsecode-api.de'
+                ]
+            ],
+            8 => [
+                # translation
+                # target language is recognised by a two character string (or via languageMap), with fallback
+                # and is like query string defined by `quotationMarks` & `subjectDelimiters` (see below)
+                'class' => 'Translation',
+                'settings' => [
+                    'yandexTranslationSettings' => [
+                        'apiKey' => 'apiKey',
+                        'standardLanguage' => 'en',
+                        'languageMap' => [
+                            'english' => 'en',
+                            'french' => 'fr',
+                            'german' => 'de'
+                        ]
+                    ]
+                ]
+            ],
+            9 => [
+                # write to group (bot master only)
+                # target group and text are defined by `quotationMarks` & `subjectDelimiters` (see below)
+                'class' => 'SendTextToGroup',
+                'settings' => []
+            ],
         ],
 
-        # replacements to perform before checking keywords, for now mainly to lowercase special characters (like umlauts)
+        # replacements to perform before checking keywords, mainly to lowercase special characters
         'stringReplacements' => [
-            'Ä' => 'Ae'
+            'ä' => 'ae',
+            'ö' => 'oe',
+            'ü' => 'ue',
+            'Ä' => 'Ae',
+            'Ö' => 'Oe',
+            'Ü' => 'Ue',
         ],
 
-        # TODO: implement this crap
-        'translation' => [
-            'fallbackLanguage' => 'english',
-            'typicalLanguageEnding' => 'ese'
-        ],
-
-        # stuff to find possible subjects, like 'foo „i am a possible subject“' and 'foo: i am too'
+        # for argument detection in text
+        # the "best" candidates should be found via things like quotation marks, colon or keywords
         'quotationMarks' => [
             '"' => '"',
             '\'' => '\'',
