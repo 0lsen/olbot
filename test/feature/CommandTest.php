@@ -124,13 +124,13 @@ class CommandTest extends FeatureTestCase
     {
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $this->chat,
-            'text' => 'answer',
+            'text' => "answer\n    _-User Allowed_",
             'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
         $answerCollection = new Collection();
-        $answerCollection->add((object) ['text' => 'answer']);
+        $answerCollection->add((object) ['text' => 'answer', 'author' => 1]);
         $answerBuilder = new BuilderMock($answerCollection);
         $this->answerMock
             ->shouldReceive('where')
