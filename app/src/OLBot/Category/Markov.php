@@ -21,7 +21,7 @@ class Markov extends AbstractCategory
         $this->endOfSentence = $this->markovSettings['endOfSentence'] ?? '.!?';
         $this->elementLength = $this->markovSettings['elementLength'] ?? 1;
 
-        $cache = isset($this->markovSettings['cache'], $this->markovSettings['cache']['active']) ?? false;
+        $cache = isset($this->markovSettings['cache']) ? $this->markovSettings['cache']['active'] ?? false : false;
         if ($cache) {
             $cacheKey = 'olbot_markov_'.$this->categoryNumber;
             switch ($this->markovSettings['cache']['type']) {
