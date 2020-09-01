@@ -2,6 +2,7 @@
 include_once 'TestMocks.php';
 
 use Illuminate\Database\Eloquent\Collection;
+use OLBotSettings\ObjectSerializer as OLBotSettingsObjectSerializer;
 use PHPythagoras\Configuration;
 use PHPythagoras\Model\FormulaResponseBody;
 use Telegram\Model\Chat;
@@ -10,7 +11,7 @@ use Telegram\Model\MessageEntity;
 use Telegram\Model\SendMessageBody;
 use Telegram\Model\Update;
 use Telegram\Model\User;
-use Telegram\ObjectSerializer;
+use Telegram\ObjectSerializer as TelegramObjectSerializer;
 
 class FeatureTestCase extends \There4\Slim\Test\WebTestCase
 {
@@ -50,7 +51,9 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     {
         $app = new \Slim\App();
 
-        $settings = require PROJECT_ROOT . '/app/config/olbot_test.dist.php';
+        $settingsArray = require PROJECT_ROOT . '/app/config/olbot_test.dist.php';
+
+        $settings = OLBotSettingsObjectSerializer::deserialize(json_decode(json_encode($settingsArray)), 'OLBotSettings\Model\Settings');
 
         require_once APP_ROOT.'/dependencies.php';
         require_once APP_ROOT.'/routes.php';
@@ -167,7 +170,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $update = new Update();
         $update->setMessage($message);
 
-        return ObjectSerializer::sanitizeForSerialization($update);
+        return TelegramObjectSerializer::sanitizeForSerialization($update);
     }
 
     protected function createMessage($fromId, $chatId, $text) : Message

@@ -3,6 +3,8 @@
 namespace OLBot\Model;
 
 
+use OLBotSettings\Model\CategorySettings;
+
 class CategoryHits
 {
     public $id;
@@ -10,7 +12,7 @@ class CategoryHits
     public $settings;
     public $hits = 0;
 
-    public function __construct($id, string $category, $settings = [])
+    public function __construct($id, string $category, ?CategorySettings $settings)
     {
         $this->id = $id;
         $this->category = $category;

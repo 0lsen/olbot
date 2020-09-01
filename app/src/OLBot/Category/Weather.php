@@ -3,7 +3,8 @@
 namespace OLBot\Category;
 
 
-use OpenWeather\Api\CurrentWeatherDataApi;
+use OLBot\Adapter\OpenWeather as OpenWeatherAdapter;
+use OLBotSettings\Model\Weather as WeatherSettings;
 use OpenWeather\Model\Model200;
 
 class Weather extends AbstractCategory
@@ -11,31 +12,36 @@ class Weather extends AbstractCategory
     private $openWeatherSettings;
     private $subjectPlace;
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
+    public function __construct(int $categoryNumber, ?int $subjectCandidateIndex, WeatherSettings $settings, $categoryhits = [])
     {
-        $this->openWeatherSettings = $settings['openWeatherSettings'];
+        $this->openWeatherSettings = $settings->getOpenWeatherSettings();
         $this->subjectPlace = self::$storageService->subjectCandidates[$subjectCandidateIndex] ?? null;
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits);
     }
 
+    /**
+     * @throws \Exception
+     * @throws \OpenWeather\ApiException
+     */
     public function generateResponse()
     {
-        $answer = $this->getAnswer();
-        $api = new CurrentWeatherDataApi();
-        $api->getConfig()->setApiKey('appid', $this->openWeatherSettings['apiKey']);
-        $data = $api->currentWeatherData(
+        $answerTemplate = $this->getAnswer();
+        $adapter = new OpenWeatherAdapter();
+
+        $data = $adapter->send(
             $this->subjectPlace ?
-                preg_replace('#[?!\.]+$#', '', $this->subjectPlace->text) :
-                $this->openWeatherSettings['fallbackPlace'],
-            null, null, null, null,
-            $this->openWeatherSettings['units'] ?? 'metric',
-            $this->openWeatherSettings['lang'] ?? 'en'
+                preg_replace('#[?!.]+$#', '', $this->subjectPlace->text) :
+                $this->openWeatherSettings->getFallbackPlace(),
+            $this->openWeatherSettings->getUnits() ?? 'metric',
+            $this->openWeatherSettings->getLanguage() ?? 'en',
+            $this->openWeatherSettings->getApiKey()
         );
-        $text = $this->mapData($answer->text, $data);
+
+        $text = $this->mapData($answerTemplate->text, $data);
         self::$storageService->response->text[] = $text;
     }
 
-    private function mapData($string, Model200 $data)
+    private function mapData($string, Model200 $data) : string
     {
         $string = preg_replace_callback(
             '/#(\w+)#/',

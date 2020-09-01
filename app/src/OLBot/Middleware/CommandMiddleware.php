@@ -11,27 +11,32 @@ use Telegram\Model\MessageEntity;
 
 class CommandMiddleware extends TextBasedMiddleware
 {
+    /** @var AbstractCommand[] */
+    private $commands = [];
+
     public function __invoke(Request $request, Response $response, $next)
     {
-        AbstractCommand::$storageService = $this->storageService;
-        AbstractCategory::$storageService = $this->storageService;
+        AbstractCommand::setStandardReplyToNewEntry($this->storageService->settings->getCommand()->getReplyToNewEntry());
+        AbstractCommand::setStandardReplyToEntryAlreadyKnown($this->storageService->settings->getCommand()->getReplyToEntryAlreadyKnown());
+        AbstractCommand::setStandardReplyToInvalidInput($this->storageService->settings->getCommand()->getReplyToInvalidInput());
+        AbstractCommand::setStorageService($this->storageService);
+
+        AbstractCategory::setStorageService($this->storageService);
+        AbstractCategory::setCacheService($this->cacheService);
 
         $entities = $this->storageService->message->getEntities();
 
         if($entities) {
+            $this->buildCommands();
             foreach ($entities as $entity) {
                 if ($entity->getType() == MessageEntity::TYPE_BOT_COMMAND) {
-                    $commandCall = substr($this->storageService->textCopy, $entity->getOffset()+1, $entity->getLength()-1);
-                    if (isset($this->storageService->settings->commands[$commandCall])) {
-                        $command = $this->storageService->settings->commands[$commandCall];
-                        $this->storageService->textCopy = preg_replace('#^/'.$commandCall.'\s*#', '', $this->storageService->textCopy, 1);
-                        $commandName = '\OLBot\Command\\'.$command->name;
-                        /** @var AbstractCommand $commandObject */
-                        $commandObject = new $commandName($command->settings);
+                    $command = substr($this->storageService->textCopy, $entity->getOffset()+1, $entity->getLength()-1);
+                    if (isset($this->commands[$command])) {
+                        $this->storageService->textCopy = preg_replace('#^/'.$command.'\s*#', '', $this->storageService->textCopy, 1);
                         $this->storageService->sendResponse = true;
 
                         try {
-                            $commandObject->doStuff();
+                            $this->commands[$command]->doStuff();
                         } catch (\Exception $e) {
                             $this->storageService->response->text[] = 'ERROR: ' . $e->getMessage();
                         }
@@ -43,5 +48,12 @@ class CommandMiddleware extends TextBasedMiddleware
         }
 
         return $next($request, $response);
+    }
+
+    private function buildCommands() {
+        foreach ($this->storageService->settings->getCommand()->getCommandList() as $command) {
+            $commandName = '\OLBot\Command\\'.$command->getCommandType();
+            $this->commands[$command->getName()] = new $commandName($command);
+        }
     }
 }

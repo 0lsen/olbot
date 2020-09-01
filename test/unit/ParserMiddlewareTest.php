@@ -1,5 +1,14 @@
 <?php
 
+use OLBot\Middleware\ParserMiddleware;
+use OLBot\Service\CacheService;
+use OLBot\Service\StorageService;
+use OLBotSettings\Model\CacheSettings;
+use OLBotSettings\Model\Math;
+use OLBotSettings\Model\ParserSettings;
+use OLBotSettings\Model\Settings;
+use OLBotSettings\Model\StringTuple;
+
 include_once 'SettingsMock.php';
 
 class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
@@ -13,16 +22,12 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
 
     function testFindSubjectCandidatesAndMathExpression()
     {
-        $settings = new SettingsMock(new \OLBot\Settings\ParserSettings(
-            [1 => ['class' => 'Math', 'settings' => ['phpythagorasSettings' => []]]],
-            [],
-            ['“' => '”', '\'' => '\''],
-            [':', 'in ']
-        ));
+        $settings = $this->createSettings();
 
-        $storage = new \OLBot\Service\StorageService($settings);
+        $storage = new StorageService($settings);
         $storage->textCopy = '{123}foo “abc \'def” ghi\' jkl: mno “pqr in stu”';
-        $detector = new \OLBot\Middleware\ParserMiddleware($storage);
+        $cache = new CacheService(new CacheSettings());
+        $detector = new ParserMiddleware($storage, $cache);
 
         $this->mockKeywords();
 
@@ -38,6 +43,26 @@ class ParserMiddlewareTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('def” ghi', $storage->subjectCandidates[2]->text);
         $this->assertEquals(' mno “pqr in stu”', $storage->subjectCandidates[3]->text);
         $this->assertEquals('stu”', $storage->subjectCandidates[4]->text);
+    }
+
+    private function createSettings() {
+        $settings = new Settings();
+        $parserSettings = new ParserSettings();
+        $parserSettings->setCategories([new Math()]);
+        $parserSettings->setQuotationMarks([
+            $this->createStringTuple('“', '”'),
+            $this->createStringTuple('\'', '\'')
+        ]);
+        $parserSettings->setSubjectDelimiters([':', 'in ']);
+        $settings->setParser($parserSettings);
+        return $settings;
+    }
+
+    private function createStringTuple(string $key, string $value) {
+        $tuple = new StringTuple();
+        $tuple->setKey($key);
+        $tuple->setValue($value);
+        return $tuple;
     }
 
     private function mockKeywords()

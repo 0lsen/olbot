@@ -23,6 +23,7 @@ class CommandTest extends FeatureTestCase
         parent::setup();
     }
 
+    /*
     function testAddNewFlatteryNegative()
     {
         $this->karmaMock
@@ -106,6 +107,7 @@ class CommandTest extends FeatureTestCase
         $this->client->post('/incoming', $this->createCommandUpdate($this->chat, $this->chat, 'addInsult'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
+    */
 
     function testAddSomethingWithNotEnoughArguments()
     {

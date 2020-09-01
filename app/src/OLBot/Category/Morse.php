@@ -4,40 +4,31 @@
 namespace OLBot\Category;
 
 
-/*
- * uses https://repat.github.io/morsecode-api/
- */
-
-use GuzzleHttp\Client;
+use OLBot\Adapter\Morse as MorseAdapter;
+use OLBotSettings\Model\Morse as MorseSettings;
 
 class Morse extends AbstractCategory
 {
-    private $url;
-    private $morseRegex = '#^[. -]+$#';
-
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
+    public function __construct(int $categoryNumber, ?int $subjectCandidateIndex, MorseSettings $settings, $categoryhits = [])
     {
-        $this->url = $settings['url'];
         $this->needsSubject = true;
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function generateResponse()
     {
-        $client = new Client();
         $text = self::$storageService->subjectCandidates[$this->subjectIndex]->text;
-        $res = $client->get(
-            $this->url.'/'
-            .(preg_match_all($this->morseRegex, $text) ? 'decode' : 'encode')
-            .'?string='
-            .urlencode($text)
-        );
+        $adapter = new MorseAdapter();
+        $response = $adapter->send($text);
 
-        if ($res->getStatusCode() == 200) {
-            $result = json_decode($res->getBody()->getContents(), true);
-            self::$storageService->response->text[] = $result[preg_match_all($this->morseRegex, $text) ? 'plaintext' : 'morsecode'];
+        if ($response->getStatusCode() == 200) {
+            $result = json_decode($response->getBody()->getContents(), true);
+            self::$storageService->response->text[] = $result[preg_match_all($adapter->regex, $text) ? 'plaintext' : 'morsecode'];
         } else {
-            throw new \Exception('morsecode api error: '.$res->getStatusCode());
+            throw new \Exception('morsecode api error: '.$response->getStatusCode());
         }
     }
 }

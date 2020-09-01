@@ -4,20 +4,26 @@ namespace OLBot\Command;
 
 
 use OLBot\Category\AbstractCategory;
+use OLBotSettings\Model\CategoryAnswer as CategoryAnswerSettings;
 
 class CategoryAnswer extends AbstractCommand
 {
     private $category;
     private $type;
 
-    public function __construct(array $settings = [])
+    /**
+     * CategoryAnswer constructor.
+     * @param CategoryAnswerSettings $settings
+     * @throws \Exception
+     */
+    public function __construct(CategoryAnswerSettings $settings)
     {
-        if (!isset($settings['category'])) {
+        if (is_null($settings->getCategory())) {
             throw new \Exception('no category setting in CategoryAnwser constructor');
         }
-        $this->category = $settings['category'];
-        $this->type = $settings['type'] ?? 'text';
-        parent::__construct(array_merge(['numberOfArguments' => 0], $settings));
+        $this->category = $settings->getCategory();
+        $this->type = $settings->getContentType() ?? \OLBotSettings\Model\CategoryAnswer::CONTENT_TYPE_TEXT;
+        parent::__construct($settings);
     }
 
     public function doStuff()
@@ -35,10 +41,14 @@ class CategoryAnswer extends AbstractCommand
     }
 
     private function createCategoryResponse() {
-        $categorySettings = self::$storageService->settings->parser->categories[$this->category];
-        $className = '\OLBot\Category\\'.$categorySettings['class'];
-        /** @var AbstractCategory $category */
-        $category = new $className($this->category, null, $categorySettings['settings'] ?? []);
-        $category->generateResponse();
+        foreach (self::$storageService->settings->getParser()->getCategories() as $category) {
+            if ($category->getCategoryNumber() === $this->category) {
+                $className = '\OLBot\Category\\'.$category->getType();
+                /** @var AbstractCategory $categoryObject */
+                $categoryObject = new $className($this->category, null, $category);
+                $categoryObject->generateResponse();
+                break;
+            }
+        }
     }
 }

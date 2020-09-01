@@ -4,15 +4,19 @@ namespace OLBot\Category;
 
 
 use OLBot\Model\DB\Answer;
+use OLBotSettings\Model\LearningTextResponse as LearningTextResponseSettings;
 
 class LearningTextResponse extends TextResponse
 {
-    private $replacements;
+    private $replacements = [];
 
-
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
+    public function __construct(int $categoryNumber, ?int $subjectCandidateIndex, LearningTextResponseSettings $settings, $categoryhits = [])
     {
-        $this->replacements = $settings['replacements'] ?? [];
+        if ($settings->getReplacements()) {
+            foreach ($settings->getReplacements() as $tuple) {
+                $this->replacements[$tuple->getKey()] = $tuple->getValue();
+            }
+        }
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits);
     }
 

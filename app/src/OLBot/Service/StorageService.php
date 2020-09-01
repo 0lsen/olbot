@@ -6,7 +6,7 @@ namespace OLBot\Service;
 use OLBot\Model\DB\AllowedUser;
 use OLBot\Model\Response;
 use OLBot\Model\SubjectCandidate;
-use OLBot\Settings;
+use OLBotSettings\Model\Settings;
 use Telegram\Model\Message;
 
 class StorageService

@@ -3,6 +3,7 @@
 namespace OLBot\Middleware;
 
 
+use OLBot\Service\CacheService;
 use OLBot\Service\StorageService;
 
 abstract class TextBasedMiddleware
@@ -10,9 +11,13 @@ abstract class TextBasedMiddleware
     /** @var StorageService */
     protected $storageService;
 
-    public function __construct($storageService)
+    /** @var CacheService */
+    protected $cacheService;
+
+    public function __construct(StorageService $storageService, CacheService $cacheService)
     {
         $this->storageService = $storageService;
+        $this->cacheService = $cacheService;
     }
 
     protected function removeFromText($needle, $all = false)

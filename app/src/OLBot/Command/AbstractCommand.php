@@ -5,12 +5,13 @@ namespace OLBot\Command;
 
 use OLBot\Service\StorageService;
 use OLBot\Util;
+use OLBotSettings\Model\CommandItemSettings;
 
 abstract class AbstractCommand
 {
-    static $standardReplyToNewEntry;
-    static $standardReplyToEntryAlreadyKnown;
-    static $standardReplyToInvalidInput;
+    private static $standardReplyToNewEntry;
+    private static $standardReplyToEntryAlreadyKnown;
+    private static $standardReplyToInvalidInput;
 
     protected $replyToNewEntry;
     protected $replyToEntryAlreadyKnown;
@@ -18,17 +19,17 @@ abstract class AbstractCommand
     protected $checkSimilarity;
 
     /** @var StorageService */
-    public static $storageService;
+    protected static $storageService;
 
     protected $numberOfArguments;
 
-    public function __construct($settings = [])
+    public function __construct(CommandItemSettings $settings)
     {
-        $this->replyToNewEntry = $settings['replyToNewEntry'] ?? self::$standardReplyToNewEntry;
-        $this->replyToEntryAlreadyKnown = $settings['replyToEntryAlreadyKnown'] ?? self::$standardReplyToEntryAlreadyKnown;
-        $this->replyToInvalidInput = $settings['replyToInvalidInput'] ?? self::$standardReplyToInvalidInput;
-        $this->checkSimilarity = $settings['checkSimilarity'] ?? false;
-        $this->numberOfArguments = $settings['numberOfArguments'] ?? 0;
+        $this->replyToNewEntry = $settings->getReplyToNewEntry() ?? self::$standardReplyToNewEntry;
+        $this->replyToEntryAlreadyKnown = $settings->getReplyToEntryAlreadyKnown() ?? self::$standardReplyToEntryAlreadyKnown;
+        $this->replyToInvalidInput = $settings->getReplyToInvalidInput() ?? self::$standardReplyToInvalidInput;
+        $this->checkSimilarity = $settings->getCheckSimilarity() ?? false;
+        $this->numberOfArguments = $settings->getNumberOfArguments() ?? 0;
     }
 
     /**
@@ -81,13 +82,47 @@ abstract class AbstractCommand
     }
 
     private function replaceText(&$text) {
-        foreach (self::$storageService->settings->parser->stringReplacements as $find => $replace) {
-            $text = str_replace($find, $replace, $text);
+        if (self::$storageService->settings->getParser()->getStringReplacements()) {
+            foreach (self::$storageService->settings->getParser()->getStringReplacements() as $find => $replace) {
+                $text = str_replace($find, $replace, $text);
+            }
         }
     }
 
     protected function addNew($eloquentModel, $text, $author, $conditions)
     {
         return call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::create', array_merge(['text' => $text, 'author' => $author], $conditions));
+    }
+
+    /**
+     * @param mixed $standardReplyToNewEntry
+     */
+    public static function setStandardReplyToNewEntry($standardReplyToNewEntry): void
+    {
+        self::$standardReplyToNewEntry = $standardReplyToNewEntry;
+    }
+
+    /**
+     * @param mixed $standardReplyToEntryAlreadyKnown
+     */
+    public static function setStandardReplyToEntryAlreadyKnown($standardReplyToEntryAlreadyKnown): void
+    {
+        self::$standardReplyToEntryAlreadyKnown = $standardReplyToEntryAlreadyKnown;
+    }
+
+    /**
+     * @param mixed $standardReplyToInvalidInput
+     */
+    public static function setStandardReplyToInvalidInput($standardReplyToInvalidInput): void
+    {
+        self::$standardReplyToInvalidInput = $standardReplyToInvalidInput;
+    }
+
+    /**
+     * @param StorageService $storageService
+     */
+    public static function setStorageService(StorageService $storageService): void
+    {
+        self::$storageService = $storageService;
     }
 }

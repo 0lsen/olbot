@@ -52,7 +52,7 @@ class MessageMiddleware
                 if (!$answers->count()) throw new \Exception('no error answer found.');
                 $answer = $answers->inRandomOrder()->first()->text;
             } catch (\Throwable $t2) {
-                $answer = $this->storageService->settings->fallbackErrorResponse;
+                $answer = $this->storageService->settings->getFallbackErrorResponse();
                 Logger::logError($this->storageService->message->getMessageId(), $t2);
             }
             $this->storageService->sendResponse = true;

@@ -4,21 +4,30 @@
 namespace OLBot\Category;
 
 
-use GuzzleHttp\Client;
+use OLBot\Adapter\Yandex as YandexAdapter;
+use OLBotSettings\Model\Translation as TranslationSettings;
 
 class Translation extends AbstractCategory
 {
     private $langCodeRegex = '#^\w{2}$#';
-    private $url = 'https://translate.yandex.net/api/v1.5/tr.json/translate';
     private $translationSettings;
+    private $languageMap = [];
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
+    public function __construct(int $categoryNumber, ?int $subjectCandidateIndex, TranslationSettings $settings, $categoryhits = [])
     {
         $this->needsSubject = true;
-        $this->translationSettings = $settings['yandexTranslationSettings'];
+        $this->translationSettings = $settings->getYandexTranslationSettings();
+        if ($this->translationSettings->getLanguageMap()) {
+            foreach ($this->translationSettings->getLanguageMap() as $tuple) {
+                $this->languageMap[$tuple->getKey()] = $tuple->getValue();
+            }
+        }
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function generateResponse()
     {
         $text = $this->getText();
@@ -40,22 +49,17 @@ class Translation extends AbstractCategory
         }
 
         if (is_null($lang)) {
-            $lang = $this->translationSettings['standardLanguage'];
+            $lang = $this->translationSettings->getStandardLanguage();
         }
 
-        $client = new Client();
+        $adapter = new YandexAdapter();
+        $response = $adapter->send($text, $lang, $this->translationSettings->getApiKey());
 
-        $res = $client->post($this->url.'?key='.$this->translationSettings['apiKey'].'&lang='.$lang, [
-            'form_params' => [
-                'text' => $text
-            ]
-        ]);
-
-        if ($res->getStatusCode() == 200) {
-            $result = json_decode($res->getBody()->getContents());
+        if ($response->getStatusCode() == 200) {
+            $result = json_decode($response->getBody()->getContents());
             self::$storageService->response->text[] = "`".$result->lang."`\n".$result->text[0];
         } else {
-            throw new \Exception('translation api error: '.$res->getStatusCode());
+            throw new \Exception('translation api error: '.$response->getStatusCode());
         }
     }
 
@@ -63,7 +67,7 @@ class Translation extends AbstractCategory
     {
         if (
             $this->subjectIndex == 0 &&
-            (isset($this->translationSettings['languageMap'][$text]) || preg_match($this->langCodeRegex, $text)) &&
+            (isset($this->languageMap[$text]) || preg_match($this->langCodeRegex, $text)) &&
             sizeof(self::$storageService->subjectCandidates) > 1
         ) {
             $this->subjectIndex = 1;
@@ -78,8 +82,8 @@ class Translation extends AbstractCategory
         $text = $this->removeSubjectCandidate();
         preg_match_all('#\w+#', $text, $matches);
         foreach ($matches[0] as $match) {
-            if (isset($this->translationSettings['languageMap'][$match])) {
-                return $this->translationSettings['languageMap'][$match];
+            if (isset($this->languageMap[$match])) {
+                return $this->languageMap[$match];
             }
         }
         return null;

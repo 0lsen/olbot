@@ -1,119 +1,128 @@
 <?php
 
-return new \OLBot\Settings(
-    'asd',
-    'olbot',
-    '123456789',
-    'Something went terribly wrong.',
-    [
+return [
+    'token' => 'mytoken',
+    'botName' => 'olbot',
+    'botmasterId' => '123456789',
+    'fallbackErrorResponse' => 'Something went terribly wrong.',
+    'cache' => [
+        'active' => true,
+        'type' => 'tmp',
+        'ttl' => 5*24*60*60
+    ],
+    'command' => [
         'replyToNewEntry' => 'Thank you for your contribution.',
         'replyToEntryAlreadyKnown' => 'I already know this.',
         'replyToInvalidInput' => 'Invalid Input.',
-        'commands' => [
-            'addFlattery' => [
-                'class' => 'AddFlattery',
+        'commandList' => [
+            [
+                'commandType' => 'CategoryAnswer',
+                'name' => 'categoryAnswer',
+                'category' => 2,
+                'contentType' => 'text'
             ],
-            'addInsult' => [
-                'class' => 'AddInsult',
+            [
+                'commandType' => 'CategoryAnswer',
+                'name' => 'categoryPicture',
+                'category' => 1,
+                'contentType' => 'pic'
             ],
-            'categoryAnswer' => [
-                'class' => 'CategoryAnswer',
-                'settings' => [
-                    'category' => 2
-                ]
-            ],
-            'categoryPicture' => [
-                'class' => 'CategoryAnswer',
-                'settings' => [
-                    'category' => 1,
-                    'type' => 'pic'
-                ]
-            ],
-            'category2Arguments' => [
-                'class' => 'CategoryAnswer',
-                'settings' => [
-                    'category' => 2,
-                    'numberOfArguments' => 2
-                ]
+            [
+                'commandType' => 'CategoryAnswer',
+                'name' => 'category2Arguments',
+                'category' => 2,
+                'contentType' => 'text',
+                'numberOfArguments' => 2
             ],
         ],
     ],
-    [
+    'instantResponses' => [
         [
             'regex' => '#^Hakuna$#',
             'response' => 'Matata',
             'break' => true,
         ],
     ],
-    [
-        'function' => '',
-        'step' => 0.1,
-    ],
-    [
+    'parser' => [
         'categories' => [
-            1 => [
-                'class' => 'Math',
-                'settings' => [
-                    'phpythagorasSettings' => [
-                        'apiKey' => 'foo',
-                        'decimalpoint' => '.',
-                        'groupSeparator' => ',',
-                        'divisionByZeroResponse' => 'I refuse to divide by zero.'
-                    ]
+            [
+                'categoryNumber' => 1,
+                'type' => 'Math',
+                'phpythagorasSettings' => [
+                    'apiKey' => 'foo',
+                    'decimalpoint' => '.',
+                    'groupSeparator' => ',',
+                    'divisionByZeroResponse' => 'I refuse to divide by zero.'
                 ]
             ],
-            2 => [
-                'class' => 'TextResponse',
-                'settings' => [
-                    'allowLatest' => true,
-                    'appendAuthor' => true
-                ]
+            [
+                'categoryNumber' => 2,
+                'type' => 'TextResponse',
+                'allowLatest' => true,
+                'appendAuthor' => true
             ],
-            3 => [
-                'class' => 'PictureResponse',
+            [
+                'categoryNumber' => 3,
+                'type' => 'PictureResponse',
             ],
-            4 => [
-                'class' => 'TextResponse',
-                'settings' => [
-                    'requiredCategoryHits' => [
-                        4 => 2,
-                        5 => 1
+            [
+                'categoryNumber' => 4,
+                'type' => 'TextResponse',
+                'requiredCategoryHits' => [
+                    [
+                        'key' => 4,
+                        'value'=> 2
                     ],
-                    'appendAuthor' => true
+                    [
+                        'key' => 5,
+                        'value' => 1
+                    ]
+                ],
+                'appendAuthor' => true
+            ],
+            [
+                'categoryNumber' => 5,
+                'type' => 'LearningTextResponse'
+            ],
+            [
+                'categoryNumber' => 6,
+                'type' => 'Weather',
+                'openWeatherSettings' => [
+                    'apiKey' => 'foo',
+                    'fallbackPlace' => 'Berlin',
+                    'units' => 'metric',
+                    'lang' => 'en'
                 ]
             ],
-            5 => [
-                'class' => 'LearningTextResponse'
-            ],
-            6 => [
-                'class' => 'Weather',
-                'settings' => [
-                    'openWeatherSettings' => [
-                        'apiKey' => 'foo',
-                        'fallbackPlace' => 'Berlin',
-                        'units' => 'metric',
-                        'lang' => 'en'
-                    ]
-                ]
-            ],
-            7 => [
-                'class' => 'Translation',
-                'settings' => [
-                    'yandexTranslationSettings' => [
-                        'apiKey' => 'foo',
-                        'standardLanguage' => 'en'
-                    ]
+            [
+                'categoryNumber' => 7,
+                'type' => 'Translation',
+                'yandexTranslationSettings' => [
+                    'apiKey' => 'foo',
+                    'standardLanguage' => 'en'
                 ]
             ]
         ],
         'stringReplacements' => [
-            'ö' => 'o'
+            [
+                'key' => 'ö',
+                'value'=> 'o'
+            ]
         ],
         'quotationMarks' => [
-            '"' => '"',
-            '\'' => '\'',
-            '„' => '“',
+            [
+                'key' => '"',
+                'value' => '"'
+            ],
+            [
+                'key' => '\'',
+                'value' => '\''
+            ],
+            [
+                'key' => '„',
+                'value' => '“',
+            ]
         ],
         'subjectDelimiters' => [':', 'in '],
     ]
-);
+];

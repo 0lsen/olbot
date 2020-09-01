@@ -3,6 +3,9 @@
 namespace OLBot\Category;
 
 
+use OLBot\Model\MarkovChainElement;
+use OLBotSettings\Model\Markov as MarkovSettings;
+
 class Markov extends AbstractCategory
 {
     private $markovSettings;
@@ -10,59 +13,41 @@ class Markov extends AbstractCategory
     private $elementLength;
     private $sentenceStart = '###START###';
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryHits = [])
+    public function __construct(int $categoryNumber, ?int $subjectCandidateIndex, MarkovSettings $settings, $categoryHits = [])
     {
-        $this->markovSettings = $settings['markovSettings'];
+        $this->markovSettings = $settings->getMarkovSettings();
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function generateResponse()
     {
-        $this->endOfSentence = $this->markovSettings['endOfSentence'] ?? '.!?';
-        $this->elementLength = $this->markovSettings['elementLength'] ?? 1;
+        $this->endOfSentence = $this->markovSettings->getEndOfSentence() ?? '.!?';
+        $this->elementLength = $this->markovSettings->getElementLength() ?? 1;
 
-        $cache = isset($this->markovSettings['cache']) ? $this->markovSettings['cache']['active'] ?? false : false;
-        if ($cache) {
-            $cacheKey = 'olbot_markov_'.$this->categoryNumber;
-            switch ($this->markovSettings['cache']['type']) {
-                case 'apcu':
-                    $elements = apcu_fetch($cacheKey);
-                    break;
-                case 'tmp':
-                    $tmp = file_get_contents(sys_get_temp_dir().'/'.$cacheKey);
-                    $elements = $tmp ? unserialize($tmp) : null;
-                    break;
-                default:
-                    $elements = null;
-            }
-        } else {
-            $elements = null;
-        }
+        $cacheKey = 'olbot_markov_'.$this->categoryNumber;
+        $elements = self::$cacheService->fetch($cacheKey);
 
         if (!$elements) {
             $elements = $this->buildChainElements();
             if (sizeof($elements) < 2) {
                 throw new \Exception('Markov could not acquire knowledge.');
             }
-            if ($cache) {
-                switch ($this->markovSettings['cache']['type']) {
-                    case 'apcu':
-                        apcu_store($cacheKey, $elements, 24*60*60);
-                        break;
-                    case 'tmp':
-                        file_put_contents(sys_get_temp_dir().'/'.$cacheKey, serialize($elements));
-                        break;
-                }
-            }
+            self::$cacheService->store($cacheKey, $elements);
         }
 
         return $this->generateText($elements);
     }
 
+    /**
+     * @return MarkovChainElement[]
+     */
     private function buildChainElements()
     {
         $elements = [];
-        foreach ($this->markovSettings['resources'] as $resource) {
+        foreach ($this->markovSettings->getResources() as $resource) {
             $data = file_get_contents(PROJECT_ROOT . '/app/resources/' . $resource);
             if ($data) {
                 preg_match_all('#(?<=^|['.$this->endOfSentence.'] )([^ ]+)( (?1)){'.($this->elementLength-1).'}#', $data, $firstWords);
@@ -117,8 +102,8 @@ class Markov extends AbstractCategory
      */
     private function generateText($elements)
     {
-        $wordThreshold = $this->markovSettings['wordThreshold'] ?? 30;
-        $sentenceThreshold = $this->markovSettings['sentenceThreshold'] ?? 4;
+        $wordThreshold = $this->markovSettings->getWordThreshold() ?? 30;
+        $sentenceThreshold = $this->markovSettings->getSentenceThreshold() ?? 4;
 
         $simple = $this->elementLength == 1;
         $words = [];
@@ -135,41 +120,8 @@ class Markov extends AbstractCategory
         self::$storageService->response->text[] = implode(' ', $words);
     }
 
-    private function lastWord(string $string) {
+    private function lastWord(string $string) : string {
         preg_match('#[^ ]+$#', $string, $match);
         return $match[0];
-    }
-}
-
-class MarkovChainElement {
-    private $successors = [];
-    private $sum = 1;
-    private $start;
-
-    public function __construct(string $word, $start = false)
-    {
-        $this->successors[$word] = 1;
-        $this->start = $start;
-    }
-
-    public function add(string $word) {
-        if (isset($this->successors[$word])) {
-            $this->successors[$word]++;
-        } else {
-            $this->successors[$word] = 1;
-        }
-        $this->sum++;
-    }
-
-    public function randomSuccessor($simple = true)
-    {
-        $result = null;
-        $index = rand(1, $this->sum);
-        foreach ($this->successors as $successor => $count) {
-            if ($count >= $index) {
-                return $this->start || $simple ? $successor : substr($successor, strpos($successor, ' ')+1);
-            }
-            $index -= $count;
-        }
     }
 }

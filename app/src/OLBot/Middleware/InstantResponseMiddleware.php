@@ -10,12 +10,12 @@ class InstantResponseMiddleware extends TextBasedMiddleware
 {
     public function __invoke(Request $request, Response $response, $next)
     {
-        foreach ($this->storageService->settings->instantResponses as $instant) {
-            if (preg_match($instant->regex, $this->storageService->textCopy)) {
+        foreach ($this->storageService->settings->getInstantResponses() as $instant) {
+            if (preg_match($instant->getRegex(), $this->storageService->textCopy)) {
                 $this->storageService->sendResponse = true;
-                $this->storageService->response->text[] = $instant->response;
+                $this->storageService->response->text[] = $instant->getResponse();
 
-                if ($instant->break)
+                if ($instant->getBreak())
                     return $response;
             }
         }

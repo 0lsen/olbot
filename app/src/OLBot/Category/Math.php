@@ -3,9 +3,9 @@
 namespace OLBot\Category;
 
 
+use OLBot\Adapter\PHPythagoras as PHPythagorasAdapter;
 use OLBot\Service\MessageService;
-use PHPythagoras\Api\DefaultApi;
-use PHPythagoras\Model\FormulaRequestBody;
+use OLBotSettings\Model\Math as MathSettings;
 use Telegram\Model\ParseMode;
 
 class Math extends AbstractCategory
@@ -13,27 +13,37 @@ class Math extends AbstractCategory
     private $phpythagorasSettings;
     private $results;
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryHits = [])
+    /**
+     * Math constructor.
+     * @param int $categoryNumber
+     * @param int|null $subjectCandidateIndex
+     * @param MathSettings $settings
+     * @param array $categoryHits
+     * @throws \PHPythagoras\ApiException
+     */
+    public function __construct(int $categoryNumber, ?int $subjectCandidateIndex, MathSettings $settings, $categoryHits = [])
     {
-        $this->phpythagorasSettings = $settings['phpythagorasSettings'];
+        $this->phpythagorasSettings = $settings->getPhpythagorasSettings();
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryHits);
         if ($this->requirementsMet) $this->requirementsMet = $this->evaluateText();
     }
 
+    /**
+     * @return bool
+     * @throws \PHPythagoras\ApiException
+     */
     private function evaluateText()
     {
-        $api = new DefaultApi();
-        $api->getConfig()
-            ->setApiKey('Authorization', $this->phpythagorasSettings['apiKey'])
-            ->setApiKeyPrefix('Authorization', 'Bearer');
-        $request = new FormulaRequestBody();
-        $request->setFormula(self::$storageService->textCopy);
-        $request->setGroupSeparator($this->phpythagorasSettings['groupSeparator'] ?? null);
-        $request->setDecimalPoint($this->phpythagorasSettings['decimalPoint'] ?? null);
-        $response = $api->formulaEvaluateFulltextPost($request);
+        $adapter = new PHPythagorasAdapter();
+        $response = $adapter->send(
+            self::$storageService->textCopy,
+            $this->phpythagorasSettings->getGroupSeparator() ?? null,
+            $this->phpythagorasSettings->getDecimalpoint() ?? null,
+            $this->phpythagorasSettings->getApiKey()
+        );
 
         foreach (explode("\n", $response->getResultString()) as $entry) {
-            $this->results[] = strpos($entry, "Division by") === false ? $entry : $this->phpythagorasSettings['divisionByZeroResponse'];
+            $this->results[] = strpos($entry, "Division by") === false ? $entry : $this->phpythagorasSettings->getDivisionByZeroResponse();
         }
         return $response->getOk() && $response->getResultString();
     }

@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 
 java -jar swagger-codegen-cli-2.3.1.jar generate \
+    -i olbotsettings.yml \
+    -l php \
+    --invoker-package \OLBotSettings \
+    -o ././../src/Api/OLBotSettings
+
+java -jar swagger-codegen-cli-2.3.1.jar generate \
     -i telegram.yaml \
     -l php \
     --invoker-package \Telegram \

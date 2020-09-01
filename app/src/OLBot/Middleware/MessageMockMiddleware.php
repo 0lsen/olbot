@@ -36,7 +36,7 @@ class MessageMockMiddleware extends TextBasedMiddleware
                 if (!$answers->count()) throw new \Exception('no error answer found.');
                 $answer = $answers->inRandomOrder()->first()->text;
             } catch (\Throwable $t2) {
-                $answer = $this->storageService->settings->fallbackErrorResponse;
+                $answer = $this->storageService->settings->getFallbackErrorResponse();
             }
             $this->storageService->sendResponse = true;
             $this->storageService->response->text = [$answer];

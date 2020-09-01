@@ -5,15 +5,19 @@ namespace OLBot\Category;
 
 use OLBot\Model\DB\AllowedGroup;
 use OLBot\Service\MessageService;
+use OLBotSettings\Model\SendTextToGroup as SendTextToGroupSettings;
 
 class SendTextToGroup extends AbstractCategory
 {
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
+    public function __construct(int $categoryNumber, ?int $subjectCandidateIndex, SendTextToGroupSettings $settings, $categoryhits = [])
     {
         $this->needsSubject = true;
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function generateResponse()
     {
         if (!self::$storageService->botmaster) return;
@@ -21,11 +25,15 @@ class SendTextToGroup extends AbstractCategory
         $text = $this->getText();
         $group = $this->getGroup();
 
-        $service = new MessageService(self::$storageService->settings->token);
+        $service = new MessageService(self::$storageService->settings->getToken());
 
         $service->sendMessage($text, $group, self::$storageService->message->getMessageId(), false);
     }
 
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
     private function getGroup()
     {
         foreach (self::$storageService->subjectCandidates as $index => $candidate) {

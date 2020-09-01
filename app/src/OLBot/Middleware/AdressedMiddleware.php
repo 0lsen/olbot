@@ -24,16 +24,17 @@ class AdressedMiddleware extends TextBasedMiddleware
 
     private function wasIMentioned()
     {
+        $botName = $this->storageService->settings->getBotName();
         $entities = $this->storageService->message->getEntities();
         if ($entities) {
             foreach ($entities as $entity) {
                 if (
                     $entity->getType() == MessageEntity::TYPE_MENTION
                     && $entity->getOffset() === 0
-                    && substr($this->storageService->textCopy, 1, $entity->getLength()-1) == $this->storageService->settings->botName
+                    && substr($this->storageService->textCopy, 1, $entity->getLength()-1) == $botName
                 ) {
                     $text = $this->storageService->textCopy;
-                    $text = str_replace_first('@' . $this->storageService->settings->botName . ' ', '', $text);
+                    $text = str_replace_first('@' . $botName . ' ', '', $text);
                     $this->storageService->textCopy = $text;
 
                     return true;

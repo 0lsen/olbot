@@ -6,8 +6,10 @@ namespace OLBot\Category;
 use Illuminate\Database\Eloquent\Builder;
 use OLBot\Model\CategoryHits;
 use OLBot\Model\DB\Answer;
+use OLBot\Service\CacheService;
 use OLBot\Service\StorageService;
 use OLBot\Util;
+use OLBotSettings\Model\CategorySettings;
 
 abstract class AbstractCategory
 {
@@ -22,13 +24,16 @@ abstract class AbstractCategory
     const CAT_LATEST = 92;
 
     /** @var StorageService */
-    public static $storageService;
+    protected static $storageService;
+
+    /** @var CacheService */
+    protected static $cacheService;
 
     protected $needsSubject = false;
 
     protected $subjectIndex;
 
-    protected $requiredCategoryHits;
+    protected $requiredCategoryHits = [];
 
     public $requirementsMet = true;
 
@@ -39,11 +44,15 @@ abstract class AbstractCategory
     /** @var Builder */
     private $answers = null;
 
-    public function __construct($categoryNumber, $subjectCandidateIndex, $settings = [], $categoryhits = [])
+    public function __construct(int $categoryNumber, ?int $subjectCandidateIndex, CategorySettings $settings, $categoryhits = [])
     {
         $this->categoryNumber = $categoryNumber;
-        $this->requiredCategoryHits = $settings['requiredCategoryHits'] ?? [];
-        $this->latest = ($settings['allowLatest'] ?? false) && $this->latestCategoryHit($categoryhits);
+        if ($settings->getRequiredCategoryHits()) {
+            foreach ($settings->getRequiredCategoryHits() as $tuple) {
+                $this->requiredCategoryHits[$tuple->getKey()] = $tuple->getValue();
+            }
+        }
+        $this->latest = ($settings->getAllowLatest() ?? false) && $this->latestCategoryHit($categoryhits);
         $this->requirementsMet = $this->areRequirementsMet($subjectCandidateIndex, $categoryhits);
     }
 
@@ -114,8 +123,10 @@ abstract class AbstractCategory
     }
 
     private function replaceText(&$text) {
-        foreach (self::$storageService->settings->parser->stringReplacements as $find => $replace) {
-            $text = str_replace($find, $replace, $text);
+        if (self::$storageService->settings->getParser()->getStringReplacements()) {
+            foreach (self::$storageService->settings->getParser()->getStringReplacements() as $tuple) {
+                $text = str_replace($tuple->getKey(), $tuple->getValue(), $text);
+            }
         }
     }
 
@@ -125,6 +136,10 @@ abstract class AbstractCategory
         }
     }
 
+    /**
+     * @return Builder|\Illuminate\Database\Eloquent\Model|mixed|object|null
+     * @throws \Exception
+     */
     protected function getAnswer()
     {
         $this->getAnswers();
@@ -140,5 +155,21 @@ abstract class AbstractCategory
     protected function removeSubjectCandidate()
     {
         return preg_replace('#\{'.($this->subjectIndex+1).'}.+{/'.($this->subjectIndex+1).'}#', '', self::$storageService->textCopy);
+    }
+
+    /**
+     * @param StorageService $storageService
+     */
+    public static function setStorageService(StorageService $storageService): void
+    {
+        self::$storageService = $storageService;
+    }
+
+    /**
+     * @param CacheService $cacheService
+     */
+    public static function setCacheService(CacheService $cacheService): void
+    {
+        self::$cacheService = $cacheService;
     }
 }

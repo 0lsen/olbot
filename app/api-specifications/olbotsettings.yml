@@ -1,0 +1,296 @@
+swagger: '2.0'
+info:
+  title: ''
+  version: ''
+paths:
+  /dummy:
+
+definitions:
+  Settings:
+    type: object
+    properties:
+      token:
+        type: string
+      botName:
+        type: string
+      botmasterId:
+        type: string
+      fallbackErrorResponse:
+        type: string
+      cache:
+        $ref: '#/definitions/CacheSettings'
+      command:
+        $ref: '#/definitions/CommandSettings'
+      instantResponses:
+        type: array
+        items:
+          $ref: '#/definitions/InstantResponseSettings'
+      parser:
+        $ref: '#/definitions/ParserSettings'
+
+  CacheSettings:
+    type: object
+    properties:
+      active:
+        type: boolean
+      method:
+        type: string
+        enum: [apcu, tmp]
+      ttl:
+        type: integer
+
+  CommandSettings:
+    type: object
+    properties:
+      replyToNewEntry:
+        type: string
+      replyToEntryAlreadyKnown:
+        type: string
+      replyToInvalidInput:
+        type: string
+      commandList:
+        type: array
+        items:
+          $ref: '#/definitions/CommandItemSettings'
+
+  CommandItemSettings:
+    type: object
+    discriminator: commandType
+    properties:
+      commandType:
+        type: string
+      name:
+        type: string
+      replyToNewEntry:
+        type: string
+      replyToEntryAlreadyKnown:
+        type: string
+      replyToInvalidInput:
+        type: string
+      checkSimilarity:
+        type: boolean
+      numberOfArguments:
+        type: integer
+    required:
+      - commandType
+      - name
+
+  CategoryAnswer:
+    allOf:
+      - $ref: '#/definitions/CommandItemSettings'
+      - type: object
+        properties:
+          category:
+            type: integer
+          contentType:
+            type: string
+            enum: [text, pic]
+        required:
+          - category
+          - contentType
+
+  Corona:
+    allOf:
+      - $ref: '#/definitions/CommandItemSettings'
+      - type: object
+
+  InstantResponseSettings:
+    type: object
+    properties:
+      regex:
+        type: string
+      response:
+        type: string
+      break:
+        type: boolean
+    required:
+      - regex
+      - response
+
+  ParserSettings:
+    type: object
+    properties:
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/CategorySettings'
+      stringReplacements:
+        type: array
+        items:
+          $ref: '#/definitions/StringTuple'
+      quotationMarks:
+        type: array
+        items:
+          $ref: '#/definitions/StringTuple'
+      subjectDelimiters:
+        type: array
+        items:
+          type: string
+
+  CategorySettings:
+    type: object
+    discriminator: type
+    properties:
+      categoryNumber:
+        type: integer
+      type:
+        type: string
+        enum:
+          - TextResponse
+          - PictureResponse
+          - LearningTextResponse
+          - SendTextToGroup
+          - Markov
+          - Math
+          - Morse
+          - Translation
+          - Weather
+      requiredCategoryHits:
+        type: array
+        items:
+          $ref: '#/definitions/IntegerTuple'
+      allowLatest:
+        type: boolean
+    required:
+      - type
+      - categoryNumber
+
+  TextResponse:
+    allOf:
+      - $ref: '#/definitions/CategorySettings'
+      - type: object
+      - properties:
+          appendAuthor:
+            type: boolean
+
+  PictureResponse:
+    allOf:
+      - $ref: '#/definitions/CategorySettings'
+      - type: object
+
+  LearningTextResponse:
+    allOf:
+      - $ref: '#/definitions/TextResponse'
+      - type: object
+      - properties:
+          replacements:
+            type: array
+            items:
+              $ref: '#/definitions/StringTuple'
+
+  SendTextToGroup:
+    allOf:
+      - $ref: '#/definitions/CategorySettings'
+      - type: object
+
+  Markov:
+    allOf:
+      - $ref: '#/definitions/CategorySettings'
+      - type: object
+      - properties:
+          markovSettings:
+            $ref: '#/definitions/MarkovSettings'
+
+  Math:
+    allOf:
+      - $ref: '#/definitions/CategorySettings'
+      - type: object
+      - properties:
+          phpythagorasSettings:
+            $ref: '#/definitions/PhpythagorasSettings'
+
+  Morse:
+    allOf:
+      - $ref: '#/definitions/CategorySettings'
+      - type: object
+
+  Translation:
+    allOf:
+      - $ref: '#/definitions/CategorySettings'
+      - type: object
+      - properties:
+          yandexTranslationSettings:
+            $ref: '#/definitions/YandexTranslationSettings'
+
+  Weather:
+    allOf:
+      - $ref: '#/definitions/CategorySettings'
+      - type: object
+      - properties:
+          openWeatherSettings:
+            $ref: '#/definitions/OpenWeatherSettings'
+
+  IntegerTuple:
+    type: object
+    properties:
+      key:
+        type: integer
+      value:
+        type: integer
+    required:
+      - key
+      - value
+
+  StringTuple:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    required:
+      - key
+      - value
+
+  MarkovSettings:
+    type: object
+    properties:
+      resources:
+        type: array
+        items:
+          type: string
+      sentenceThreshold:
+        type: integer
+      wordThreshold:
+        type: integer
+      elementLength:
+        type: integer
+      endOfSentence:
+        type: string
+
+  PhpythagorasSettings:
+    type: object
+    properties:
+      apiKey:
+        type: string
+      decimalpoint:
+        type: string
+      groupSeparator:
+        type: string
+      divisionByZeroResponse:
+        type: string
+
+  YandexTranslationSettings:
+    type: object
+    properties:
+      apiKey:
+        type: string
+      standardLanguage:
+        type: string
+      languageMap:
+        type: array
+        items:
+          $ref: '#/definitions/StringTuple'
+
+  OpenWeatherSettings:
+    type: object
+    properties:
+      apiKey:
+        type: string
+      fallbackPlace:
+        type: string
+      units:
+        type: string
+        enum: [metric, imperial]
+      language:
+        type: string

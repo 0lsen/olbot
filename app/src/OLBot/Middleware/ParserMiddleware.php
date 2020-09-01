@@ -52,7 +52,9 @@ class ParserMiddleware extends TextBasedMiddleware
 
     private function findSubjectCandidates(&$text)
     {
-        foreach ($this->storageService->settings->parser->quotationMarks as $start => $end) {
+        foreach ($this->storageService->settings->getParser()->getQuotationMarks() as $tuple) {
+            $start = $tuple->getKey();
+            $end = $tuple->getValue();
             $regexPattern = '#(?:{(?<i>\d+)}|(?<!{\d}))'.preg_quote($start, '#').'([^'.preg_quote($start.$end, '#').']+)'.preg_quote($end, '#').'(?!{/(?P=i)})#';
             preg_match_all($regexPattern, $text, $matches);
             for ($i = 0; $i < sizeof($matches[0]); $i++) {
@@ -77,7 +79,7 @@ class ParserMiddleware extends TextBasedMiddleware
 //        // limit to 10 because of '(?<!{\d})' - lookbehind fixed width prevents the use of '\d+' here
 //        while (preg_match($regexPattern, $text, $match) && sizeof($this->storageService->subjectCandidates) < 10)
 
-        foreach ($this->storageService->settings->parser->subjectDelimiter as $delimiter) {
+        foreach ($this->storageService->settings->getParser()->getSubjectDelimiters() as $delimiter) {
             if (preg_match('#'.preg_quote($delimiter, '#').'(.+)$#', $text, $matches)) {
                 $match = $matches[1];
                 $this->removeTags($match);
@@ -132,8 +134,8 @@ class ParserMiddleware extends TextBasedMiddleware
         $this->cleanUp($text);
 
         $hits = [];
-        foreach ($this->storageService->settings->parser->categories as $id => $category) {
-            $hits[$id] = new CategoryHits($id, $category['class'], $category['settings'] ?? []);
+        foreach ($this->storageService->settings->getParser()->getCategories() as $category) {
+            $hits[$category->getCategoryNumber()] = new CategoryHits($category->getCategoryNumber(), $category->getType(), $category);
         }
 
         preg_match_all('#\w{3,}#', $text, $words);
@@ -143,7 +145,7 @@ class ParserMiddleware extends TextBasedMiddleware
             $keyword = Keyword::find(md5(strtolower($word)));
             if (!is_null($keyword)) {
                 if (!isset($hits[$keyword->category])) {
-                    $hits[$keyword->category] = new CategoryHits($keyword->category, '', []);
+                    $hits[$keyword->category] = new CategoryHits($keyword->category, '', null);
                 }
                 $hits[$keyword->category]->hits++;
             }
@@ -156,8 +158,12 @@ class ParserMiddleware extends TextBasedMiddleware
 
     private function cleanUp(&$text)
     {
-        foreach ($this->storageService->settings->parser->stringReplacements as $find => $replace) {
-            $text = str_replace($find, $replace, $text);
+        if ($this->storageService->settings->getParser()->getStringReplacements()) {
+            foreach ($this->storageService->settings->getParser()->getStringReplacements() as $tuple) {
+                $find = $tuple->getKey();
+                $replace = $tuple->getValue();
+                $text = str_replace($find, $replace, $text);
+            }
         }
 
         $text = strtolower($text);
