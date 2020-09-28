@@ -101,6 +101,10 @@ return [
                     'apiKey' => 'foo',
                     'standardLanguage' => 'en'
                 ]
+            ],
+            [
+                'categoryNumber' => 8,
+                'type' => 'Status'
             ]
         ],
         'stringReplacements' => [

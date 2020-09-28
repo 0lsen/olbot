@@ -308,4 +308,48 @@ class ParserTest extends FeatureTestCase
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'MomMa Fat'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
+
+    public function testStatus()
+    {
+        $from = self::USER_NEUTRAL_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->mockKeywords(['status' => 8, 'bar' => null]);
+        $this->expectedMessage = new SendMessageBody([
+            'chat_id' => $chat,
+            'text' => "Status:\nCategory 1 Description: 3",
+            'parse_mode' => ParseMode::MARKDOWN,
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ]);
+
+        $answerCollection1 = new Collection();
+        $answerCollection1->add((object) ['text' => "Status:\n#cat1#: #no1#"]);
+        $answerBuilder1 = new BuilderMock($answerCollection1);
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['category' => 8])
+            ->once()
+            ->andReturn($answerBuilder1);
+        $answerCollection2 = new Collection();
+        $answerCollection2->add((object) []);
+        $answerCollection2->add((object) []);
+        $answerCollection2->add((object) []);
+        $answerBuilder2 = new BuilderMock($answerCollection2);
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['category' => 1])
+            ->once()
+            ->andReturn($answerBuilder2);
+        $categoryCollection = new Collection();
+        $categoryCollection->add((object) ['description' => 'Category 1 Description']);
+        $categoryBuilder = new BuilderMock($categoryCollection);
+        $this->categoryMock
+            ->shouldReceive('where')
+            ->with(['id' => 1])
+            ->once()
+            ->andReturn($categoryBuilder);
+
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'status bar'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
 }

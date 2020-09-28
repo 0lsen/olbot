@@ -143,6 +143,7 @@ definitions:
           - Markov
           - Math
           - Morse
+          - Status
           - Translation
           - Weather
       requiredCategoryHits:

@@ -165,6 +165,11 @@ return [
                 # requires two query strings as arguments (group name and message)
                 'type' => 'SendTextToGroup',
             ],
+            [
+                'categoryNumber' => 10,
+                # status answer with "#catX#" and "#noX#" (with integer X) placeholders for category descriptions and number of known answers
+                'type' => 'Status'
+            ]
         ],
 
         # replacements to perform before checking keywords, mainly to lowercase special characters

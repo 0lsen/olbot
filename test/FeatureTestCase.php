@@ -32,6 +32,8 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
     protected $keywordMock;
     /** @var \Mockery\MockInterface */
     protected $answerMock;
+    /** @var \Mockery\MockInterface */
+    protected $categoryMock;
 
     protected $token;
     /** @var SendMessageBody */
@@ -43,6 +45,7 @@ class FeatureTestCase extends \There4\Slim\Test\WebTestCase
         $this->mockKarma();
         $this->keywordMock = Mockery::mock('alias:OLBot\Model\DB\Keyword');
         $this->answerMock = Mockery::mock('alias:OLBot\Model\DB\Answer');
+        $this->categoryMock = Mockery::mock('alias:OLBot\Model\DB\Category');
 
         parent::setup();
     }
