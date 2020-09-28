@@ -317,13 +317,13 @@ class ParserTest extends FeatureTestCase
         $this->mockKeywords(['status' => 8, 'bar' => null]);
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
-            'text' => "Status:\nCategory 1 Description: 3",
+            'text' => "Status:\nCategory 18 Description: 3",
             'parse_mode' => ParseMode::MARKDOWN,
             'reply_to_message_id' => self::MESSAGE_ID,
         ]);
 
         $answerCollection1 = new Collection();
-        $answerCollection1->add((object) ['text' => "Status:\n#cat1#: #no1#"]);
+        $answerCollection1->add((object) ['text' => "Status:\n#cat18#: #no18#"]);
         $answerBuilder1 = new BuilderMock($answerCollection1);
         $this->answerMock
             ->shouldReceive('where')
@@ -337,15 +337,15 @@ class ParserTest extends FeatureTestCase
         $answerBuilder2 = new BuilderMock($answerCollection2);
         $this->answerMock
             ->shouldReceive('where')
-            ->with(['category' => 1])
+            ->with(['category' => 18])
             ->once()
             ->andReturn($answerBuilder2);
         $categoryCollection = new Collection();
-        $categoryCollection->add((object) ['description' => 'Category 1 Description']);
+        $categoryCollection->add((object) ['description' => 'Category 18 Description']);
         $categoryBuilder = new BuilderMock($categoryCollection);
         $this->categoryMock
             ->shouldReceive('where')
-            ->with(['id' => 1])
+            ->with(['id' => 18])
             ->once()
             ->andReturn($categoryBuilder);
 

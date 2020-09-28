@@ -15,7 +15,7 @@ class Status extends AbstractCategory
         $answer = $this->getAnswer();
 
         $text = preg_replace_callback(
-            '/#(\w+)(\d+)#/',
+            '/#([a-z]+)(\d+)#/',
             function($match) {
                 switch ($match[1]) {
                     case 'cat':
