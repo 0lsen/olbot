@@ -76,7 +76,8 @@ class KarmaMiddleware extends TextBasedMiddleware
 //        }
     }
 
-    private function manipulateKarma($karma) {
+    private function manipulateKarma($karma)
+    {
         //TODO: increase/decrease User Karma und save User
         //      function needed that slowly approaches -1/1
     }

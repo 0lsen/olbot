@@ -20,7 +20,7 @@ class LearningTextResponse extends TextResponse
         parent::__construct($categoryNumber, $subjectCandidateIndex, $settings, $categoryhits);
     }
 
-    public function generateResponse()
+    public function generateResponse() : void
     {
         $text = self::$storageService->textCopy;
         foreach ($this->replacements as $search => $replace) {

@@ -23,7 +23,7 @@ class Weather extends AbstractCategory
      * @throws \Exception
      * @throws \OpenWeather\ApiException
      */
-    public function generateResponse()
+    public function generateResponse() : void
     {
         $answerTemplate = $this->getAnswer();
         $adapter = new OpenWeatherAdapter();

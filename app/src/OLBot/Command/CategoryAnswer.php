@@ -40,7 +40,8 @@ class CategoryAnswer extends AbstractCommand
         }
     }
 
-    private function createCategoryResponse() {
+    private function createCategoryResponse()
+    {
         foreach (self::$storageService->settings->getParser()->getCategories() as $category) {
             if ($category->getCategoryNumber() === $this->category) {
                 $className = '\OLBot\Category\\'.$category->getType();

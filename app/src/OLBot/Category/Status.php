@@ -10,7 +10,7 @@ class Status extends AbstractCategory
     /**
      * @throws \Exception
      */
-    public function generateResponse()
+    public function generateResponse() : void
     {
         $answer = $this->getAnswer();
 

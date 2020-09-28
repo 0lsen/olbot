@@ -35,21 +35,25 @@ abstract class AbstractCommand
     /**
      * @throws \Exception
      */
-    public function doStuff() {
+    public function doStuff()
+    {
         if (!$this->hasEnoughParameters()) {
             throw new \Exception('not enough parameters.');
         }
     }
 
-    protected function hasEnoughParameters() {
+    protected function hasEnoughParameters()
+    {
         return self::$storageService->textCopy != '' && $this->numberOfParameters() >= $this->numberOfArguments;
     }
 
-    protected function numberOfParameters() {
+    protected function numberOfParameters()
+    {
         return sizeof(explode(' ', self::$storageService->textCopy));
     }
 
-    protected function tryToAddNewText($eloquentModel, $conditions = []) {
+    protected function tryToAddNewText($eloquentModel, $conditions = [])
+    {
         $alreadyKnown = $this->checkSimilarity
             ? $this->isSimilarTextAlreadyKnown($eloquentModel, $conditions)
             : $this->isTextAlreadyKnown($eloquentModel, self::$storageService->textCopy, $conditions);
@@ -67,7 +71,8 @@ abstract class AbstractCommand
         return call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::where', array_merge(['text' => $text], $conditions))->count();
     }
 
-    private function isSimilarTextAlreadyKnown($eloquentModel, $conditions) {
+    private function isSimilarTextAlreadyKnown($eloquentModel, $conditions)
+    {
         $entries = call_user_func('\OLBot\Model\DB\\' . $eloquentModel . '::where', $conditions);
         $text1 = self::$storageService->textCopy;
         $this->replaceText($text1);
@@ -81,7 +86,8 @@ abstract class AbstractCommand
         return false;
     }
 
-    private function replaceText(&$text) {
+    private function replaceText(&$text)
+    {
         if (self::$storageService->settings->getParser()->getStringReplacements()) {
             foreach (self::$storageService->settings->getParser()->getStringReplacements() as $find => $replace) {
                 $text = str_replace($find, $replace, $text);

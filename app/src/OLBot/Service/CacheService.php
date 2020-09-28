@@ -29,7 +29,8 @@ class CacheService
     }
 
 
-    public function fetch(string $key) {
+    public function fetch(string $key)
+    {
         if (!$this->active) {
             return null;
         }
@@ -48,7 +49,8 @@ class CacheService
         return $item;
     }
 
-    public function store(string $key, $value) {
+    public function store(string $key, $value)
+    {
         if (!$this->active) {
             return;
         }

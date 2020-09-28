@@ -48,7 +48,7 @@ class Math extends AbstractCategory
         return $response->getOk() && $response->getResultString();
     }
 
-    public function generateResponse()
+    public function generateResponse() : void
     {
         MessageService::$parseMode = ParseMode::HTML;
         foreach ($this->results as $result) {

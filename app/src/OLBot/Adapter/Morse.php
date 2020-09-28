@@ -24,4 +24,12 @@ class Morse
             .urlencode($text)
         );
     }
+
+    /**
+     * @return string
+     */
+    public function getRegex(): string
+    {
+        return $this->regex;
+    }
 }

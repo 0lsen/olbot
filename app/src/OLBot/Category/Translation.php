@@ -28,7 +28,7 @@ class Translation extends AbstractCategory
     /**
      * @throws \Exception
      */
-    public function generateResponse()
+    public function generateResponse() : void
     {
         $text = $this->getText();
 

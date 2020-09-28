@@ -35,12 +35,14 @@ class AllowedMiddleware extends TextBasedMiddleware
         return $id < 0 && AllowedGroup::where(['id' => $id, 'active' => true])->count();
     }
 
-    private function getUser() {
+    private function getUser()
+    {
         //TODO: register (inactive?) User if unknown
         return AllowedUser::find($this->storageService->message->getFrom()->getId());
     }
 
-    private function isBotmaster($id) {
+    private function isBotmaster($id)
+    {
          return $id == $this->storageService->settings->getBotmasterId();
     }
 }

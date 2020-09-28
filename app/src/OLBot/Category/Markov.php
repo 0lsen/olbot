@@ -22,7 +22,7 @@ class Markov extends AbstractCategory
     /**
      * @throws \Exception
      */
-    public function generateResponse()
+    public function generateResponse() : void
     {
         $this->endOfSentence = $this->markovSettings->getEndOfSentence() ?? '.!?';
         $this->elementLength = $this->markovSettings->getElementLength() ?? 1;
@@ -38,7 +38,7 @@ class Markov extends AbstractCategory
             self::$cacheService->store($cacheKey, $elements);
         }
 
-        return $this->generateText($elements);
+        $this->generateText($elements);
     }
 
     /**
@@ -120,7 +120,8 @@ class Markov extends AbstractCategory
         self::$storageService->response->text[] = implode(' ', $words);
     }
 
-    private function lastWord(string $string) : string {
+    private function lastWord(string $string) : string
+    {
         preg_match('#[^ ]+$#', $string, $match);
         return $match[0];
     }

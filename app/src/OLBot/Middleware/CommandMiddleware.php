@@ -50,7 +50,8 @@ class CommandMiddleware extends TextBasedMiddleware
         return $next($request, $response);
     }
 
-    private function buildCommands() {
+    private function buildCommands()
+    {
         foreach ($this->storageService->settings->getCommand()->getCommandList() as $command) {
             $commandName = '\OLBot\Command\\'.$command->getCommandType();
             $this->commands[$command->getName()] = new $commandName($command);

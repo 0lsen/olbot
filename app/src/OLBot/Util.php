@@ -40,7 +40,8 @@ class Util
         }
     }
 
-    static function isUsersBirthdayToday(AllowedUser $user) {
+    static function isUsersBirthdayToday(AllowedUser $user)
+    {
         // TODO: check if it's users birthday, return age else return null
         return null;
     }
@@ -48,7 +49,8 @@ class Util
     // TODO: via settings
     private static $textSimilarityThreshold = 0.8;
 
-    static function textIsSimilar($text1, $text2) {
+    static function textIsSimilar($text1, $text2)
+    {
         $text1 = strtolower($text1);
         $text2 = strtolower($text2);
         preg_match_all('#\w{3,}#', $text1, $t1Tokens);

@@ -19,7 +19,7 @@ class TextResponse extends AbstractCategory
     /**
      * @throws \Exception
      */
-    public function generateResponse()
+    public function generateResponse() : void
     {
         $answer = $this->getAnswer();
         if ($this->appendAuthor && $answer->author) {

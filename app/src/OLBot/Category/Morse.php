@@ -18,7 +18,7 @@ class Morse extends AbstractCategory
     /**
      * @throws \Exception
      */
-    public function generateResponse()
+    public function generateResponse() : void
     {
         $text = self::$storageService->subjectCandidates[$this->subjectIndex]->text;
         $adapter = new MorseAdapter();
@@ -26,7 +26,7 @@ class Morse extends AbstractCategory
 
         if ($response->getStatusCode() == 200) {
             $result = json_decode($response->getBody()->getContents(), true);
-            self::$storageService->response->text[] = $result[preg_match_all($adapter->regex, $text) ? 'plaintext' : 'morsecode'];
+            self::$storageService->response->text[] = $result[preg_match_all($adapter->getRegex(), $text) ? 'plaintext' : 'morsecode'];
         } else {
             throw new \Exception('morsecode api error: '.$response->getStatusCode());
         }

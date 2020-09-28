@@ -11,7 +11,7 @@ use OLBot\Service\StorageService;
 use OLBot\Util;
 use OLBotSettings\Model\CategorySettings;
 
-abstract class AbstractCategory
+abstract class AbstractCategory implements CategoryInterface
 {
     // 70+ for cron related categories (for now)
     const CAT_BIRTHDAY_REMINDER = 70;
@@ -73,8 +73,6 @@ abstract class AbstractCategory
         return false;
     }
 
-    public function generateResponse() {}
-
     private function areRequirementsMet($subjectCandidateIndex, $categoryHits)
     {
         $requirementsMet = $this->subjectRequirements($subjectCandidateIndex) && $this->categoryRequirements($categoryHits);
@@ -115,7 +113,8 @@ abstract class AbstractCategory
         return $requirementsMet;
     }
 
-    protected function similiarAnswerIsKnown(string $text1) {
+    protected function similiarAnswerIsKnown(string $text1)
+    {
         $text1 = Util::replace($text1, self::$storageService->settings->getParser()->getStringReplacements());
         if ($this->textContainsOnlyKeywords($text1)) {
             return true;
@@ -130,7 +129,8 @@ abstract class AbstractCategory
         return false;
     }
 
-    private function textContainsOnlyKeywords(string $text) : bool {
+    private function textContainsOnlyKeywords(string $text) : bool
+    {
         foreach (Util::getWords($text) as $word) {
             $found = false;
             foreach ($this->categoryHits as $categoryHit) {
@@ -146,7 +146,8 @@ abstract class AbstractCategory
         return true;
     }
 
-    private function getAnswers() {
+    private function getAnswers()
+    {
         if (is_null($this->answers)) {
             $this->answers = Answer::where(['category' => $this->categoryNumber]);
         }

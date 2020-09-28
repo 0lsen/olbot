@@ -18,7 +18,7 @@ class SendTextToGroup extends AbstractCategory
     /**
      * @throws \Exception
      */
-    public function generateResponse()
+    public function generateResponse() : void
     {
         if (!self::$storageService->botmaster) return;
 
