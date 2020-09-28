@@ -35,7 +35,10 @@ abstract class AbstractCategory
 
     protected $requiredCategoryHits = [];
 
-    public $requirementsMet = true;
+    /** @var CategoryHits[] */
+    protected $categoryHits;
+
+    protected $requirementsMet = true;
 
     protected $categoryNumber;
 
@@ -60,10 +63,10 @@ abstract class AbstractCategory
      * @param CategoryHits[] $categoryHits
      * @return bool
      */
-    private function latestCategoryHit($categoryHits)
+    private function latestCategoryHit(array $categoryHits)
     {
         foreach ($categoryHits as $category) {
-            if ($category->id == self::CAT_LATEST && $category->hits) {
+            if ($category->getId() == self::CAT_LATEST && $category->getHits()) {
                 return true;
             }
         }
@@ -74,8 +77,11 @@ abstract class AbstractCategory
 
     private function areRequirementsMet($subjectCandidateIndex, $categoryHits)
     {
-        return $this->subjectRequirements($subjectCandidateIndex)
-            && $this->categoryRequirements($categoryHits);
+        $requirementsMet = $this->subjectRequirements($subjectCandidateIndex) && $this->categoryRequirements($categoryHits);
+        if ($requirementsMet) {
+            $this->categoryHits = $categoryHits;
+        }
+        return $requirementsMet;
     }
 
     private function subjectRequirements($subjectCandidateIndex)
@@ -94,8 +100,8 @@ abstract class AbstractCategory
             $hit = false;
             /** @var CategoryHits $hits */
             foreach ($categoryHits as $hits) {
-                if ($hits->id == $category) {
-                    if ($hits->hits >= $requiredHits) {
+                if ($hits->getId() == $category) {
+                    if (sizeof($hits->getHits()) >= $requiredHits) {
                         $hit = true;
                     }
                     break;
@@ -109,12 +115,14 @@ abstract class AbstractCategory
         return $requirementsMet;
     }
 
-    protected function similiarAnswerIsKnown($text1) {
-        $this->replaceText($text1);
+    protected function similiarAnswerIsKnown(string $text1) {
+        $text1 = Util::replace($text1, self::$storageService->settings->getParser()->getStringReplacements());
+        if ($this->textContainsOnlyKeywords($text1)) {
+            return true;
+        }
         $this->getAnswers();
         foreach ($this->answers->get() as $answer) {
-            $text2 = $answer->text;
-            $this->replaceText($text2);
+            $text2 = Util::replace($answer->text, self::$storageService->settings->getParser()->getStringReplacements());
             if (Util::textIsSimilar($text1, $text2)) {
                 return true;
             }
@@ -122,12 +130,20 @@ abstract class AbstractCategory
         return false;
     }
 
-    private function replaceText(&$text) {
-        if (self::$storageService->settings->getParser()->getStringReplacements()) {
-            foreach (self::$storageService->settings->getParser()->getStringReplacements() as $tuple) {
-                $text = str_replace($tuple->getKey(), $tuple->getValue(), $text);
+    private function textContainsOnlyKeywords(string $text) : bool {
+        foreach (Util::getWords($text) as $word) {
+            $found = false;
+            foreach ($this->categoryHits as $categoryHit) {
+                if (in_array($word, $categoryHit->getHits())) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                return false;
             }
         }
+        return true;
     }
 
     private function getAnswers() {
@@ -155,6 +171,11 @@ abstract class AbstractCategory
     protected function removeSubjectCandidate()
     {
         return preg_replace('#\{'.($this->subjectIndex+1).'}.+{/'.($this->subjectIndex+1).'}#', '', self::$storageService->textCopy);
+    }
+
+    public function requirementsMet(): bool
+    {
+        return $this->requirementsMet;
     }
 
     /**

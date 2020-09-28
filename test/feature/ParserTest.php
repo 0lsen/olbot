@@ -229,7 +229,7 @@ class ParserTest extends FeatureTestCase
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
 
-        $this->mockKeywords(['momma' => 5, 'fat' => 5]);
+        $this->mockKeywords(['momma' => 5, 'fat' => 5, 'sooo' => null]);
 
         $this->expectedMessage = new SendMessageBody([
             'chat_id' => $chat,
@@ -248,14 +248,14 @@ class ParserTest extends FeatureTestCase
             ->andReturn($answerBuilder);
         $this->answerMock
             ->shouldReceive('create')
-            ->with(['category' => 5, 'text' => 'yo momma so fat', 'author' => 5])
+            ->with(['category' => 5, 'text' => 'yo momma sooo fat', 'author' => 5])
             ->once();
 
-        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'yo momma so fat'));
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'yo momma sooo fat'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 
-    public function testLearningTextResponsenegative()
+    public function testLearningTextResponseNegativeAnswerAlreadyKnown()
     {
         $from = self::USER_NEUTRAL_KARMA;
         $chat = self::GROUP_ALLOWED;
@@ -279,6 +279,33 @@ class ParserTest extends FeatureTestCase
             ->andReturn($answerBuilder);
 
         $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'yo momma so fat'));
+        $this->assertEquals(200, $this->client->response->getStatusCode());
+    }
+
+    public function testLearningTextResponseNegativeKeywordsOnly()
+    {
+        $from = self::USER_NEUTRAL_KARMA;
+        $chat = self::GROUP_ALLOWED;
+
+        $this->mockKeywords(['momma' => 5, 'fat' => 5]);
+
+        $this->expectedMessage = new SendMessageBody([
+            'chat_id' => $chat,
+            'text' => "yo momma so fat",
+            'parse_mode' => ParseMode::MARKDOWN,
+            'reply_to_message_id' => self::MESSAGE_ID,
+        ]);
+
+        $answerCollection = new Collection();
+        $answerCollection->add((object) ['time' => '2018-01-01 01:00:00', 'text' => 'yo momma so fat', 'author' => '']);
+        $answerBuilder = new BuilderMock($answerCollection);
+        $this->answerMock
+            ->shouldReceive('where')
+            ->with(['category' => 5])
+            ->once()
+            ->andReturn($answerBuilder);
+
+        $this->client->post('/incoming', $this->createMessageUpdate($from, $chat, 'MomMa Fat'));
         $this->assertEquals(200, $this->client->response->getStatusCode());
     }
 }

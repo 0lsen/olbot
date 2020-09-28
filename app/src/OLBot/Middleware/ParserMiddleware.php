@@ -7,6 +7,7 @@ use OLBot\Category\AbstractCategory;
 use OLBot\Model\CategoryHits;
 use OLBot\Model\DB\Keyword;
 use OLBot\Model\SubjectCandidate;
+use OLBot\Util;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -30,11 +31,11 @@ class ParserMiddleware extends TextBasedMiddleware
         $categoryHits = $this->getCategoryHits($text);
 
         foreach ($categoryHits as $categoryHit) {
-            if ($categoryHit->hits && $categoryHit->category) {
-                $className = '\OLBot\Category\\'.$categoryHit->category;
+            if ($categoryHit->getHits() && $categoryHit->getCategory()) {
+                $className = '\OLBot\Category\\'.$categoryHit->getCategory();
                 /** @var AbstractCategory $cat */
-                $cat = new $className($categoryHit->id, $bestCandidate, $categoryHit->settings, $categoryHits);
-                if ($cat->requirementsMet) {
+                $cat = new $className($categoryHit->getId(), $bestCandidate, $categoryHit->getSettings(), $categoryHits);
+                if ($cat->requirementsMet()) {
                     $cat->generateResponse();
                     $this->storageService->sendResponse = true;
                     break;
@@ -129,17 +130,15 @@ class ParserMiddleware extends TextBasedMiddleware
      * @param string $text
      * @return CategoryHits[]
      */
-    private function getCategoryHits($text)
+    private function getCategoryHits(string $text)
     {
-        $this->cleanUp($text);
-
+        /** @var CategoryHits[] $hits */
         $hits = [];
         foreach ($this->storageService->settings->getParser()->getCategories() as $category) {
             $hits[$category->getCategoryNumber()] = new CategoryHits($category->getCategoryNumber(), $category->getType(), $category);
         }
 
-        preg_match_all('#\w{3,}#', $text, $words);
-        $words = array_unique($words[0]);
+        $words = Util::getWords(Util::replace($text, $this->storageService->settings->getParser()->getStringReplacements()));
 
         foreach ($words as $word) {
             $keyword = Keyword::find(md5(strtolower($word)));
@@ -147,25 +146,12 @@ class ParserMiddleware extends TextBasedMiddleware
                 if (!isset($hits[$keyword->category])) {
                     $hits[$keyword->category] = new CategoryHits($keyword->category, '', null);
                 }
-                $hits[$keyword->category]->hits++;
+                $hits[$keyword->category]->addHit($word);
             }
         }
 
         usort($hits, ['OLBot\Model\CategoryHits', 'cmp']);
 
         return $hits;
-    }
-
-    private function cleanUp(&$text)
-    {
-        if ($this->storageService->settings->getParser()->getStringReplacements()) {
-            foreach ($this->storageService->settings->getParser()->getStringReplacements() as $tuple) {
-                $find = $tuple->getKey();
-                $replace = $tuple->getValue();
-                $text = str_replace($find, $replace, $text);
-            }
-        }
-
-        $text = strtolower($text);
     }
 }
