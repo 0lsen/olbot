@@ -19,7 +19,7 @@
     "php": "^7.1",
     "slim/slim": "3.10.0",
     "guzzlehttp/guzzle": "6.3.3",
-    "illuminate/database": "v5.5.39",
+    "illuminate/database": "v6.20.14",
     "symfony/console": "v3.4.14",
     "mockery/mockery": "1.1.0",
     "ext-json": "*"
