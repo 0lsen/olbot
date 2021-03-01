@@ -31,12 +31,13 @@ class CommandMiddleware extends TextBasedMiddleware
             foreach ($entities as $entity) {
                 if ($entity->getType() == MessageEntity::TYPE_BOT_COMMAND) {
                     $command = substr($this->storageService->textCopy, $entity->getOffset()+1, $entity->getLength()-1);
-                    if (isset($this->commands[$command])) {
+                    $commandClean = preg_replace("#@".$this->storageService->settings->getBotName()."#", "", $command, 1);
+                    if (isset($this->commands[$commandClean])) {
                         $this->storageService->textCopy = preg_replace('#^/'.$command.'\s*#', '', $this->storageService->textCopy, 1);
                         $this->storageService->sendResponse = true;
 
                         try {
-                            $this->commands[$command]->doStuff();
+                            $this->commands[$commandClean]->doStuff();
                         } catch (\Exception $e) {
                             $this->storageService->response->text[] = 'ERROR: ' . $e->getMessage();
                         }
