@@ -62,6 +62,31 @@ class MarkovTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    function testThreeElementLength() {
+        if (!defined('PROJECT_ROOT')) {
+            define('PROJECT_ROOT', __DIR__ . '/../..');
+        }
+
+        $storageService = new StorageService(new SettingsMock());
+        AbstractCategory::setStorageService($storageService);
+        AbstractCategory::setCacheService(new CacheService(new CacheSettings()));
+
+        $markov = new Markov(
+            1,
+            null,
+            $this->createMarkovSettings(3, 3),
+            1
+        );
+
+        srand(123);
+        $markov->generateResponse();
+
+        $this->assertEquals(
+            'We want to live by each other\'s happiness, not by each other\'s misery. Without these qualities, life will be violent and all will be lost. Machinery that gives abundance has left us in want.',
+            $storageService->response->text[0]
+        );
+    }
+
     private function createMarkovSettings(int $sentenceThreshold, ?int $elementLength) {
         $settings = new \OLBotSettings\Model\Markov();
         $markovSettings = new MarkovSettings();

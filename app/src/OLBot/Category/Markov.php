@@ -111,8 +111,12 @@ class Markov extends AbstractCategory
         $sentences = 1;
         $endOfSentence = true;
         while (!($sentences > $sentenceThreshold) && (!(sizeof($words) > $wordThreshold) || !$endOfSentence)) {
-            $words[] = $elements[$endOfSentence ? $this->sentenceStart : $lastKey]->randomSuccessor($simple);
-            $lastKey = ($endOfSentence || $simple ? '' : $this->lastWord($words[sizeof($words)-2]).' ') . end($words);
+            if ($endOfSentence) {
+                $words = array_merge($words, explode(' ', $elements[$this->sentenceStart]->randomSuccessor($simple)));
+            } else {
+                $words[] = $elements[$lastKey]->randomSuccessor($simple);
+            }
+            $lastKey = $this->lastWords($words);
             $endOfSentence = preg_match('#['.$this->endOfSentence.']$#', end($words));
             if ($endOfSentence) $sentences++;
         }
@@ -120,9 +124,9 @@ class Markov extends AbstractCategory
         self::$storageService->response->text[] = implode(' ', $words);
     }
 
-    private function lastWord(string $string) : string
+    private function lastWords(array $words) : string
     {
-        preg_match('#[^ ]+$#', $string, $match);
-        return $match[0];
+        $reverse = array_reverse($words);
+        return implode(' ', array_reverse(array_splice($reverse, 0, $this->elementLength)));
     }
 }

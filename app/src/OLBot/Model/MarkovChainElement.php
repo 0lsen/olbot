@@ -28,7 +28,7 @@ class MarkovChainElement {
         $index = rand(1, $this->sum);
         foreach ($this->successors as $successor => $count) {
             if ($count >= $index) {
-                return $this->start || $simple ? $successor : substr($successor, strpos($successor, ' ')+1);
+                return $this->start || $simple ? $successor : substr($successor, strrpos($successor, ' ')+1);
             }
             $index -= $count;
         }
