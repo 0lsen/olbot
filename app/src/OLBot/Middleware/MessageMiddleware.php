@@ -32,7 +32,7 @@ class MessageMiddleware
         /** @var Message $message */
         $message = ObjectSerializer::deserialize($messageObject, 'Telegram\Model\Message');
 
-        if (!$message) return $response;
+        if (!$message || Logger::messageInAlreadyLogged($message)) return $response;
 
         Logger::logMessageIn($message);
 

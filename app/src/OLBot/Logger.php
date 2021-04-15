@@ -21,6 +21,11 @@ class Logger
         ]);
     }
 
+    public static function messageInAlreadyLogged(Message $message)
+    {
+        return LogMessageIn::where(['id_in' => $message->getMessageId()])->count() > 0;
+    }
+
     public static function logMessageIn(Message $message)
     {
         LogMessageIn::create([

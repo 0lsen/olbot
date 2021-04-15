@@ -19,6 +19,8 @@ class MessageMockMiddleware extends TextBasedMiddleware
         /** @var Message $message */
         $message = ObjectSerializer::deserialize($messageObject, 'Telegram\Model\Message');
 
+        if (!$message || Logger::messageInAlreadyLogged($message)) return $response;
+
         Logger::logMessageIn($message);
 
         if ($this->insufficientMessageData($message)) {
