@@ -3,11 +3,10 @@
 namespace OLBot\Command;
 
 
-use OLBot\Service\StorageService;
 use OLBot\Util;
 use OLBotSettings\Model\CommandItemSettings;
 
-abstract class AbstractCommand
+abstract class AbstractCommand extends StorageCommand
 {
     private static $standardReplyToNewEntry;
     private static $standardReplyToEntryAlreadyKnown;
@@ -17,9 +16,6 @@ abstract class AbstractCommand
     protected $replyToEntryAlreadyKnown;
     protected $replyToInvalidInput;
     protected $checkSimilarity;
-
-    /** @var StorageService */
-    protected static $storageService;
 
     protected $numberOfArguments;
 
@@ -122,13 +118,5 @@ abstract class AbstractCommand
     public static function setStandardReplyToInvalidInput($standardReplyToInvalidInput): void
     {
         self::$standardReplyToInvalidInput = $standardReplyToInvalidInput;
-    }
-
-    /**
-     * @param StorageService $storageService
-     */
-    public static function setStorageService(StorageService $storageService): void
-    {
-        self::$storageService = $storageService;
     }
 }

@@ -5,13 +5,14 @@ namespace OLBot\Middleware;
 
 use OLBot\Category\AbstractCategory;
 use OLBot\Command\AbstractCommand;
+use OLBot\Command\StorageCommand;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Telegram\Model\MessageEntity;
 
 class CommandMiddleware extends TextBasedMiddleware
 {
-    /** @var AbstractCommand[] */
+    /** @var StorageCommand[] */
     private $commands = [];
 
     public function __invoke(Request $request, Response $response, $next)
@@ -19,7 +20,7 @@ class CommandMiddleware extends TextBasedMiddleware
         AbstractCommand::setStandardReplyToNewEntry($this->storageService->settings->getCommand()->getReplyToNewEntry());
         AbstractCommand::setStandardReplyToEntryAlreadyKnown($this->storageService->settings->getCommand()->getReplyToEntryAlreadyKnown());
         AbstractCommand::setStandardReplyToInvalidInput($this->storageService->settings->getCommand()->getReplyToInvalidInput());
-        AbstractCommand::setStorageService($this->storageService);
+        StorageCommand::setStorageService($this->storageService);
 
         AbstractCategory::setStorageService($this->storageService);
         AbstractCategory::setCacheService($this->cacheService);
