@@ -5,6 +5,7 @@ namespace OLBot\Category;
 
 use Illuminate\Database\Eloquent\Builder;
 use OLBot\Model\CategoryHits;
+use OLBot\Model\DB\AllowedUser;
 use OLBot\Model\DB\Answer;
 use OLBot\Service\CacheService;
 use OLBot\Service\StorageService;
@@ -44,6 +45,8 @@ abstract class AbstractCategory implements CategoryInterface
 
     protected $latest;
 
+    protected $author;
+
     /** @var Builder */
     private $answers = null;
 
@@ -55,7 +58,8 @@ abstract class AbstractCategory implements CategoryInterface
                 $this->requiredCategoryHits[$tuple->getKey()] = $tuple->getValue();
             }
         }
-        $this->latest = ($settings->getAllowLatest() ?? false) && $this->latestCategoryHit($categoryhits);
+        $this->latest = ($settings->getAllowLatestQuery() ?? false) && $this->latestCategoryHit($categoryhits);
+        $this->author = $settings->getAllowAuthorQuery() ? self::$storageService->authorHint : null;
         $this->requirementsMet = $this->areRequirementsMet($subjectCandidateIndex, $categoryhits);
     }
 
@@ -149,7 +153,15 @@ abstract class AbstractCategory implements CategoryInterface
     private function getAnswers()
     {
         if (is_null($this->answers)) {
-            $this->answers = Answer::where(['category' => $this->categoryNumber]);
+            if ($this->author) {
+                $author = AllowedUser::where(['name' => $this->author])->get()->first();
+                if ($author) {
+                    $this->answers = Answer::where(['category' => $this->categoryNumber, 'author' => $author->id]);
+                }
+            }
+            if (!$this->answers) {
+                $this->answers = Answer::where(['category' => $this->categoryNumber]);
+            }
         }
     }
 

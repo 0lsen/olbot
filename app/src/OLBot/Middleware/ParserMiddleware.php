@@ -98,6 +98,12 @@ class ParserMiddleware extends TextBasedMiddleware
                 );
             }
         }
+
+        foreach ($this->storageService->settings->getParser()->getAuthorHints() as $hint) {
+            if (preg_match('#'.preg_quote($hint, '#').'#', $text, $matches)) {
+                $this->storageService->authorHint = $matches[1];
+            }
+        }
     }
 
     private function chooseBestSubjectCandidate()

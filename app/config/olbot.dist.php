@@ -57,7 +57,9 @@ return [
                 # (optional) append author name of chosen response
                 'appendAuthor' => true,
                 # (optional) with keyword from category 92 the most recent registered response may be requested
-                'allowLatest' => true,
+                'allowLatestQuery' => true,
+                # (optional) allow to request response from specific author
+                'allowAuthorQuery' => true,
                 # (optional) specify how many keywords (value) of each category (key) are necessary to trigger
                 'requiredCategoryHits' => [
                     [
@@ -217,5 +219,6 @@ return [
             ],
         ],
         'subjectDelimiters' => [':', 'in '],
+        'authorHints' => ['\\bfrom (\w+)\\b'],
     ]
 ];

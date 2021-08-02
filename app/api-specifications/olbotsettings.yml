@@ -126,6 +126,10 @@ definitions:
         type: array
         items:
           type: string
+      authorHints:
+        type: array
+        items:
+          type: string
 
   CategorySettings:
     type: object
@@ -150,7 +154,9 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/IntegerTuple'
-      allowLatest:
+      allowLatestQuery:
+        type: boolean
+      allowAuthorQuery:
         type: boolean
     required:
       - type

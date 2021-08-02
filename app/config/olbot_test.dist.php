@@ -58,7 +58,7 @@ return [
             [
                 'categoryNumber' => 2,
                 'type' => 'TextResponse',
-                'allowLatest' => true,
+                'allowLatestQuery' => true,
                 'appendAuthor' => true
             ],
             [

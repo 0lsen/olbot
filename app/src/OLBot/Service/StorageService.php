@@ -23,6 +23,8 @@ class StorageService
     /** @var SubjectCandidate[] */
     public $subjectCandidates = [];
 
+    public $authorHint;
+
     public $sendResponse = false;
     public $response;
     public $karma;
