@@ -127,6 +127,6 @@ return [
                 'value' => '“',
             ]
         ],
-        'subjectDelimiters' => [':', 'in '],
+        'subjectDelimiters' => [':\\s+', '\\bin\\s+'],
     ]
 ];

@@ -218,7 +218,7 @@ return [
                 'value' => '“'
             ],
         ],
-        'subjectDelimiters' => [':', 'in '],
+        'subjectDelimiters' => [':\\s+', '\\bin\\s+'],
         'authorHints' => ['\\bfrom (\w+)\\b'],
     ]
 ];
