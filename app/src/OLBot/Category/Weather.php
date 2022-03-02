@@ -28,10 +28,22 @@ class Weather extends AbstractCategory
         $answerTemplate = $this->getAnswer();
         $adapter = new OpenWeatherAdapter();
 
+        if ($this->subjectPlace) {
+            $place = preg_replace('#[?!.]+$#', '', $this->subjectPlace->text);
+            if ($this->openWeatherSettings->getAliases()) {
+                foreach ($this->openWeatherSettings->getAliases() as $alias) {
+                    if (preg_match('#^'.$alias->getKey().'$#', $place)) {
+                        $place = $alias->getValue();
+                        break;
+                    }
+                }
+            }
+        } else {
+            $place = $this->openWeatherSettings->getFallbackPlace();
+        }
+
         $data = $adapter->send(
-            $this->subjectPlace ?
-                preg_replace('#[?!.]+$#', '', $this->subjectPlace->text) :
-                $this->openWeatherSettings->getFallbackPlace(),
+            $place,
             $this->openWeatherSettings->getUnits() ?? 'metric',
             $this->openWeatherSettings->getLanguage() ?? 'en',
             $this->openWeatherSettings->getApiKey()

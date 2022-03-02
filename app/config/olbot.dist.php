@@ -112,7 +112,13 @@ return [
                     'apiKey' => 'apiKey',
                     'fallbackPlace' => 'London',
                     'units' => 'metric',
-                    'language' => 'en'
+                    'language' => 'en',
+                    'aliases' => [
+                        [
+                            'key' => '\\b(?i)home\\b',
+                            'value' => 'Beaverlick'
+                        ]
+                    ],
                 ]
             ],
             [
